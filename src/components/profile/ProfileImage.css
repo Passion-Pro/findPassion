@@ -1,0 +1,12 @@
+.profileImage{
+    display: flex;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.profileImage>img{
+    display: flex;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}

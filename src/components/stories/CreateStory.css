@@ -1,0 +1,23 @@
+.CreateProfile{
+   display: flex;
+   width: 50px;
+   height: 50px;
+   border-radius: 50%;
+   background-color: white;
+   border: 1px solid lightgray;
+   align-items: center;
+   justify-content: center;
+   margin:4px;
+}
+.AddStory__text{
+   display: flex;
+   color: rgb(75, 69, 69);
+   font-weight:600;
+   font-size: xx-small;
+   left:0;
+   padding-top: 4px;
+   width: 50px;
+   overflow-x: scroll;
+   align-items: flex-end;
+   justify-content: center;
+}

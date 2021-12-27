@@ -1,0 +1,29 @@
+.home{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+}
+.homeBody{
+    display: flex;
+    flex-direction: column;
+    padding: 6px 12px 0 12px;
+}
+.recommendPeople{
+    display: flex;
+    overflow-x: scroll;
+    padding-bottom: 7vh;
+    overflow-y: scroll;
+}
+.stories{
+    display: flex;
+    position: sticky;
+    overflow-x: scroll;
+}
+.stories__div{
+    display: flex;
+}
+@media(max-width:800px){
+    .recommendPeople{
+        flex-direction: column;
+    }  
+}
