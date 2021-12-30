@@ -37,7 +37,7 @@
 }
 .PeopleStartedSameIn__Text{
     display: flex;
-    /* padding-top: 3px; */
+    font-size: small;
     font-weight: 600;
     color: rgb(85, 78, 78);
 }

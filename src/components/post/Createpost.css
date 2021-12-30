@@ -1,0 +1,16 @@
+.Createpost{
+     height: 100vh;
+}
+.createpost__body{
+     height: 90vh;
+}
+.CreateHeader>img{
+    display: flex;
+    height: 400px;
+    width: 400px;
+}
+.image__Show_toCrop{
+    display: flex;
+    height: 400px;
+    width: 400px;
+}

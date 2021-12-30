@@ -1,0 +1,27 @@
+.PostPopup{
+    display: flex;
+    flex-direction: column;
+}
+.PostPopup__IN{
+    display: flex;
+    flex-direction: column;
+}
+.postPopup__Field{
+    display: flex;
+    padding: 3px;
+    margin: 3px;
+    border-bottom:1px solid #003300;
+    align-items: center;
+    padding: 3px 12px;
+    padding-bottom: 6px;
+    /* color: #003300; */
+    /* color: #000033; */
+    color: #193a94;
+    cursor:pointer;
+}
+.postPopup__Field>img{
+    color: lightblue;
+    padding: 6px;
+    margin-right: 6px;
+    border: 1.5px solid #000033;
+}

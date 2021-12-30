@@ -3,19 +3,18 @@
     justify-content: center;
     align-items: center;
     width: 100vw;
-    position: sticky;
+    position:sticky;
     top: 0;
     background-color:#0088CC;
     z-index: 200;
-    padding: 6px 0 6px 0;
-    height: 10vh;
+    padding:1vh 0;
+    height: 8vh;
     overflow:hidden;
 }
 .Loginheader_In{
     display: flex;
     flex: 1;
     height: 10vh;
-    /* max-width: 1300px; */
     justify-content: space-between;
     align-items: center;
     padding: 0px 12px 0 12px;
@@ -50,6 +49,7 @@
 }
 .Loginheader__Icon__addIcon{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     border: 1.7px solid white;
@@ -85,6 +85,22 @@
     background-color: #7ac1e4;
     border-radius: 4px;
     box-shadow: 0 0 8px -4px #0a67a4;
+}
+.postPopup{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    width: fit-content;
+    background-color: white;
+    height: fit-content;
+    border: 1px solid lightgray;
+    font-weight: 600;
+    padding: 12px;
+    margin-top: 2px;
+    z-index: 100;
+    border-top: 2px solid #2370e2;
+    top: 10vh;
+    right: 150px;
 }
 @media(max-width:800px){
     .Loginheader__Icons{
