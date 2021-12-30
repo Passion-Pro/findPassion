@@ -1,0 +1,33 @@
+/* sx={{ minWidth:'345px',margin:"20px",height:'fit-content' }} */
+.profilecard{
+    min-width: 345px;
+    min-height: 300px;
+    max-width: 345px;
+    max-height: 300px;
+    margin: 12px;
+}
+.profileimage__profilecard{
+    display: flex;
+    position:absolute;
+    top: 0;   
+    z-index: 100;
+    width: 100%;
+    align-items: flex-end;
+    justify-content: center;
+    height: 160px;
+}
+.profileimage__profilecard>img{
+    display: flex; 
+    height: 120px;
+    width: 120px;
+    border-radius: 50%;
+}
+@media(max-width:769px){
+    .profilecard{
+        min-width: 96%;
+        min-height: 300px;
+        max-width: 96%;
+        max-height: 300px;
+        margin: 2%;
+    }
+}

@@ -1,0 +1,110 @@
+.Loginheader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    position: sticky;
+    top: 0;
+    background-color:#0088CC;
+    z-index: 200;
+    padding: 6px 0 6px 0;
+    height: 10vh;
+    overflow:hidden;
+}
+.Loginheader_In{
+    display: flex;
+    flex: 1;
+    height: 10vh;
+    /* max-width: 1300px; */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 12px 0 12px;
+    width: 100vw;
+}
+.Loginheader__Logo{
+    display: flex;
+    flex: 0.2;
+    font-size: large;
+    font-weight: bold;
+    padding-left: 12px;
+    color: white;
+}
+.Loginheader__Icons{
+    display: flex;
+    flex: 0.2;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 12px 0 12px;
+}
+.Loginheader__home__Icon{
+    display: flex;
+    align-items: center;
+    padding: 0px 12px 0 12px;
+    justify-content: center;
+}
+.Loginheader__Icon__search{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 12px 0 12px;
+}
+.Loginheader__Icon__addIcon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.7px solid white;
+    border-radius: 4px;
+    margin: 0px 12px 0 12px;
+}
+.Loginheader__profile{
+    display: flex;
+    flex-direction: column;
+    flex:0.1;
+    align-items: center;
+    justify-content: center;
+    color: rgb(240, 239, 239);
+}
+.Loginheader_profileName{
+    display: flex;
+    font-size: small;
+    color: whitesmoke;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+}
+.Loginheader__Icons__forMobile{
+    display: none;
+}
+.searchHeader__divOut__ForLoginHeader{
+    flex: 0.4;
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    padding:4px 12px 4px 12px;
+    height: 5vh;
+    background-color: #7ac1e4;
+    border-radius: 4px;
+    box-shadow: 0 0 8px -4px #0a67a4;
+}
+@media(max-width:800px){
+    .Loginheader__Icons{
+        display: none;
+    }
+    .Loginheader__Icons__forMobile{
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        background-color:#0088CC;
+        width: 100vw;
+        height: 7vh;
+        align-items: center;
+        z-index: 200;
+        justify-content: space-around;
+    }
+    .Loginheader_In{
+        justify-content: space-between;
+    }
+    .searchHeader__divOut__ForLoginHeader{
+        display: none;
+    }
+}
