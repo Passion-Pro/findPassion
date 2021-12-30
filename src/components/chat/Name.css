@@ -1,0 +1,13 @@
+.name_for_mobile{
+    display : none !important;
+ }
+ 
+ @media(max-width: 500px){
+     .name_for_mobile{
+         display : flex !important;
+     }
+ 
+     .name_for_laptop{
+         display : none  !important;
+     }
+ }
