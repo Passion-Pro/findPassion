@@ -12,14 +12,27 @@ import VideoPlayer from './components/world/Stories/VideoPlayer';
 import StoryPage from './components/world/Stories/StoryPage';
 import LearnersPage from './components/world/Learnings/LearnersPage';
 import AddStoryPage from './components/world/Stories/AddStoryPage';
-
-
-
+import Group from './components/group/Group';
+import Createpost from './components/post/Createpost';
+import WithoutLogin from './components/withoutlogin/WithoutLoginHome';
+import Home from './components/home/Home'
 
 function App() {
   return (
     <div className="App">
        <Router>
+       <Route path='/withoutloginhome'>
+          <WithoutLogin>
+        </Route>
+        <Route path='/createpost'>
+          <Createpost/>
+        </Route>
+        <Route path='/group'>
+          <Group/>
+        </Route>
+        <Route path='/'>
+          <Home/>
+        </Route>
          <Switch>
          <Route path="/newAccount"> 
           <CreateAccount/>

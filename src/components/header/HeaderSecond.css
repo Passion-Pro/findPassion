@@ -1,28 +1,47 @@
-.HeaderSecond{
+/* .HeaderSecond{
     display: none;
-}
-@media(max-width:800px){
+} */
+/* @media(max-width:800px){ */
     .HeaderSecond{
         display: flex;
         position: sticky;
-        top: 11.5vh;
+        top: 10vh;
         align-items: center;
         justify-content: space-between;
-        padding: 0 4px;
+        padding: 0 2vw;
         background-color: white;
-        z-index: 200;
+        z-index: 10;
+        width: 96vw;
+        max-width: 1300px;
+        border-bottom: 1px solid lightgray;
     }
     .followingCard{
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 2px 12px;
-        border: 1px solid lightgray;
+        border: 1px solid rgb(72, 72, 243);
         margin: 6px 2px;
         font-size: small;
         border-radius: 12px;
+        cursor: pointer;
+    }
+    .followingCard__active{
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 12px;
+        border: 1px solid rgb(72, 72, 243);
+        margin: 6px 2px;
+        font-size: small;
+        border-radius: 12px;
+        background-color: rgb(72, 72, 243);
+        box-shadow: 0 0 10px -2px rgb(8, 8, 192);
+        color: white;
+        font-weight: 600;
     }
     .HeaderSecond__Div{
         display: flex;
     }
-}
+/* } */
