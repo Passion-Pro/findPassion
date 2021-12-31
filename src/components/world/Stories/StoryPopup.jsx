@@ -78,35 +78,35 @@ function StoryPopup() {
             {startJourney === false ? (
               <div className="journey"></div>
             ) : (
-              //   <div className="journey_cards">
-              //     <div className="tinderCards_cardContainer">
-              //       {parts.map((part, index) => (
-              //         <TinderCard
-              //           className="swipe"
-              //           key={part.caption}
-              //           preventSwipe={["up", "down", "right"]}
-              //           onSwipe = {() => swiped(index)}
-              //           //  onCardLeftScreen = {() => outOfFrame(person.name)}
-              //         >
-              //           <div
-              //             className="card"
-              //             style={{ backgroundImage: `url(${part.imageUrl})` }}
-              //           >
-              //             <h3>{part.caption}</h3>
-              //           </div>
-              //         </TinderCard>
-              //       ))}
-              //     </div>
-              //   </div>
+                <div className="journey_cards">
+                  <div className="tinderCards_cardContainer">
+                    {parts.map((part, index) => (
+                      <TinderCard
+                        className="swipe"
+                        key={part.caption}
+                        preventSwipe={["up", "down", "right"]}
+                        onSwipe = {() => swiped(index)}
+                        //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                      >
+                        <div
+                          className="card"
+                          style={{ backgroundImage: `url(${part.imageUrl})` }}
+                        >
+                          <h3>{part.caption}</h3>
+                        </div>
+                      </TinderCard>
+                    ))}
+                  </div>
+                </div>
 
-              <div
-                style={{
-                  marginTop: 20,
-                  marginBottom: 20,
-                }}
-              >
-                <VideoPlayer />
-              </div>
+              // <div
+              //   style={{
+              //     marginTop: 20,
+              //     marginBottom: 20,
+              //   }}
+              // >
+              //   <VideoPlayer />
+              // </div>
             )}
             <div className="start_button">
               {startJourney === false ? (
