@@ -12,17 +12,16 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import db, { auth , storage } from "../../../firebase";
+import db, { auth, storage } from "../../../firebase";
 import { v4 as uuid } from "uuid";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import LearningsPopup from "./LearningsPopup";
 import Learning from "./Learning";
 import Skill from "./Skill";
 
-
-
 function CreateAccount() {
-  const [{ selectedQualities, passion ,user , learnings }, dispatch] = useStateValue();
+  const [{ selectedQualities, passion, user, learnings }, dispatch] =
+    useStateValue();
   const [experience, setExperience] = useState();
   const [image, setImage] = useState();
   const [email, setEmail] = useState();
@@ -30,7 +29,7 @@ function CreateAccount() {
   const [name, setName] = useState();
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
-
+  const [input, setInput] = useState("");
 
   const openQaulitiesPopup = () => {
     dispatch({
@@ -47,7 +46,7 @@ function CreateAccount() {
   };
 
   const handleChange = (e) => {
-      setExperience(e.target.value)
+    setExperience(e.target.value);
   };
 
   const selectImage = (e) => {
@@ -57,17 +56,17 @@ function CreateAccount() {
   };
 
   const open_learnings_popup = () => {
-     dispatch({
-         type : actionTypes.OPEN_LEARNINGS_POPUP,
-         openLearningsPopup: true,
-     })    
-  }
+    dispatch({
+      type: actionTypes.OPEN_LEARNINGS_POPUP,
+      openLearningsPopup: true,
+    });
+  };
 
   const create_account = (e) => {
     e.preventDefault();
 
     if (email && password && name && selectedQualities.length > 0 && passion) {
-        console.log(experience)
+      console.log(experience);
       if (
         (passion !== "Don't know" && experience) ||
         passion === "Don't know"
@@ -76,12 +75,10 @@ function CreateAccount() {
           .createUserWithEmailAndPassword(email, password)
           .then((auth) => {
             if (auth) {
-       
-               dispatch({
-                   type : actionTypes.SET_USER,
-                   user : auth.user
-               })
-
+              dispatch({
+                type: actionTypes.SET_USER,
+                user: auth.user,
+              });
 
               if (passion === "Don't know") {
                 db.collection("users").doc(auth.user.uid).set({
@@ -89,6 +86,7 @@ function CreateAccount() {
                   email: email,
                   qualities: selectedQualities,
                   passion: passion,
+                  subInterest : input
                 });
               } else {
                 db.collection("users").doc(auth.user.uid).set({
@@ -97,49 +95,47 @@ function CreateAccount() {
                   qualities: selectedQualities,
                   passion: passion,
                   experience: experience,
+                  subInterest : input
                 });
               }
 
-           
+              const id = uuid();
 
-          const id = uuid();
+              if (image) {
+                const upload = storage.ref(`images/${id}`).put(image);
 
-          if(image) {
-            const upload = storage.ref(`doubtImages/${id}`).put(image);
+                upload.on(
+                  "state_changed",
+                  (snapshot) => {
+                    const progress =
+                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-            upload.on(
-              "state_changed",
-              (snapshot) => {
-                const progress =
-                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  
-                console.log(`Progress : ${progress}%`);
-                if (snapshot.state === "RUNNING") {
-                  console.log(`Progress : ${progress}%`);
-                }
-              },
-              (error) => console.log(error.code),
-              async () => {
-                const url = await upload.snapshot.ref.getDownloadURL();
-                if (url) {
-                   db.collection("users").doc(auth.user.uid).update({
-                       profilePhotoUrl: url
-                   })
-  
-                }
+                    console.log(`Progress : ${progress}%`);
+                    if (snapshot.state === "RUNNING") {
+                      console.log(`Progress : ${progress}%`);
+                    }
+                  },
+                  (error) => console.log(error.code),
+                  async () => {
+                    const url = await upload.snapshot.ref.getDownloadURL();
+                    if (url) {
+                      db.collection("users").doc(auth.user.uid).update({
+                        profilePhotoUrl: url,
+                      });
+                    }
+                  }
+                );
               }
-            );
-          }
 
-          history.push("/home")
+              history.push("/world");
             }
           })
           .catch((error) => alert(error.message));
-      }else{
-          alert("Please fill all the details")
+      } else {
+        alert("Please fill all the details");
       }
-    }else{
-        alert("Please fill all the details")
+    } else {
+      alert("Please fill all the details");
     }
   };
 
@@ -219,24 +215,21 @@ function CreateAccount() {
             </p>
             <p>{passion}</p>
           </div>
-          {passion && passion!== "Don't know" && (
-              <>
+          {passion && passion !== "Don't know" && (
+            <>
               <div className="subfield">
-                  <p className = "let_us" onClick = {open_learnings_popup}>Mention your learnings</p>
+                <p>Mention subInterest in your passion:</p>
+                <input
+                  type="text"
+                  placeholder=""
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  style = {{
+                    textTransform : "uppercase"
+                  }}
+                />
               </div>
-              
-              <div className="selected_qualities_div">
-                {learnings?.length > 0 && (
-                  <p className="your_qualities">Your Learnings:</p>
-                )}
-                <div className="selected_qualities_div_qualities">
-                  {learnings.map((skill) => (
-                    <Skill skill={skill} />
-                  ))}
-                </div>
-              </div>
-                </>
-              
+            </>
           )}
           {passion && passion !== "Don't know" && (
             <div className="experience">
@@ -268,7 +261,7 @@ function CreateAccount() {
       </div>
       <QualitiesPopup />
       <PassionPopup />
-      <LearningsPopup/>
+      <LearningsPopup />
     </Container>
   );
 }
@@ -328,12 +321,12 @@ const Container = styled.div`
       padding-left: 20px;
       display: flex;
       flex-direction: column;
-      overflow-y : scroll;
-      padding-bottom : 20px;
+      overflow-y: scroll;
+      padding-bottom: 20px;
     }
 
     .right_details::-webkit-scrollbar {
-        display : none;
+      display: none;
     }
 
     .info {
@@ -353,11 +346,11 @@ const Container = styled.div`
     }
 
     .let_us {
-        &:hover {
-          cursor: pointer;
-          color: blue;
-        }
+      &:hover {
+        cursor: pointer;
+        color: blue;
       }
+    }
 
     .selected_qualities_div {
       display: flex;
@@ -410,6 +403,20 @@ const Container = styled.div`
           cursor: pointer;
           background-color: #56caf8;
         }
+      }
+    }
+
+    .subfield {
+      p {
+        margin-bottom: 5px;
+      }
+
+      input {
+        border-radius: 5px;
+        border: 1px solid gray;
+        padding: 7px;
+        width: 50%;
+        outline: 0;
       }
     }
   }

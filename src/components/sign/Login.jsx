@@ -3,12 +3,13 @@ import styled from "styled-components"
 import db, { auth , storage } from "../../firebase";
 import { actionTypes } from "../../reducer";
 import { useStateValue } from "../../StateProvider";
+import {useHistory} from "react-router-dom";
 
 function Login() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const[{user} , dispatch] = useStateValue();
-    
+    const history = useHistory();
     
 
     const sign_in = (e) => {
@@ -19,7 +20,33 @@ function Login() {
             dispatch({
               type : actionTypes.SET_USER,
                user : auth.user
+            });
+
+            db.collection("users")
+            .where("email", "==", email)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                
+                db.collection("users").doc(doc.id).onSnapshot((snapshot) => (
+                  
+                    dispatch({
+                       type : actionTypes.SET_USER_INFO,
+                       userInfo : snapshot.data()
+                    })
+                ))
+              
+
+              });
             })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+
+           history.push("/world")
+
         })
         .catch((error) => {
           alert(error.message);

@@ -10,13 +10,13 @@ function AddStoryPage() {
   const [{ journeyUpload }, dispatch] = useStateValue();
   const [video, setVideo] = useState();
   const [image, setImage] = useState();
-  const [uploadedPhotos, setUplaodedPhotos] = useState([]);
+  const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [selectedImageUrl, setSelectedImageUrl] = useState();
   const history = useHistory();
   const [x, setX] = useState(0);
   const [z, setZ] = useState(0);
   const [input, setInput] = useState();
-  const[p,setP] = useState(0);
+  const [p, setP] = useState(0);
   const [parts, setParts] = useState([
     {
       imageUrl:
@@ -44,9 +44,17 @@ function AddStoryPage() {
     // },
   ]);
 
+
+  useEffect(() => {}, [z, storyParts?.length]);
+
   useEffect(() => {
-    
-  }, [z , storyParts?.length , input ]);
+      if(p === 1){
+        const newStoryParts = storyParts
+        setStoryParts([]);
+        setStoryParts(newStoryParts);
+        console.log("P is " , p)
+      }
+  }, [p])
 
   useEffect(() => {
     if (image) {
@@ -99,16 +107,17 @@ function AddStoryPage() {
     }
   };
 
-
   const add_text = () => {
-      storyParts.push(input);
-      setInput("");
+    storyParts.push(input);
+    setInput("");
+    setP(1);
   };
 
   const cancel_last = () => {
-     storyParts.pop();
-     setInput("")
-  }
+    storyParts.pop();
+    setInput("");
+    setP(1);
+  };
 
   return (
     <div>
@@ -203,7 +212,9 @@ function AddStoryPage() {
                           onSwipe={() => {
                             if (index === 0) {
                               console.log("Index is ", index);
-                              setZ(1);
+                              const newUploadedPhotos = uploadedPhotos;
+                              setUploadedPhotos([]);
+                              setUploadedPhotos(newUploadedPhotos);
                             }
                           }}
                         >
@@ -282,6 +293,15 @@ function AddStoryPage() {
                           // key={part.caption}
                           preventSwipe={["up", "down"]}
                           //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                          onSwipe={() => {
+                            setP(0);
+                            console.log("Index is " , index)
+                            if(index === 0) {
+                                const newStoryParts = storyParts
+                                setStoryParts([]);
+                                setStoryParts(newStoryParts);
+                            }                           
+                          }}
                         >
                           <div className="card text_card">
                             <p>{part}</p>
@@ -291,7 +311,7 @@ function AddStoryPage() {
                     ))}
                   </div>
                 </div>
-                <div className="write_text add_caption">
+                {storyParts?.length > 0 ?(<div className="write_text add_caption">
                   <textarea
                     name=""
                     id=""
@@ -302,10 +322,34 @@ function AddStoryPage() {
                     onChange={(e) => setInput(e.target.value)}
                   ></textarea>
                   <div className="add_button_text">
-                    <button onClick = {cancel_last} className = "delete">Delete Previous Card</button>
-                    <button onClick = {add_text}>Add</button>
+                    <button onClick={cancel_last} className="delete">
+                      Delete Previous Card
+                    </button>
+                    <button onClick={add_text}>Add</button>
                   </div>
-                </div>
+                </div>):(
+                    <div className="write_text add_caption"
+                    style = {{
+                        marginTop : '20px'
+                    }}
+                    >
+                    <textarea
+                      name=""
+                      id=""
+                      cols="30"
+                      rows="10"
+                      placeholder="Add Caption with the selected image"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                    ></textarea>
+                    <div className="add_button_text">
+                      <button onClick={cancel_last} className="delete">
+                        Delete Previous Card
+                      </button>
+                      <button onClick={add_text}>Add</button>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -625,17 +669,17 @@ const Container = styled.div`
     margin-top: 290px;
   }
 
-  .delete{
+  .delete {
     padding-top: 5px;
-        padding-bottom: 5px;
-        border-radius: 20px;
-        border: 0;
-        width: 150px !important;
+    padding-bottom: 5px;
+    border-radius: 20px;
+    border: 0;
+    width: 150px !important;
 
-        &:hover {
-          cursor: pointer;
-          background-color: #dfdede;
-        }
+    &:hover {
+      cursor: pointer;
+      background-color: #dfdede;
+    }
   }
 `;
 
