@@ -4,7 +4,7 @@ import './WithoutLogin.css';
 import './Header'
 import Header from './Header';
 
-function Home() {
+function WithoutLogin() {
 
     const data=[
         {
@@ -46,4 +46,4 @@ function Home() {
     )
 }
 
-export default Home
+export default WithoutLogin

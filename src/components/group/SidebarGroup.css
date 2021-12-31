@@ -1,0 +1,50 @@
+.SidebarGroup{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+.leftSidebarGroup__body{
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar{
+    width: 4px;
+    height: 4px;
+}
+::-webkit-scrollbar-track {
+    background: #d8d4d4; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+.leftSidebarGroup__header{
+    border-bottom: 2px solid lightgray;
+    width: 100%;
+    padding:4px;
+    padding-left: 12px;
+}
+.leftSidebarGroup__Admin{
+    display: flex;
+    width: 92%;
+    background-color: lightgray;
+    margin: 2%;
+    padding: 2%;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+@media(max-width:800px){
+    .SidebarGroup{
+        display: none;
+    }
+}

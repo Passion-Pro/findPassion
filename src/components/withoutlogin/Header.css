@@ -98,9 +98,9 @@
     height: 5vh;
     background-color: #7ac1e4;
 }
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     display: none;
-}
+} */
 @media(max-width:769px){
     .header{
         padding: 3px 0 3px 0;

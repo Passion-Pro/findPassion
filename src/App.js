@@ -58,6 +58,18 @@ function App() {
   return (
     <div className="App">
        <Router>
+       <Route path='/withoutloginhome'>
+          <WithoutLogin>
+        </Route>
+        <Route path='/createpost'>
+          <Createpost/>
+        </Route>
+        <Route path='/group'>
+          <Group/>
+        </Route>
+        <Route path='/'>
+          <Home/>
+        </Route>
          <Switch>
          <Route path="/newAccount"> 
           <CreateAccount/>
