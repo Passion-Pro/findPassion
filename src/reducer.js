@@ -10,10 +10,13 @@ export const initialState = {
   openStoryPopup: false,
   startJourney : false,
   journeyUpload : "video",
+  showStoryCaption:false,
+  showStory:false,
 };
 
-
 export const actionTypes = {
+  SET_SHOWSTORY:'SET_SHOWSTORY',
+  SET_SHOWSTORY_CAPTION:'SET_SHOWSTORY_CAPTION',
   OPEN_QUALITIES_POPUP: "OPEN_QUALITIES_POPUP",
   ADD_QUALITY: "ADD_QUALITY",
   REMOVE_QUALITY: "REMOVE_QUALITY",
@@ -33,6 +36,16 @@ export const actionTypes = {
 const reducer = (state, action) => {
   console.log(state, action);
   switch (action.type) {
+    case actionTypes.SET_SHOWSTORY:
+      return {
+        ...state,
+        showStory: action.showStory,
+      };
+    case actionTypes.SET_SHOWSTORY_CAPTION:
+      return {
+        ...state,
+        showStoryCaption: action.showStoryCaption,
+      };
     case actionTypes.OPEN_QUALITIES_POPUP:
       return {
         ...state,

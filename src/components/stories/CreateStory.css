@@ -17,7 +17,7 @@
    left:0;
    padding-top: 4px;
    width: 50px;
-   overflow-x: scroll;
+   overflow-x: hidden;
    align-items: flex-end;
    justify-content: center;
 }

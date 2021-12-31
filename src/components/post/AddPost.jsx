@@ -9,14 +9,13 @@ import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 
-export default function LandscapePost() {
+export default function AddPost() {
     const [popUpImageCrop, setPopUpImageCrop] = useState(false);
-    console.log("object", popUpImageCrop)
-    const [upImg, setUpImg] = useState();
+    const [upImg, setUpImg] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null);
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
-    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16/9});
+    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 8 / 9 });
     const [completedCrop, setCompletedCrop] = useState(null);
 
     function generateDownload(canvas, crop) {
@@ -28,15 +27,12 @@ export default function LandscapePost() {
             (blob) => {
                 setCroppedImage(blob);
                 setPopUpImageCrop(false);
-                console.log('fuck')
             },
             'image/png',
             1
         );
     }
-    useEffect(() => {
-        console.log("object", popUpImageCrop)
-    }, [popUpImageCrop]);
+
 
     const onSelectFile = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -82,6 +78,10 @@ export default function LandscapePost() {
             crop.height * scaleY
         );
     }, [completedCrop]);
+    
+    const UploadImage=()=>{
+        
+    }
 
     return (
         <>
@@ -131,7 +131,7 @@ export default function LandscapePost() {
                     <div className="addPost__In">
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
-                                Landscape  Post
+                                Regular Post
                             </div>
                             <div className="addPost__Image">
                                 {!croppedImage && <div className="Upload__ImageIcon" onClick={() => {
@@ -161,7 +161,7 @@ export default function LandscapePost() {
                     </div>
                     <div className="button__uploadImage">
                         <Stack direction="row" spacing={2}>
-                            <Button variant="contained" endIcon={<SendIcon />}>
+                            <Button variant="contained" onClick={UploadImage} endIcon={<SendIcon />}>
                                 Upload
                             </Button>
                         </Stack>
