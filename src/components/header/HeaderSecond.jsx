@@ -7,13 +7,15 @@ import { useHistory } from 'react-router-dom';
 
 function HeaderSecond() {
     const history = useHistory();
-    const [pathName, setPathName] = useState('')
+    const [pathName, setPathName] = useState('');
     return (
         <>
             <div className='HeaderSecond'>
-                <div className="followingCard">
+                {/* <div className="followingCard "> */}
+                <div className="followingCardShow">
                     Stories <ArrowDropDownRoundedIcon style={{ fontSize: 18 }} />
                 </div>
+                {/* </div> */}
                 <div className="HeaderSecond__Div">
                     <div onClick={() =>{ history.push('/post')
                 setPathName('/post')
@@ -29,9 +31,9 @@ function HeaderSecond() {
                         className={window.location.pathname== '/following__profile' || pathName == '/following__profile' ? "followingCard__active" : "followingCard"}>
                         Following
                     </div>
-                    <div onClick={() =>{ history.push('/all__profile')
-                      setPathName('/all__profile')
-                 }} className={window.location.pathname== '/all__profile' || pathName == '/all__profile' ? "followingCard__active" : "followingCard"}>
+                    <div onClick={() =>{ history.push('/all_profile')
+                      setPathName('/all_profile')
+                 }} className={window.location.pathname== '/all_profile' || pathName == '/all_profile' ? "followingCard__active" : "followingCard"}>
                         All
                     </div>
                     <div className={window.location.pathname == '/more' ? "followingCard__active" : "followingCard"}>

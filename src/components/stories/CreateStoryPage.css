@@ -1,0 +1,14 @@
+.CreateStoryPage{
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+}
+.createstory__body{
+     display: flex;
+     height: 90%;
+     width: 80%;
+}
