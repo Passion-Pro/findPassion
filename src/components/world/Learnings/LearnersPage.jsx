@@ -10,7 +10,7 @@ import { ArrowBack } from "@material-ui/icons";
 
 function LearnersPage() {
     const history = useHistory();
-    
+
     return (
         <div>
            <Container>
