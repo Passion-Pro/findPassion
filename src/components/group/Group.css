@@ -71,10 +71,12 @@
 .group__lower__leftSidebar{
     display: flex;
     flex: 0.2;
+    width: 20%;
 }
 .group__lower__rightSidebar{
     display: flex;
     flex: 0.8;
+    width: 80%;
 } 
 .groupHead__More{
     display: flex;
@@ -84,23 +86,40 @@
     align-items: center;
     justify-content: flex-end;
     top: 10vh;
+    z-index: 10;
 }
 .groupHead__More__Icon{
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
 }
+.group__lowerForMobile{
+    display: none;
+}
+.group__lower__leftSidebarForMobile{
+    display: none;
+}
+.group__lower__rightSidebarForMobile{
+    display: none;
+} 
 @media(max-width:800px){
-    .group{
-    
-    }
-    .group__head{
-    
-    }
     .group__lower{
+        display: none;
+    }
+    .group__lowerForMobile{
         display: flex;
         margin: 66px 6px 0 6px;
         height: 300px;
         border: 1px solid lightgray;
     }
+    .group__lower__leftSidebarForMobile{
+        display: flex;
+        flex: 1;
+        width: 100%;
+    }
+    .group__lower__rightSidebarForMobile{
+        display: flex;
+        flex: 1;
+        width: 100%;
+    } 
 }

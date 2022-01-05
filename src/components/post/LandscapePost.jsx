@@ -2,22 +2,39 @@ import react, { useState, useCallback, useRef, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import './AddPost.css';
+import { v4 as uuid } from "uuid";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Header from '../header/Header';
 import Button from '@mui/material/Button';
 // import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
+import firebase from "firebase";
+import db from '../../firebase';
+import { useStateValue } from '../../StateProvider';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import { useHistory } from 'react-router-dom';
 
 export default function LandscapePost() {
+
+    const history = useHistory();
+    const [{ userInfo, user }] = useStateValue();
+
+    const [loading, setLoading] = useState(false);
+    const [postHead, setPostHead] = useState('')
+    const [postText, setPostText] = useState('')
     const [popUpImageCrop, setPopUpImageCrop] = useState(false);
-    console.log("object", popUpImageCrop)
-    const [upImg, setUpImg] = useState();
+    const [upImg, setUpImg] = useState(null);
+    const [upImgImage, setUpImgImage] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null);
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
-    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16/9});
+    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16 / 9 });
     const [completedCrop, setCompletedCrop] = useState(null);
+
+    var today = new Date();
+    var datetime = today.toLocaleString();
 
     function generateDownload(canvas, crop) {
         if (!crop || !canvas) {
@@ -28,18 +45,17 @@ export default function LandscapePost() {
             (blob) => {
                 setCroppedImage(blob);
                 setPopUpImageCrop(false);
-                console.log('fuck')
+
             },
             'image/png',
             1
         );
     }
-    useEffect(() => {
-        console.log("object", popUpImageCrop)
-    }, [popUpImageCrop]);
+
 
     const onSelectFile = (e) => {
         if (e.target.files && e.target.files.length > 0) {
+            setUpImgImage(e.target.files[0])
             const reader = new FileReader();
             reader.addEventListener('load', () => setUpImg(reader.result));
             reader.readAsDataURL(e.target.files[0]);
@@ -83,8 +99,84 @@ export default function LandscapePost() {
         );
     }, [completedCrop]);
 
+    if (croppedImage) {
+        console.log("?", upImgImage.name);
+    }
+
+    const UploadImage = async () => {
+        setLoading(true)
+        if (croppedImage) {
+            const id = uuid();
+            const imagesRef = firebase.storage().ref("PostImages").child(id);
+            await imagesRef.put(croppedImage);
+            imagesRef.getDownloadURL().then((url) => {
+                if (user.uid) {
+                    db.collection("Web-development")
+                        .doc('Csb15iOnGedmpceiQOhX')
+                        .collection("Posts")
+                        .doc(id)
+                        .set({
+                            username: userInfo.name,
+                            userEmail: userInfo.email,
+                            imageURL: url,
+                            date: datetime,
+                            postType: 'Regular',
+                            likedUser: [],
+                            postHead: postHead,
+                            postText: postText,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            imageName: id,
+                            imageOriginalName: upImgImage.name,
+                        })
+                        .then(() => {
+                            // adding post in user private collection
+                            db.collection("users")
+                                .doc(user.uid)
+                                .collection("Posts")
+                                .doc(id)
+                                .set({
+                                    username: userInfo.name,
+                                    userEmail: userInfo.email,
+                                    imageURL: url,
+                                    date: datetime,
+                                    postType: 'Landscape',
+                                    likedUser: [],
+                                    postHead: postHead,
+                                    postText: postText,
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                    imageName: id,
+                                    imageOriginalName: upImgImage.name,
+                                })
+                                .then(() => {
+                                    setLoading(false);
+                                    setPostHead('');
+                                    setPostText('');
+                                    setLoading(false);
+                                    setCroppedImage(null);
+                                    history.push('/');
+                                });
+                        });
+                } else {
+                    alert('Try with another method.');
+                    setLoading(false);
+                    history.push('/');
+                }
+            });
+        } else {
+            alert('Select photo')
+            setLoading(false);
+            history.push('/');
+        }
+    }
+
     return (
-        <>
+        <>{loading &&
+            <div className="popupImageCrop">
+                <Box sx={{ display: 'flex' }}>
+                    <CircularProgress />
+                </Box>
+            </div>
+        }
             {popUpImageCrop &&
                 <div className="popupImageCrop">
                     <div className="popupImageCrop__In" >
@@ -131,7 +223,14 @@ export default function LandscapePost() {
                     <div className="addPost__In">
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
-                                Landscape  Post
+                                Landscape Post
+                                {/* <div className="button__uploadImage"> */}
+                                <Stack direction="row">
+                                    <Button variant="contained" onClick={UploadImage} endIcon={<SendIcon />}>
+                                        Upload
+                                    </Button>
+                                </Stack>
+                                {/* </div> */}
                             </div>
                             <div className="addPost__Image">
                                 {!croppedImage && <div className="Upload__ImageIcon" onClick={() => {
@@ -154,17 +253,11 @@ export default function LandscapePost() {
                                 </div>}
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">
-                                    <textarea />
+                                    <textarea className='textareaHead' placeholder='Write heading of your post ' onChange={e => setPostHead(e.target.value)} />
+                                    <textarea className='textareaSecond' placeholder='Write about the post' onChange={e => setPostText(e.target.value)} />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="button__uploadImage">
-                        <Stack direction="row" spacing={2}>
-                            <Button variant="contained" endIcon={<SendIcon />}>
-                                Upload
-                            </Button>
-                        </Stack>
                     </div>
                 </div>
             }

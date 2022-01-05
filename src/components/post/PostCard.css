@@ -19,12 +19,12 @@
 .PostCardStartedIn{
     display: flex;
     flex-direction: column;
-    width: 96%;
+    width: 98%;
     border: 1px solid lightgray;
     box-shadow: 0 0 9px -6px gray;
     border-radius:8px;
     min-height:10vh ;
-    padding: 2%;
+    padding: 1%;
     justify-content: center;
 }
 .PostCard__lower{

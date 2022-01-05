@@ -6,8 +6,10 @@ import Divider from '@mui/material/Divider';
 import { useHistory } from 'react-router-dom';
 
 function HeaderSecond() {
+
     const history = useHistory();
     const [pathName, setPathName] = useState('');
+    
     return (
         <>
             <div className='HeaderSecond'>

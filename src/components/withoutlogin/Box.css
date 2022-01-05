@@ -11,7 +11,7 @@
     box-shadow: 0 0 9px -6px gray;
     border-radius:8px;
     min-height:10vh ;
-    padding: 1%;
+    /* padding: 1%; */
 }
 .PeopleStartedSameIn__Accountname{
     display: flex;
@@ -41,8 +41,8 @@
     font-weight: 600;
     color: rgb(85, 78, 78);
 }
-@media(max-width:769px){
+@media(max-width:800px){
     .PeopleStartedSameIn{
-        padding: 2%;
+        /* padding: 2%; */
     }
 }

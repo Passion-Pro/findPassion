@@ -4,7 +4,7 @@ export const initialState = {
   openPassionPopup: false,
   openAttachPopup: false,
   passion: null,
-  user: [],
+  user: null,
   openLearningsPopup: false,
   learnings: [],
   openStoryPopup: false,
@@ -13,10 +13,17 @@ export const initialState = {
   showStoryCaption:false,
   showStory:false,
   openNewLearningPopup : false,
-  userInfo : []
+  userInfo : [],
+  courseDiv:false,
+  showDiv: false,
+  showLeftSidebarGroup:true,
+  showExpandGroup:false,
+  groupDetails:null,
+  groupMember:null,
 };
 
 export const actionTypes = {
+  SET_COURSEDIV:"SET_COURSEDIV",
   SET_SHOWSTORY:'SET_SHOWSTORY',
   SET_SHOWSTORY_CAPTION:'SET_SHOWSTORY_CAPTION',
   OPEN_QUALITIES_POPUP: "OPEN_QUALITIES_POPUP",
@@ -35,11 +42,47 @@ export const actionTypes = {
   SET_JOURNEY_UPLOAD : "SET_JOURNEY_UPLOAD",
   OPEN_NEW_LEARNING_POPUP: "OPEN_NEW_LEARNING_POPUP",
   SET_USER_INFO : "SET_USER_INFO",
+  SET_SHOW_DIV: 'SET_SHOW_DIV',
+  SET_SHOW_LEFTSIDEBARGROUP:'SET_SHOW_LEFTSIDEBARGROUP',
+  SET_SHOW_EXPANDGROUP:"SET_SHOW_EXPANDGROUP",
+  SET_GROUP_DETAILS:'SET_GROUP_DETAILS',
+  SET_GROUP_MEMBER:'SET_GROUP_MEMBER',
 };
 
 const reducer = (state, action) => {
   console.log(state, action);
   switch (action.type) {
+    case actionTypes.SET_GROUP_MEMBER:
+      return {
+        ...state,
+        groupMember: action.groupMember,
+      };
+    case actionTypes.SET_GROUP_DETAILS:
+      return {
+        ...state,
+        groupDetails: action.groupDetails,
+      };
+    case actionTypes.SET_SHOW_EXPANDGROUP:
+      return {
+        ...state,
+        showExpandGroup: action.showExpandGroup,
+      };
+    case actionTypes.SET_SHOW_LEFTSIDEBARGROUP:
+      return {
+        ...state,
+        showLeftSidebarGroup: action.showLeftSidebarGroup,
+      };
+      // showExpandGroup
+    case actionTypes.SET_COURSEDIV:
+      return {
+        ...state,
+        courseDiv: action.courseDiv,
+      };
+    case actionTypes.SET_SET_SHOW_DIV:
+      return {
+        ...state,
+        showDiv: action.showDiv,
+      };
     case actionTypes.SET_SHOWSTORY:
       return {
         ...state,

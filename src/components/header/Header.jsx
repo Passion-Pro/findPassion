@@ -10,13 +10,16 @@ import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import PostPopup from '../post/PostPopup';
+import { useStateValue } from '../../StateProvider';
+import { actionTypes } from '../../reducer';
 
 function Header() {
+    const [{  user, courseDiv  }, dispatch] =useStateValue();
     const history = useHistory();
-    const [showPostPopup, setShowPostPopup] = useState(false);
 
     const signupimage = 'https://image.cnbcfm.com/api/v1/image/105815446-1553624918736gettyimages-1078542150.jpeg?v=1612303414';
-
+    
+    console.log("courseDiv",courseDiv)
     return (
         <>
             <div className='Loginheader' >
@@ -35,7 +38,14 @@ function Header() {
                         <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                             <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
-                        <div className="Loginheader__Icon__addIcon" onClick={() => setShowPostPopup(true)}>
+                        <div className="Loginheader__Icon__addIcon" onClick={() =>
+                    {   
+                            dispatch({
+                              type: actionTypes.SET_COURSEDIV,
+                              courseDiv: true,
+                            });
+                }
+                    }>
                             <AddIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
                         <div className="Loginheader__Icon__search" onClick={() => history.push('/')}>
@@ -61,7 +71,14 @@ function Header() {
                 </div>
                 <div className="Loginheader__Icon__search" onClick={() => history.push('/search')}><SearchRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => setShowPostPopup(true)}>
+                <div className="Loginheader__Icon__search" onClick={() =>
+                    {   
+                            dispatch({
+                              type: actionTypes.SET_COURSEDIV,
+                              courseDiv: true,
+                            });
+                }
+                    }>
                     <AddIcon style={{ fontSize: 30, color: "white", border: '1.6px solid white', borderRadius: '4px', padding: 0 }} />
                 </div>
                 <div className="Loginheader__Icon__search" onClick={() => history.push('/search')}>
@@ -72,7 +89,7 @@ function Header() {
                 </div>
             </div>
             {
-                showPostPopup &&
+                courseDiv  &&
                 <div className="postPopup">
                     <PostPopup />
                 </div>
