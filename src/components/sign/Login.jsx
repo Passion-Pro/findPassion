@@ -1,4 +1,4 @@
-import React , {useState, useEffect} from 'react'
+import React , {useState, useEffect} from 'react';
 import styled from "styled-components" 
 import db, { auth , storage } from "../../firebase";
 import { actionTypes } from "../../reducer";
@@ -59,7 +59,7 @@ function Login() {
         <div>
              <Container>
                <div className="signIn">
-                  <div className="header">
+                  <div className="signIn__header">
                       <p>Passion</p>
                   </div>
                   <form action="">
@@ -131,7 +131,7 @@ flex : 1;
 
   
 
-.header{
+.signIn__header{
   p{
       font-size : 20px;
       font-family : "Helvetica Neue",Helvetica;

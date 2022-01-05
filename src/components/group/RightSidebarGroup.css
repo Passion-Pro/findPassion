@@ -2,14 +2,21 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    background-color: rgb(236, 234, 234);
+    height: 100%;
 }
+.RightSidebarGroupTask{
+    display: flex;
+    flex-direction: column;
+    width: 100%; 
+}
+/*  */
 .rightSidebarGroup__header{
      display: flex;
      width: 100%;
-     background-color: rgb(216, 217, 218);
+     border-bottom: 1.8px solid lightgray;
      justify-content: space-between;
-     height: 30px;
+     align-items: center;
+     height: 7.6%;
 }
 .rightSidebarGroup__headName{
     display: flex;
@@ -19,8 +26,7 @@
     font-style: oblique;
 }
 .rightSidebarGroup__headMore{
-    display: flex;
-    align-items: center;
+    display: none;
 }
 .rightSidebarGroup__body{
     display: flex;
@@ -33,11 +39,106 @@
     width: 90px;
     padding: 12px;
     margin: 12px;
-
     border: 1px solid rgba(171, 95, 243, 0.507);
     box-shadow: 0 0 10px -4px blue;
     background-color: rgb(125, 212, 238);
     border-radius: 6px;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+}
+.taskUpper{
+    width: 92%;
+    margin: 2% 2% 0 2%;
+    padding: 1% 2%;
+    border-radius: 4px;
+    font-weight: 500;
+    background-color: white;
+    box-shadow: 0 0 10px -4px blue;
+}
+.taskUpper>p{
+    padding: 10px 4px;
+    margin: 0;
+}
+.taskUpper>span{
+    padding-left: 8px;
+    font-weight: 600;
+    font-style: italic;
+    color: rgb(9, 62, 80);
+}
+.taskUpper>input{
+    margin-left: 8px; 
+    font-weight: 600;
+    font-style: italic;
+    color: rgb(9, 62, 80);
+}
+.taskUpperHead{
+    display: flex;
+    flex-direction: column;
+    color: rgb(88, 32, 32);
+}
+/*  */
+.rightSidebarGroup__bodyTask{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+}
+.rightSidebarGroup__bodyTask__Head{
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 12px;
+    background-color: lightgray;
+    position: sticky;
+    width: 92%;
+}
+.rightSidebarGroup__bodyTask__Head>div{
+    padding: 0 12px;
+}
+.rightSidebarGroup__headMoreTask{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    z-index: 12;
+}
+.GroupChat__body{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height:100%;
+    overflow-y: scroll;
+    background-color: rgb(209, 218, 226);
+    flex-direction: column-reverse;
+}
+/*  */
+.GroupChat__Footer{
+    display: flex;
+    height: 10%;
+    align-items: center;
+    justify-content: center;
+    padding: 1%;
+    width: 98%;
+}
+.GroupChat__Footer>textarea{
+    flex: 1;
+    margin: 4px;
+    border: 1px solid rgb(20, 218, 226);
+    outline: none;
+    overflow: hidden;
+    resize: none;
+    border-radius: 8px;
+    padding: 4px 12px;
+    height:70%;
+}
+@media(max-width:800px){
+    .rightSidebarGroup__headMore{
+        display: flex;
+        align-items: center;
+        z-index: 12;
+    }
+    .rightSidebarGroup__body{
+        flex-direction: column;
+    }
 }

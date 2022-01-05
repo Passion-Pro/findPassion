@@ -3,11 +3,13 @@ import './Group.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { useStateValue } from '../../StateProvider';
+import RightSidebarGroupTask from './RightSidebarGroupTask';
 import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
 
-function Group() {
+function GroupTask() {
   const [{ userInfo, user ,showLeftSidebarGroup},dispatch] = useStateValue();
   const [showLeftdiv,setShowLeftdiv]=useState(true);
   const backgroundImage="https://cdn.w600.comps.canstockphoto.com/find-your-passion-in-splashs-background-stock-illustrations_csp78297071.jpg";
@@ -17,27 +19,27 @@ function Group() {
     <div className='group'>
       <Header />
       <div className="group__body">
-      <GroupTopBody/>
+         <GroupTopBody/>
         <div className="group__lower">
           {<div className="group__lower__leftSidebar">
           <SidebarGroup/>
           </div>}
           {<div className="group__lower__rightSidebar">
-          <RightSidebarGroup/>
+          <RightSidebarGroupTask/>
           </div>}
         </div>
         <div className="group__lowerForMobile">
           {showLeftSidebarGroup?<div className="group__lower__leftSidebarForMobile">
           <SidebarGroup/>
           </div>:<div className="group__lower__rightSidebarForMobile">
-          <RightSidebarGroup/>
+          <RightSidebarGroupTask/>
           </div>}
         </div>
       </div>
-     <GroupExpandMore/>
+      <GroupExpandMore/>
     </div>
   )
 }
 
-export default Group;
+export default GroupTask;
 
