@@ -14,8 +14,8 @@
 .recommendPeople{
     display: flex;
     overflow-x: scroll;
-    padding-bottom: 7vh;
-    overflow-y: scroll;
+    padding-top: 5vh;
+    /* overflow-y: scroll; */
 }
 .recommendPosts{
     display: flex;
@@ -27,12 +27,17 @@
     position: sticky;
     overflow-x: scroll;
 }
+.stories::-webkit-scrollbar{
+    display: none;
+}
 .stories__div{
     display: flex;
 }
 @media(max-width:800px){
     .recommendPeople{
         flex-direction: column;
+        padding: 5vh;
+        padding-top: 1vh;
     }
     .recommendPosts{
         display: flex;

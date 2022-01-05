@@ -16,10 +16,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { useHistory } from 'react-router-dom';
 
-export default function LandscapePost() {
-
+export default function AddPost() {
     const history = useHistory();
-    const [{ userInfo, user }] = useStateValue();
+    const [{ userInfo, user }, dispatch] = useStateValue();
 
     const [loading, setLoading] = useState(false);
     const [postHead, setPostHead] = useState('')
@@ -30,7 +29,7 @@ export default function LandscapePost() {
     const [croppedImage, setCroppedImage] = useState(null);
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
-    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16 / 9 });
+    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 8 / 9 });
     const [completedCrop, setCompletedCrop] = useState(null);
 
     var today = new Date();
@@ -139,7 +138,7 @@ export default function LandscapePost() {
                                     userEmail: userInfo.email,
                                     imageURL: url,
                                     date: datetime,
-                                    postType: 'Landscape',
+                                    postType: 'Regular',
                                     likedUser: [],
                                     postHead: postHead,
                                     postText: postText,
@@ -223,7 +222,7 @@ export default function LandscapePost() {
                     <div className="addPost__In">
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
-                                Landscape Post
+                                Regular Post
                                 {/* <div className="button__uploadImage"> */}
                                 <Stack direction="row">
                                     <Button variant="contained" onClick={UploadImage} endIcon={<SendIcon />}>

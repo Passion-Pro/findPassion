@@ -1,6 +1,9 @@
 /* .HeaderSecond{
     display: none;
 } */
+.followingCardShow{
+    visibility: hidden;
+}
 /* @media(max-width:800px){ */
     .HeaderSecond{
         display: flex;
@@ -10,7 +13,7 @@
         justify-content: space-between;
         padding: 0 2vw;
         background-color: white;
-        z-index: 10;
+        z-index: 11;
         width: 96vw;
         max-width: 1300px;
         border-bottom: 1px solid lightgray;
@@ -44,4 +47,8 @@
     .HeaderSecond__Div{
         display: flex;
     }
-/* } */
+    @media(max-width:800px){
+        .followingCardShow{
+            display: flex;
+        }
+    }

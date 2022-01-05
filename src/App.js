@@ -21,10 +21,22 @@ import RequestsPage from "./components/RequestsPage/RequestsPage";
 import UploadPdf from "./components/world/Learnings/UploadPdf";
 import ViewPdf from "./components/world/Learnings/ViewPdf";
 import UserProfile from "./components/UserProfile/UserProfile";
-
+import WithoutLogin from './components/withoutlogin/WithoutLoginHome';
+import Group from './components/group/Group';
+import Createpost from './components/post/Createpost';
+import Home from './components/home/Home';
+import HomeWithAllProfile from './components/home/HomeWithAllProfile';
+import LandspacePost from './components/post/LandscapePost';
+import AddPost from "./components/post/AddPost";
+import PortraitPhotos from './components/post/PortraitPhotos';
+import GroupTask from "./components/group/GroupTask";
+import GroupChat from "./components/group/GroupChat";
+import GroupEnvolvement from "./components/group/GroupEnvolvement";
 
 function App() {
   const [{ user }, dispatch] = useStateValue();
+
+  const [{ user, courseDiv ,showExpandGroup }, dispatch] =useStateValue();
 
   useEffect(() => {
     // will only run once when the app component loads...
@@ -52,10 +64,56 @@ function App() {
     }
   }, [user?.uid]);
 
+
+  const handleCourseDiv = () => {
+    if (courseDiv) {
+      dispatch({
+        type: actionTypes.SET_COURSEDIV,
+        courseDiv: false,
+      })
+    }
+    if (showExpandGroup) {
+      dispatch({
+        type: actionTypes.SET_SHOW_EXPANDGROUP,
+        showExpandGroup: false,
+      })
+    }
+  }
+
   return (
-    <div className="App">
+    <div className="App" onClick={handleCourseDiv}>
       <Router>
         <Switch>
+          <Route path='/withoutloginhome'>
+            <WithoutLogin/>
+          </Route>
+          <Route path='/grouptask'>
+            <GroupTask />
+          </Route>
+          <Route path='/groupchat'>
+            <GroupChat />
+          </Route>
+          <Route path='/groupevolvement'>
+            <GroupEnvolvement />
+          </Route>
+          <Route path='/group'>
+            <Group />
+          </Route>
+          <Route path='/createpost'>
+            <Createpost />
+          </Route>
+          <Route path='/all_profile'>
+            <HomeWithAllProfile />
+          </Route>
+          <Route path='/landspacepost'>
+            <LandspacePost />
+          </Route>
+          <Route path='/addpost'>
+            <AddPost />
+          </Route>
+          <Route path='/portraitpost'>
+            <PortraitPhotos />
+          </Route>
           <Route path="/newAccount">
             <CreateAccount />
           </Route>

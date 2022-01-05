@@ -1,4 +1,4 @@
-import firebase from "firebase"
+import firebase from "firebase";
 const firebaseConfig = {
     apiKey: "AIzaSyBYGWOiZ8Uzh3pIk0h9YeUonnNA7h9lWvc",
     authDomain: "find-passion.firebaseapp.com",

@@ -89,7 +89,7 @@
 .postPopup{
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: fixed;
     width: fit-content;
     background-color: white;
     height: fit-content;
@@ -100,7 +100,7 @@
     z-index: 100;
     border-top: 2px solid #2370e2;
     top: 10vh;
-    right: 150px;
+    right: 15vw;
 }
 @media(max-width:800px){
     .Loginheader__Icons{
@@ -122,5 +122,19 @@
     }
     .searchHeader__divOut__ForLoginHeader{
         display: none;
+    }
+    .postPopup{
+        top: 35vh;
+        left: 40vw;
+        align-items: center;
+        justify-content: center;
+    }
+}
+@media(max-width:500px){
+    .postPopup{
+        top: 35vh;
+        left: 20vw;
+        align-items: center;
+        justify-content: center;
     }
 }

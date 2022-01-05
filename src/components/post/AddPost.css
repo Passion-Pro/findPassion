@@ -1,0 +1,220 @@
+.addPost{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    justify-items: center;
+    background-color: #ededee;
+}
+.addPost__In{
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid lightgray; */
+    /* width: 100%; */
+    height: 90%;
+    width: 600px;
+    align-items: center;
+    justify-items: center;
+}
+.addPost__InIN{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid lightgray;
+    width: 90%;
+    height: 88.5%;
+    background-color: #fff;
+    box-shadow: 0 0 12px -6px gray;
+    border-radius: 9px;
+    margin-top: 1.5%;
+    align-items: center;
+    justify-items: center;
+}
+.adddPost__Head{ 
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-weight: 700;
+    width: 100%;
+    max-width: 500px;
+    font-size: large;
+    padding: 12px 0;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 4px;
+}
+.addPost__Image{
+    display: flex;
+    flex-direction: column;
+    height: 95%;
+    align-items: center;
+    justify-items: center;
+}
+.addPost__Image>img{
+    display: flex;
+    height: 70%;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+}
+.addPost__Text{
+    display: flex;
+    flex-direction: column;
+    height: 29%;
+    width: 100%;
+    min-width: 400px;
+}
+.textareaHead{
+    display: flex;
+    height: 14%;
+    resize: none;
+    width: 96%;
+    border: none;
+    background-color: rgb(247, 247, 247);
+    outline: none;
+    border: 1px solid lightblue;
+    color: rgb(31, 72, 128);
+    font-weight: 700;
+    padding: 2%;
+    margin: 2% 0;
+}
+.textareaSecond{
+    display: flex;
+    height: 30%;
+    resize: none;
+    width: 96%;
+    border: none;
+    background-color: rgb(247, 247, 247);
+    outline: none;
+    border: 1px solid lightblue;
+    color: rgb(31, 72, 128);
+    font-weight: 700;
+    padding: 2%;
+}
+.popupImageCrop{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: #858484cc;
+    z-index: 1000;
+}
+.popupImageCropForStatus{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: whitesmoke;
+    z-index: 1000;
+}
+.popupImageCrop__In{
+    min-width: 350px;
+    /* min-height: 3px; */
+    max-width: 80%;
+    max-height: 80% !important;
+    align-items: center;
+    justify-content: center;
+   border: 1px solid lightgray;
+   background-color: white;
+   height: fit-content;
+   color: rgb(243, 241, 241);
+}
+.image__Show_toCrop{
+    display: flex;
+    max-height: 100%;
+    max-width: 100%;
+    background-color: white;
+}
+.CropImage__FinalButton{
+    display: flex;
+    position: fixed;
+    right:12vw;
+    z-index: 100;
+    bottom: 12vh;
+}
+.CropImage__FinalButton>button{
+   border: none;
+   outline: none;
+   background: transparent;
+}
+
+.Upload__ImageIcon{
+    display: flex;
+    width: fit-content;
+    height: 400px;
+    border: 1px solid lightblue;
+    min-width: 400px;
+    align-items: center;
+    color: blue;
+    font-weight: bold;
+    justify-content: center;
+}
+.button__uploadImage{
+    display: flex;
+    position: fixed;
+    /* right:32vw; */
+    align-items: center;
+    justify-content: center;
+    margin-right: -500px;
+    z-index: 100;
+    bottom: 12vh;
+}
+@media(max-width:900px){
+    .addPost__In{
+        width: 100%;
+        height: 90%;
+        align-items: center;
+        justify-items: center;
+    }
+    .Upload__ImageIcon{
+        display: flex;
+        width: fit-content;
+        height: 300px;
+        border: 1px solid lightblue;
+        min-width: 300px;
+        align-items: center;
+        color: blue;
+        font-weight: bold;
+        justify-content: center;
+    }
+    .addPost__Text{
+        min-width: 200px;
+    }
+    .addPost__InIN{
+        border-radius: 8px;
+    }
+}
+@media(max-width:400px){
+    .addPost__In{
+        width: 100%;
+        height: 90%;
+        align-items: center;
+        justify-items: center;
+    }
+    .Upload__ImageIcon{
+        display: flex;
+        width: fit-content;
+        height: 350px;
+        border: 1px solid lightblue;
+        min-width: 250px;
+        align-items: center;
+        color: blue;
+        font-weight: bold;
+        justify-content: center;
+    }
+    .addPost__Text{
+        min-width: 200px;
+    }
+    .addPost__InIN{
+        border-radius: 4px;
+    }
+}
