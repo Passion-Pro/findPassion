@@ -2,8 +2,27 @@ import React from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import MyLearning from "./MyLearning";
+import { useHistory } from "react-router-dom";
+import db from "../../firebase";
+import { useStateValue } from "../../StateProvider";
+
+
+
+
 
 function ProfilePage() {
+  const history = useHistory();
+  const[{user , userInfo} , dispatch] = useStateValue();
+
+  const generate_chat= (e) => {
+    e.preventDefault();
+    
+    db.collection("users").doc(user?.uid).collection("chats").add({
+       
+    })
+    
+  }
+
   return (
     <div>
       <Container>
@@ -17,6 +36,9 @@ function ProfilePage() {
             </div>
             <div className="name">
               <p>Mark</p>
+            </div>
+            <div className="chat_button">
+              <button onClick = {generate_chat}>Chat</button>
             </div>
           </div>
           <div className="profile_info">
@@ -171,6 +193,33 @@ const Container = styled.div`
     background-color: white;
   }
 
+  .chat_button {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    @media (max-width: 500px) {
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 150px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-radius: 20px;
+      border: 0;
+      background-color: #6868fa;
+      color: white;
+      margin-right: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
+
+      &:hover {
+        cursor: pointer;
+        background-color: #9595ff;
+      }
+    }
+  }
+
   .avatar {
     width: 180px;
     height: 180px;
@@ -182,6 +231,7 @@ const Container = styled.div`
       font-size: 25px;
       margin-top: 10px;
       color: white;
+      margin-bottom: 0;
     }
   }
 
@@ -215,12 +265,12 @@ const Container = styled.div`
     }
   }
 
-  .learnt_stuff{
-      @media(max-width: 600px){
-          display : flex;
-          margin-left : 10px;
-          flex-direction : column;
-      }
+  .learnt_stuff {
+    @media (max-width: 600px) {
+      display: flex;
+      margin-left: 10px;
+      flex-direction: column;
+    }
   }
 
   .learning {
@@ -265,7 +315,7 @@ const Container = styled.div`
     .achievements {
       display: flex;
       margin-top: 0px;
-      margin-left : 5px;
+      margin-left: 5px;
 
       .achievement {
         display: flex;
@@ -284,7 +334,7 @@ const Container = styled.div`
 
     .experience {
       display: flex;
-      margin-left : 5px;
+      margin-left: 5px;
 
       img {
         width: 30px;

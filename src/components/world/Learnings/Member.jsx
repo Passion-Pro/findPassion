@@ -6,18 +6,19 @@ import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
 
 
-function Member() {
+function Member({learner}) {
   const history = useHistory();
 
   return (
     <>
-      <Container>
+      <Container onClick={(e) => history.push("/profile") }>
         <Avatar
           className="avatar"
-          src="https://bsmedia.business-standard.com/_media/bs/img/article/2018-03/22/full/1521664011-0145.jpg"
+          src= {learner?.data?.learner?.profilePhotoUrl}
         />
+        {console.log(learner)}
         <div className="chatName_info">
-          <p>Ronak</p>
+          <p>{learner?.data?.learner?.name}</p>
         </div>
       </Container>
     </>

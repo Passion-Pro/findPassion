@@ -1,16 +1,59 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
 import db from "../../../firebase";
-import firebase from "firebase"
-
+import firebase from "firebase";
 
 function Learning({ learning, type }) {
   const history = useHistory();
   const [{ user, userInfo }, dispatch] = useStateValue();
+  const [requestSent, setRequestSent] = useState(false);
+
+  useEffect(() => {
+    if (user?.uid && learning?.data?.started_by?.email && userInfo) {
+      db.collection("users")
+        .where("email", "==", learning?.data?.started_by?.email)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            db.collection("users")
+              .doc(doc.id)
+              .collection("learnRequests")
+              .where("requestFrom", "==", userInfo)
+              .get()
+              .then((querySnapshot) => {
+                //  if(querySnapshot.empty === true) {
+                //    alert("Empty")
+                //  }
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+
+                  if (doc.data().status === "pending") {
+                    setRequestSent(true);
+                  }
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }
+  }, [user?.uid, learning , userInfo]);
+
+  useEffect(() => {
+
+  })
 
   const send_join_request = (e) => {
     e.preventDefault();
@@ -27,12 +70,12 @@ function Learning({ learning, type }) {
             .collection("learnRequests")
             .add({
               requestFrom: userInfo,
-              learning : learning,
+              learning: learning,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-
+              status: "pending",
             })
             .then(() => {
-              alert("Join Request Sent!");
+              alert("Join Request Sent!....");
             });
         });
       })
@@ -69,9 +112,17 @@ function Learning({ learning, type }) {
       )}
       <div className="join_button" style={{}}>
         {type === "my" ? (
-          <button onClick={(e) => history.push("/learningGroup")}>View</button>
+          <button onClick={(e) => history.push(`/learning/${learning?.id}`)}>View</button>
         ) : (
-          <button onClick={send_join_request}>Join</button>
+          <>
+            {requestSent === false ? (
+              <button onClick={send_join_request}>Join</button>
+            ) : (
+              <button onClick={() => {
+                alert("Join Request Sent!")
+              }}>Join</button>
+            )}
+          </>
         )}
       </div>
     </Container>
@@ -82,7 +133,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 200px;
-  height: fit-content;
+  height: 150px;
   border: 1px solid lightgray;
   border-radius: 10px;
   padding: 10px;
@@ -124,6 +175,7 @@ const Container = styled.div`
 
   .started_date {
     font-size: 12px;
+    flex : 1;
     p {
       margin-top: 5px;
       margin-bottom: 0px;
@@ -144,7 +196,7 @@ const Container = styled.div`
     display: flex;
     justify-content: flex-end;
     margin-right: 5px;
-    margin-bottom: 2px;
+    margin-bottom: 2px !important;
     margin-top: 10px;
 
     button {

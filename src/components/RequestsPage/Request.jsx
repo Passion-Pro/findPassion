@@ -4,6 +4,7 @@ import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
 import db from "../../firebase";
 import Avatar from "@mui/material/Avatar";
+import firebase from "firebase"
 
 function Request({ request }) {
   const [{ user , userInfo }, dispatch] = useStateValue();
@@ -47,7 +48,7 @@ function Request({ request }) {
           console.log(doc.id, " => ", doc.data());
 
           db.collection("learnings").doc(doc.id).collection("learners").add({
-              learner : userInfo
+              learner : request?.data?.requestFrom
           })
 
         });
@@ -64,10 +65,11 @@ function Request({ request }) {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
 
-           db.collection("users").doc(doc.id).collection("myLearnings").add({
-               
+           db.collection("users").doc(doc.id).collection("myJoinedLearnings").add({
+               learning : request?.data?.learning,
+               joined_on : firebase.firestore.FieldValue.serverTimestamp(),
            })
-        
+
 
         });
       })
@@ -81,6 +83,7 @@ function Request({ request }) {
   
 
   const delete_request = () => {
+
     db.collection("users")
       .doc(user?.uid)
       .collection("learnRequests")
@@ -95,7 +98,7 @@ function Request({ request }) {
           db.collection("users")
           .doc(user?.uid)
           .collection("learnRequests").doc(doc.id).delete()
-
+           
 
         });
       })

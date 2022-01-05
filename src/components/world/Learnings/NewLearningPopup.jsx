@@ -4,12 +4,12 @@ import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
-import db , {auth , storage} from "../../../firebase";
+import db, { auth, storage } from "../../../firebase";
 import firebase from "firebase";
 import { v4 as uuid } from "uuid";
 
 function NewLearningPopup() {
-  const [{ openNewLearningPopup, user , userInfo }, dispatch] = useStateValue();
+  const [{ openNewLearningPopup, user, userInfo }, dispatch] = useStateValue();
   const [image, setImage] = useState();
   const [input, setInput] = useState();
   const [imageUrl, setImageUrl] = useState("");
@@ -31,8 +31,6 @@ function NewLearningPopup() {
     }
   }, [user]);
 
-
-
   const close_popup = () => {
     dispatch({
       type: actionTypes.OPEN_NEW_LEARNING_POPUP,
@@ -42,72 +40,92 @@ function NewLearningPopup() {
 
   const start_learning = (e) => {
     e.preventDefault();
-    console.log("Image URl is " , imageUrl)
+    console.log("Image URl is ", imageUrl);
     if (learnings?.length < 5) {
-      if(image){
-         const id = uuid();
+      if (image) {
+        const id = uuid();
 
-         const upload = storage.ref(`images/${id}`).put(image);
+        const upload = storage.ref(`images/${id}`).put(image);
 
-         upload.on(
-           "state_changed",
-           (snapshot) => {
-             const progress =
-               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        upload.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-             console.log(`Progress : ${progress}%`);
-             if (snapshot.state === "RUNNING") {
-               console.log(`Progress : ${progress}%`);
-             }
-           },
-           (error) => console.log(error.code),
-           async () => {
-             const url = await upload.snapshot.ref.getDownloadURL();
-             if (url) {
-                
-                db.collection("users").doc(user.uid).collection("myLearnings").add({
-                    learning: input,
-                    learningImageUrl: url,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                  });
-            
-                  db.collection('learnings').add({
-                    learning: input,
-                    learningImageUrl: url,
-                    started_by : userInfo,
-                    learnersLength : 1,
-                    fires : [],
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                  })
-                
+            console.log(`Progress : ${progress}%`);
+            if (snapshot.state === "RUNNING") {
+              console.log(`Progress : ${progress}%`);
+            }
+          },
+          (error) => console.log(error.code),
+          async () => {
+            const url = await upload.snapshot.ref.getDownloadURL();
+            if (url) {
+              db.collection("users")
+                .doc(user.uid)
+                .collection("myLearnings")
+                .add({
+                  learning: input,
+                  learningImageUrl: url,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                });
 
-             }
-           }
-         );
+              db.collection("learnings")
+                .add({
+                  learning: input,
+                  learningImageUrl: url,
+                  started_by: userInfo,
+                  learnersLength: 1,
+                  fires: [],
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                })
+                .then(() => {
+                  db.collection("learnings")
+                    .where("learning", "==", input)
+                    .where("started_by", "==", userInfo)
+                    .get()
+                    .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        console.log(doc.id, " => ", doc.data());
 
-
-      }else{
+                        db.collection("learnings")
+                          .doc(doc.id)
+                          .collection("learners")
+                          .add({
+                            learner: userInfo,
+                          });
+                      });
+                    })
+                    .catch((error) => {
+                      console.log("Error getting documents: ", error);
+                    });
+                });
+            }
+          }
+        );
+      } else {
         db.collection("users").doc(user.uid).collection("myLearnings").add({
-            learning: input,
-            learningImageUrl: "",
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-    
-          db.collection('learnings').add({
-            learning: input,
-            learningImageUrl: "",
-            started_by : userInfo,
-            learnersLength : 1,
-            fires : [],
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          })
-        }
-        dispatch({
-          type: actionTypes.OPEN_NEW_LEARNING_POPUP,
-          openNewLearningPopup: false,
+          learning: input,
+          learningImageUrl: "",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+
+        db.collection("learnings").add({
+          learning: input,
+          learningImageUrl: "",
+          started_by: userInfo,
+          learnersLength: 1,
+          fires: [],
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         });
       }
-
+      dispatch({
+        type: actionTypes.OPEN_NEW_LEARNING_POPUP,
+        openNewLearningPopup: false,
+      });
+    }
   };
 
   const selectImage = (e) => {

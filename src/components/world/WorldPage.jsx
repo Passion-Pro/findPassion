@@ -36,8 +36,10 @@ function WorldPage() {
         )
       );
     }
-  }, [user?.uid]);
 
+    console.log("My Learnings is ", myLearnings);
+    console.log(" Learnings is ", learnings);
+  }, [user?.uid]);
 
   const add_learning = () => {
     dispatch({
@@ -70,8 +72,12 @@ function WorldPage() {
           <div className="my_learnings">
             <p>My Learnings</p>
             <div className="my_learnings_learnings">
-              {myLearnings.map((learning) => (
-                <Learning learning={learning} userInfo={userInfo} type="my" />
+              {learnings.map((learning) => (
+                <>
+                  {learning.data.started_by.email === userInfo.email && (
+                    <Learning learning={learning} type="my" />
+                  )}
+                </>
               ))}
             </div>
           </div>
@@ -79,16 +85,18 @@ function WorldPage() {
         <div className="all_learnings">
           {learnings.map((learning) => (
             <>
-              {learning.data.started_by.experience === userInfo.experience && learning.data.started_by.email !== userInfo.email  && (
-                <Learning learning={learning} type="all"/>
-              )}
+              {learning.data.started_by.experience === userInfo.experience &&
+                learning.data.started_by.email !== userInfo.email && (
+                  <Learning learning={learning} type="all" />
+                )}
             </>
           ))}
           {learnings.map((learning) => (
             <>
-              {learning.data.started_by.experience !== userInfo.experience && learning.data.started_by.email !== userInfo.email &&  (
-                <Learning learning={learning} type="all"/>
-              )}
+              {learning.data.started_by.experience !== userInfo.experience &&
+                learning.data.started_by.email !== userInfo.email && (
+                  <Learning learning={learning} type="all" />
+                )}
             </>
           ))}
         </div>

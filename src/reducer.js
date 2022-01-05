@@ -11,7 +11,8 @@ export const initialState = {
   startJourney : false,
   journeyUpload : "video",
   openNewLearningPopup : false,
-  userInfo : []
+  userInfo : [],
+  journey : [],
 };
 
 
@@ -32,6 +33,7 @@ export const actionTypes = {
   SET_JOURNEY_UPLOAD : "SET_JOURNEY_UPLOAD",
   OPEN_NEW_LEARNING_POPUP: "OPEN_NEW_LEARNING_POPUP",
   SET_USER_INFO : "SET_USER_INFO",
+  SET_JOURNEY : "SET_JOURNEY",
 };
 
 const reducer = (state, action) => {
@@ -145,6 +147,11 @@ const reducer = (state, action) => {
             ...state,
             userInfo : action.userInfo
           }
+          case actionTypes.SET_JOURNEY:
+            return{
+              ...state,
+              journey : action.journey
+            }
     default:
       return state;
   }
