@@ -1,26 +1,24 @@
 import React from 'react';
 import './RightSidebarGroupEnvolvement.css';
-import { useHistory } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
+import { useHistory, useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
-import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EnvolveGraph from './EnvolveGraph';
-import Divider from '@mui/material/Divider';
 
 function RightSidebarGroupEnvolvement() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupMember, groupDetails }, dispatch] = useStateValue();
-    
+    const [{groupMember, groupDetails }, dispatch] = useStateValue();
+
+    const { id } = useParams();
+
     return (
         <div className='RightSidebarGroup'>
             <div className="rightSidebarGroup__header">
                 <div className="rightSidebarGroup__headMoreTask">
                     <ArrowBackRoundedIcon onClick={() => {
-                        history.push('/group')
+                        history.push(`/groupother/${id}`)
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
@@ -31,8 +29,8 @@ function RightSidebarGroupEnvolvement() {
             <div className="rightSidebarGroup__bodyEnvolve">
                 <div className="rightSidebarGroup__bodyEnvolvement2">
 
-                    <Button variant="outlined">{groupDetails?.name}</Button>
-                    {groupMember&& groupMember.map((groupMember) => (
+                    <Button variant="outlined">{"Admin"}</Button>
+                    {groupMember && groupMember.map((groupMember) => (
                         <Button variant="outlined">{groupMember?.data?.name}</Button>
                     ))}
                 </div>

@@ -1,0 +1,84 @@
+.chatTeacher__message{
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+
+}
+.chatTeacher__messageByOther{
+    display: flex;
+    width: 100%;
+}
+.chatTeacher__message__my{
+    padding: 0;
+    max-width: 60%;
+    padding: 3px 8px;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 8px;
+}
+.chatTeacher__message__ByOther{
+    padding: 0;
+    max-width: 60%;
+    padding: 3px 8px;
+    width: fit-content;
+    height: fit-content;
+    border: 1px solid lightgray;
+    background: white;
+    border-radius: 8px;
+}
+.chatTeacher__message_divmy {
+    display: flex;
+    flex-direction: column;
+    word-break: break-all;
+    border-radius: 6px;
+    border: 1px solid lightgray;
+    background-color: white;
+    padding: 4px;
+  }
+.chatTeacher__message_div {
+    display: flex;
+    flex-direction: column;
+    word-break: break-all;
+    border-radius: 6px;
+    background-color: white;
+    padding: 4px;
+  }
+.chatTeacher__message__my>h6 {
+    margin: 0;
+    padding: 2px 0px 2px 0px !important ;
+    color: black;
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 700;
+}
+.dateChat{
+    display: flex;
+    justify-content: flex-end;
+    color: gray;
+    padding-top: 3px;
+    font-size:7px !important;
+}
+.GroupChatMsg__Message{
+    margin: 0;
+    font-size: smaller;
+}
+.deleteIcon{
+    display: none;
+    width: fit-content;
+    padding: 12px 0 10px 12px;
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+  .chatTeacher__message__my:hover .deleteIcon {
+    display: flex;
+    margin-right: 12px;
+  }
+  .chatTeacher__message_divmy:hover
+  {
+      background-color: rgba(125, 122, 122, 0.319);
+  }
+  /* .chatTeacher__message_div:hover
+  {
+      background-color: rgba(125, 122, 122, 0.319);
+  } */

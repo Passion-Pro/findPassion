@@ -1,110 +1,112 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import './GroupExpandMore.css'
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { useStateValue } from '../../StateProvider';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import { actionTypes } from '../../reducer';
-import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import CloseIcon from "@mui/icons-material/Close";
 import db from '../../firebase';
 import firebase from 'firebase';
-import { v4 as uuid } from "uuid";
-
+import GroupNameField from './GroupNameField';
 
 function GroupExpandMore() {
-    const [{ showExpandGroup, user }, dispatch] = useStateValue();
-    const [showAddGroup, setShowAddGroup] = useState(false);
-    const [groupName,setGroupName]=useState('');
-    const AddGroup = () => {
-           if(user){
-            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid+'Details').set({
-              GroupName: groupName ? groupName : 'Your Group',
-              GroupStatus: "Our passion makes us happy which no one else can do.",
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              startedby:user.email,
-          }).then(() => {
-              // db.collection('Group').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid+'Inventors').set({
-              //     names:[user.email]
-              // }).then(()=>{
-                  setGroupName('')
-                  setShowAddGroup(false)
-              // })
-          }).catch(err=>{
-              console.log(err.message)
-          })
-           }else{
-             alert('Something went wrong')
-           }
-    }
-    return (
-        <>
-            {showAddGroup && (
-                <Container>
-                    <div className="addLearning">
-                        <div className="add_learning_header">
-                            <CloseIcon className="close_icon"
-                                onClick={() => {
-                                    setShowAddGroup(false)
-                                }}
-                            />
-                        </div>
-                        <div className="group_photo">
-                            <div className="learning_detail">
-                                <input
-                                    type="text"
-                                    placeholder="Group Name"
-                                    maxlength="70"
-                                    onChange={e=>setGroupName(e.target.value)}
-                                />
-                            </div>
-                            <div className="start_button">
-                                <button onClick={AddGroup} >Add</button>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
-            )}
-            <div className="groupHead__More" onClick={() => {
-                dispatch({
-                    type: actionTypes.SET_SHOW_EXPANDGROUP,
-                    showExpandGroup: true,
-                })
-            }}>
-                <ExpandMoreRoundedIcon className="groupHead__More__Icon" />
-            </div>
-            {showExpandGroup &&
-                <div className="showExpandGroup">
-                    <div className="showExpandGroup__AddGroup" onClick={() => {
-                        setShowAddGroup(true)
-                    }}>
-                        <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
-                        Add Group
-                    </div>
-                    <div className="showExpandGroup__OtherGroup">
-                        <div className="showExpandGroup__OtherGroup__Head">
-                            Groups
-                        </div>
-                        <div className="showExpandGroup__AddGroup">
-                            <GroupsRoundedIcon style={{
-                                color: '#0173ab',
-                                padding: '4px', marginRight: "12px", borderRadius: '50%', border: '1px solid lightgray', height: "22px", width: '22px'
-                            }} />
-                            Add Group
-                        </div>
-                        <div className="showExpandGroup__AddGroup">
-                            <GroupsRoundedIcon style={{
-                                color: '#0173ab',
-                                padding: '4px', marginRight: "12px", borderRadius: '50%', border: '1px solid lightgray', height: "22px", width: '22px'
-                            }} />
-                            Add Group
-                        </div>
+  const [{ showExpandGroup, user, groupDetails }, dispatch] = useStateValue();
+  const [showAddGroup, setShowAddGroup] = useState(false);
+  const [groupName, setGroupName] = useState('');
+  const [groups, setGroups] = useState([]);
 
-                    </div>
-                </div>
-            }
-        </>
-    )
+  const AddGroup = () => {
+    if (user) {
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details').set({
+        GroupName: groupName ? groupName : 'Your Group',
+        GroupStatus: "Our passion makes us happy which no one else can do.",
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        startedby: user.email,
+      }).then(() => {
+        setGroupName('')
+        setShowAddGroup(false)
+      }).catch(err => {
+        console.log(err.message)
+      })
+    } else {
+      alert('Something went wrong')
+    }
+  }
+  useEffect(() => {
+    if (user?.uid) {
+
+      db.collection('users').doc(user.uid).collection('Groups')
+        .onSnapshot((snapshot) => (
+          setGroups(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            })))
+        ));
+    }
+  }, [user])
+
+  return (
+    <>
+      {showAddGroup && (
+        <Container>
+          <div className="addLearning">
+            <div className="add_learning_header">
+              <CloseIcon className="close_icon"
+                onClick={() => {
+                  setShowAddGroup(false)
+                }}
+              />
+            </div>
+            <div className="group_photo">
+              <div className="learning_detail">
+                <input
+                  type="text"
+                  placeholder="Group Name"
+                  maxlength="70"
+                  onChange={e => setGroupName(e.target.value)}
+                />
+              </div>
+              <div className="start_button">
+                <button onClick={AddGroup} >Add</button>
+              </div>
+            </div>
+          </div>
+        </Container>
+      )}
+      <div className="groupHead__More" onClick={() => {
+        dispatch({
+          type: actionTypes.SET_SHOW_EXPANDGROUP,
+          showExpandGroup: true,
+        })
+      }}>
+        <ExpandMoreRoundedIcon className="groupHead__More__Icon" />
+      </div>
+      {showExpandGroup &&
+        <div className="showExpandGroup">
+           {!groupDetails?.name &&
+          <div className="showExpandGroup__AddGroup" onClick={() => {
+              setShowAddGroup(true)
+          }}>
+              <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
+                        Add Group
+          </div>
+                    }
+          <div className="showExpandGroup__OtherGroup">
+            <div className="showExpandGroup__OtherGroup__Head">
+              Groups
+            </div>
+            {groups && groups.map((group) => (
+              <>
+                <GroupNameField group={group} key={group?.id} />
+              </>
+            ))}
+          </div>
+        </div>
+      }
+    </>
+  )
 }
 
 export default GroupExpandMore

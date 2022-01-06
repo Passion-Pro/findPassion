@@ -20,6 +20,8 @@ export const initialState = {
   showExpandGroup:false,
   groupDetails:null,
   groupMember:null,
+  groupMemberDetails:null,
+  groupMemberDetailsId:null,
 };
 
 export const actionTypes = {
@@ -47,11 +49,22 @@ export const actionTypes = {
   SET_SHOW_EXPANDGROUP:"SET_SHOW_EXPANDGROUP",
   SET_GROUP_DETAILS:'SET_GROUP_DETAILS',
   SET_GROUP_MEMBER:'SET_GROUP_MEMBER',
+  SET_GROUP_MEMBERDETAILS:'SET_GROUP_MEMBERDETAILS',
+  SET_GROUP_MEMBERDETAILS_ID:'SET_GROUP_MEMBERDETAILS_ID',
 };
 
 const reducer = (state, action) => {
-  console.log(state, action);
   switch (action.type) {
+    case actionTypes.SET_GROUP_MEMBERDETAILS:
+      return {
+        ...state,
+        groupMemberDetails: action.groupMemberDetails,
+      };
+    case actionTypes.SET_GROUP_MEMBERDETAILS_ID:
+      return {
+        ...state,
+        groupMemberDetailsId: action.groupMemberDetailsId,
+      };
     case actionTypes.SET_GROUP_MEMBER:
       return {
         ...state,
