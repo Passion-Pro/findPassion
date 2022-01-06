@@ -14,7 +14,7 @@ import db from '../../firebase';
 import firebase from 'firebase';
 
 function SidebarGroup() {
-    const [{ userInfo, user, groupDetails, groupMember}, dispatch] = useStateValue();
+    const [{ userInfo, user, groupDetails, groupMember }, dispatch] = useStateValue();
     const [showAddMember, setShowAddMember] = useState(false);
     const [showInventor, setShowInventor] = useState(false);
     const [showMember, setShowMember] = useState(false);
@@ -26,55 +26,55 @@ function SidebarGroup() {
 
     const AddMember = () => {
         if (newmember) {
-            db.collection('users').where('email','==',newmember)
-            .get()
-            .then((querySnapshot) => {
-                if (querySnapshot.empty === true) {
-                //   db.collection("addByAdmin").add({
-                //     value: "admin",
-                //     email: email,
-                //   });
-                  alert('This email address is not exist in platform');
-                }else{
-                    querySnapshot.forEach((doc)=>{
-                        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').add({
-                            date: date,
-                            name: doc.data()?.name,
-                            email:newmember,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        }).then(() => {
-                            setNewmember('');
-                            setShowAddMember(false)
+            db.collection('users').where('email', '==', newmember)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty === true) {
+                        alert('This email address is not exist in platform');
+                    } else {
+                        querySnapshot.forEach((doc) => {
+                            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').add({
+                                date: date,
+                                name: doc.data()?.name,
+                                email: newmember,
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            }).then(() => {
+                                db.collection('users').doc(doc.id).collection('Groups').add({
+                                    date: date,
+                                    name: doc.data()?.name,
+                                    email: newmember,
+                                    startedby: user?.email,
+                                    GroupId: user?.uid,
+                                    GroupName: groupDetails?.GroupName,
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                })
+                                setNewmember('');
+                                setShowAddMember(false)
+                            })
                         })
-                    })
-                }
-            })
+                    }
+                })
         }
     }
 
-    useEffect(()=>{
-       if(user){
-        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user?.uid + 'groupmember').collection('GroupMember')
-        .onSnapshot((snapshot) => (
-        // setMembers(snapshot.docs.map((doc) => ({
-        //       data: doc.data(),
-        //       id: doc.id,
-        //     })))
-        //   )
-        dispatch({
-            type: actionTypes.SET_GROUP_MEMBER,
-            groupMember: snapshot.docs.map((doc) => ({
-                          data: doc.data(),
-                          id: doc.id,
-                         })),
-          })
-          ))
-       }
-    },[user])
+    useEffect(() => {
+        if (user) {
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user?.uid + 'groupmember').collection('GroupMember')
+                .onSnapshot((snapshot) => (
+                    dispatch({
+                        type: actionTypes.SET_GROUP_MEMBER,
+                        groupMember: snapshot.docs.map((doc) => ({
+                            data: doc.data(),
+                            id: doc.id,
+                        })),
+                    })
+                ))
+        }
+    }, [user])
 
     return (
         <>
-{showAddMember && (
+            {showAddMember && (
                 <Container>
                     <div className="addLearning">
                         <div className="add_learning_header">
@@ -106,7 +106,7 @@ function SidebarGroup() {
                     <div className="leftSidebarGroup__headeRIcon">
                         <ArrowForwardRoundedIcon
                             onClick={() => {
-                                dispatch({ 
+                                dispatch({
                                     type: actionTypes.SET_SHOW_LEFTSIDEBARGROUP,
                                     showLeftSidebarGroup: false,
                                 })
@@ -130,8 +130,8 @@ function SidebarGroup() {
                     <div>
                     </div>
                 </div>
-                {showInventor && <div className="leftSidebarGroup__body" > 
-                        {/* <GroupMemberField inventor={"name"}/>  */}
+                {showInventor && <div className="leftSidebarGroup__body" >
+                    {/* <GroupMemberField inventor={"name"}/>  */}
                 </div>}
                 <div className="leftSidebarGroup__Admin"
                     onClick={() => {
@@ -144,11 +144,11 @@ function SidebarGroup() {
                             !showMember ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
                         }
                     </div>
-                    <div onClick={() => {
+                    {user?.email == groupDetails?.startedby && <div onClick={() => {
                         setShowAddMember(true)
                     }}>
                         <AddRoundedIcon />
-                    </div>
+                    </div>}
                 </div>
                 {showMember && <div className="leftSidebarGroup__body">
                     {groupMember.map((member, serial) => (
