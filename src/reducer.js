@@ -23,6 +23,7 @@ export const initialState = {
   groupMember:null,
   groupMemberDetails:null,
   groupMemberDetailsId:null,
+  openAddLearntPopup : false,
 };
 
 export const actionTypes = {
@@ -51,8 +52,12 @@ export const actionTypes = {
   SET_SHOW_EXPANDGROUP:"SET_SHOW_EXPANDGROUP",
   SET_GROUP_DETAILS:'SET_GROUP_DETAILS',
   SET_GROUP_MEMBER:'SET_GROUP_MEMBER',
+<<<<<<< Updated upstream
   SET_GROUP_MEMBERDETAILS:'SET_GROUP_MEMBERDETAILS',
   SET_GROUP_MEMBERDETAILS_ID:'SET_GROUP_MEMBERDETAILS_ID',
+=======
+  OPEN_ADD_LEARNT_POPUP : 'OPEN_ADD_LEARNT_POPUP'
+>>>>>>> Stashed changes
 };
 
 const reducer = (state, action) => {
@@ -220,6 +225,11 @@ const reducer = (state, action) => {
             return{
               ...state,
               journey : action.journey
+            }
+            case actionTypes.OPEN_ADD_LEARNT_POPUP:
+            return{
+              ...state,
+              openAddLearntPopup: action.openAddLearntPopup
             }
     default:
       return state;

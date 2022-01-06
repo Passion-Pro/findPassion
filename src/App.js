@@ -38,10 +38,9 @@ import GroupChatOther from "./components/otherGroups/GroupChat";
 import GroupEnvolvementOther from "./components/otherGroups/GroupEnvolvement";
 
 function App() {
-  const [{ user }, dispatch] = useStateValue();
 
   const [{ user, courseDiv ,showExpandGroup }, dispatch] =useStateValue();
-
+   
   useEffect(() => {
     // will only run once when the app component loads...
     auth.onAuthStateChanged((auth) => {
@@ -87,7 +86,7 @@ function App() {
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-        <Switch>
+        <Switch>  
           <Route path='/withoutloginhome'>
             <WithoutLogin/>
           </Route>

@@ -39,7 +39,7 @@ function PassionPopup() {
       {openPassionPopup === true && (
         <Container>
           <div className="passionPopup">
-            <div className="header">
+            <div className="passionPopup_header">
               <p>Select your passion:</p>
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
@@ -86,7 +86,7 @@ const Container = styled.div`
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
 
-    .header {
+    .passionPopup_header{
       display: flex;
       width: 100%;
       p {

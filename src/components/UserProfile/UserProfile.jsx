@@ -1,24 +1,22 @@
-import React , {useState, useEffect} from 'react'
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
-import db from '../../firebase';
-import { useStateValue } from '../../StateProvider';
-import PassionPopup from '../sign/CreateAccount/PassionPopup';
+import db from "../../firebase";
+import { useStateValue } from "../../StateProvider";
+import PassionPopup from "../sign/CreateAccount/PassionPopup";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { v4 as uuid } from "uuid";
-import { actionTypes } from '../../reducer';
-
-
-
+import { actionTypes } from "../../reducer";
+import AddLearntPopup from "./AddLearntPopup";
+import LearntStuff from "./LearntStuff";
 
 
 function UserProfile() {
-    const [{ passion , user , userInfo }, dispatch] =
-    useStateValue();
+  const [{ passion, user, userInfo }, dispatch] = useStateValue();
   const [experience, setExperience] = useState();
   const [image, setImage] = useState();
   const [email, setEmail] = useState();
@@ -27,11 +25,23 @@ function UserProfile() {
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
   const [input, setInput] = useState("");
-  
-  useEffect(() => {
-     
-  } , [])
+  const [learntStuff, setLearntStuff] = useState([]);
 
+  useEffect(() => {
+    if (user) {
+      db.collection("users")
+        .doc(user?.uid)
+        .collection("learntStuff")
+        .onSnapshot((snapshot) =>
+          setLearntStuff(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            }))
+          )
+        );
+    }
+  }, [user]);
 
   const open_passion_popup = () => {
     dispatch({
@@ -50,18 +60,22 @@ function UserProfile() {
     }
   };
 
-  const update_account = (e) => {
-     
-  }
+  const update_account = (e) => {};
 
+  const open_add_learnt_popup = (e) => {
+    dispatch({
+      type: actionTypes.OPEN_ADD_LEARNT_POPUP,
+      openAddLearntPopup: true,
+    });
+  };
 
-    return (
+  return (
     <Container>
       <div className="left">
         {image ? (
           <Avatar className="avatar" src={URL.createObjectURL(image)} />
         ) : (
-          <Avatar className="avatar" src = {userInfo?.profilePhotoUrl} />
+          <Avatar className="avatar" src={userInfo?.profilePhotoUrl} />
         )}
         <input
           type="file"
@@ -75,68 +89,73 @@ function UserProfile() {
         <label htmlFor="photo">
           <p>Change profile photo</p>
         </label>
-        <p className = "name">Ronak</p>
+        <p className="name">Ronak</p>
       </div>
       <div className="right">
         <div className="right_header">
           <p>Passion</p>
         </div>
         <div className="right_details">
-           <div className="add_learnt_stuff">
-              <p></p> 
-           </div>
+          <div className="add_learnt_stuff">
+            <button onClick={open_add_learnt_popup}>
+              {learntStuff?.length > 0 ? `Add to your learnings` : ` Show your learnt stuff`}
+            </button>
+          </div>
+          <div className="leant_stuff">
+            {learntStuff.map((learntStuff) => (
+              <LearntStuff learntStuff={learntStuff}/>
+            ))}
+          </div>
           <div className="passion">
             <p onClick={open_passion_popup} className="select_passion">
-              Change your passion , interest:{" "}
+              Your passion :{" "}
             </p>
-           {passion? (<p>{passion}</p>):( <p>{userInfo?.passion}</p>)}
+            {passion ? <p>{passion}</p> : <p>{userInfo?.passion}</p>}
           </div>
-            <>
-              <div className="subfield">
-                <p>Mention subInterest in your passion:</p>
-                <input
-                  type="text"
-                  placeholder= {userInfo?.subInterest}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  style = {{
-                    textTransform : "uppercase"
-                  }}
-                />
-              </div>
-            </>
-      
-         
-            <div className="experience">
-              <p>Experience in your passion: </p>
-              <FormControl sx={{ m: 1, minWidth: 180 }}>
-                <InputLabel id="demo-simple-select-label">
-                  Experience
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={experience}
-                  label="Experience"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={0}>Less than 1 year</MenuItem>
-                  <MenuItem value={1}>1 year</MenuItem>
-                  <MenuItem value={2}>2 years</MenuItem>
-                  <MenuItem value={3}>3 years</MenuItem>
-                  <MenuItem value={4}>4 years</MenuItem>
-                </Select>
-              </FormControl>
+          <>
+            <div className="subfield">
+              <p>Your subInterest in passion:</p>
+              <input
+                type="text"
+                placeholder={userInfo?.subInterest}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                style={{
+                  textTransform: "uppercase",
+                }}
+              />
             </div>
-          
+          </>
+
+          <div className="experience">
+            <p>Experience in your passion: </p>
+            <FormControl sx={{ m: 1, minWidth: 180 }}>
+              <InputLabel id="demo-simple-select-label">Experience</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={experience}
+                label="Experience"
+                onChange={handleChange}
+              >
+                <MenuItem value={0}>Less than 1 year</MenuItem>
+                <MenuItem value={1}>1 year</MenuItem>
+                <MenuItem value={2}>2 years</MenuItem>
+                <MenuItem value={3}>3 years</MenuItem>
+                <MenuItem value={4}>4 years</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+
           <div className="create_account_button">
             <button onClick={update_account}>Update Account</button>
           </div>
         </div>
       </div>
       <PassionPopup />
+      <AddLearntPopup />
     </Container>
-    )
+  );
 }
 
 const Container = styled.div`
@@ -165,7 +184,7 @@ const Container = styled.div`
       p {
         color: #006eff;
         text-align: center;
-        margin-bottom : 10px;
+        margin-bottom: 10px;
         &:hover {
           cursor: pointer;
         }
@@ -295,14 +314,31 @@ const Container = styled.div`
     }
   }
 
-  .name{
-        text-align: center;
-        margin-top : 0;
-        font-family: "Helvetica Neue";
-        font-size : 20px;
+  .name {
+    text-align: center;
+    margin-top: 0;
+    font-family: "Helvetica Neue";
+    font-size: 20px;
+  }
 
-        
+  .add_learnt_stuff {
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    button {
+      width: 200px;
+      padding: 10px;
+      border: 0;
+      border-radius: 20px;
+      background-color: #00a2ff;
+      color: white;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #418dff;
+      }
     }
+  }
 `;
 
-export default UserProfile
+export default UserProfile;
