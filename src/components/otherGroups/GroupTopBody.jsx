@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import db from '../../firebase';
 import { actionTypes } from '../../reducer';
 import { useStateValue } from '../../StateProvider';
 
-function GroupTopBody() {
+function GroupTopBody({id}) {
     const [{ userInfo, user ,showLeftSidebarGroup,groupDetails},dispatch] = useStateValue();
     const [groupInfo,setGroupInfo]=useState([]);
 
     useEffect(()=>{
-      if(user){
-        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid+'Details')
+      if(user?.uid && id){ 
+        db.collection('users').doc(user.uid).collection('Groups').doc(id)
         .onSnapshot((snapshot) => {
-            // console.log(snapshot.data())
             dispatch({
                 type: actionTypes.SET_GROUP_DETAILS,
                 groupDetails:snapshot.data(),
               })
-        })
-      }
+        })}
     },[user])
 
     const backgroundImage="https://cdn.w600.comps.canstockphoto.com/find-your-passion-in-splashs-background-stock-illustrations_csp78297071.jpg";

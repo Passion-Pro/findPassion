@@ -23,6 +23,7 @@ import ViewPdf from "./components/world/Learnings/ViewPdf";
 import UserProfile from "./components/UserProfile/UserProfile";
 import WithoutLogin from './components/withoutlogin/WithoutLoginHome';
 import Group from './components/group/Group';
+import GroupOther from './components/otherGroups/Group';
 import Createpost from './components/post/Createpost';
 import Home from './components/home/Home';
 import HomeWithAllProfile from './components/home/HomeWithAllProfile';
@@ -32,6 +33,9 @@ import PortraitPhotos from './components/post/PortraitPhotos';
 import GroupTask from "./components/group/GroupTask";
 import GroupChat from "./components/group/GroupChat";
 import GroupEnvolvement from "./components/group/GroupEnvolvement";
+import GroupTaskOther from "./components/otherGroups/GroupTask";
+import GroupChatOther from "./components/otherGroups/GroupChat";
+import GroupEnvolvementOther from "./components/otherGroups/GroupEnvolvement";
 
 function App() {
   const [{ user }, dispatch] = useStateValue();
@@ -87,6 +91,15 @@ function App() {
           <Route path='/withoutloginhome'>
             <WithoutLogin/>
           </Route>
+          <Route path='/grouptaskother/:id'>
+            <GroupTaskOther />
+          </Route>
+          <Route path='/groupchatother/:id'>
+            <GroupChatOther />
+          </Route>
+          <Route path='/groupevolvementother/:id'>
+            <GroupEnvolvementOther />
+          </Route>
           <Route path='/grouptask'>
             <GroupTask />
           </Route>
@@ -98,6 +111,9 @@ function App() {
           </Route>
           <Route path='/group'>
             <Group />
+          </Route>
+          <Route path='/groupother/:id'>
+            <GroupOther />
           </Route>
           <Route path='/createpost'>
             <Createpost />

@@ -1,72 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './GroupMemberField.css';
 import styled from "styled-components";
 import Divider from '@mui/material/Divider';
 import CloseIcon from "@mui/icons-material/Close";
 import db from '../../firebase';
 import { useStateValue } from '../../StateProvider';
+import { actionTypes } from '../../reducer';
 
 function GroupMemberField({ member, serial }) {
-    const [{ user }] = useStateValue();
-    const [showAddTask,setshowAddTask]=useState(false)
+  const [{ user, groupDetails, groupMemberDetails },dispatch] = useStateValue();
+  const [showAddTask, setshowAddTask] = useState(false)
 
-    const [task,settask]=useState('');
+  const [task, settask] = useState('');
 
-    var today = new Date();
-    var date = today.toLocaleString();
+  var today = new Date();
+  var date = today.toLocaleString();
 
-    const AddTask=()=>{
-      if(user){
-        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid+'groupmember').collection('GroupMember').doc(member.id).update({
-            task:task,
-            date:date,
-            givenBy:user?.email,
-        }).then(()=>{
-          setshowAddTask(false);
-        })
-      }
-    }
-    return (
-        <>
-         {showAddTask && (
-                <Container>
-                    <div className="addLearning">
-                        <div className="add_learning_header">
-                            <CloseIcon className="close_icon"
-                                onClick={() => {
-                                    setshowAddTask(false)
-                                }}
-                            />
-                        </div>
-                        <div className="group_photo">
-                            <div className="learning_detail">
-                                <input
-                                    type="text"
-                                    placeholder="Type a task"
-                                    maxlength="70"
-                                    onChange={e=>settask(e.target.value)}
-                                />
-                            </div>
-                            <div className="start_button">
-                                <button onClick={AddTask} >Add</button>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
-            )}
-            <div className='GroupMemberField'>
-                <div className="groupmember__name">
-                    {member?.data?.name}
-                </div>
-                <div className="groupmember__icons" onClick={()=>{
-                    setshowAddTask(true)
-                }}>
-                    <img src="https://www.vhv.rs/dpng/d/78-784488_chat-icon-png-transparent-png.png" alt="" />
-                </div>
-            </div>
-            <Divider />
-        </>
-    )
+  return (
+    <>
+      <div className='GroupMemberField'>
+        <div className="groupmember__name">
+          {member?.data?.name}
+        </div> 
+      </div>
+      <Divider />
+    </>
+  )
 }
 
 export default GroupMemberField;

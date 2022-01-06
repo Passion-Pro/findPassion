@@ -5,10 +5,12 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import { useParams } from 'react-router-dom';
 
 function RightSidebarGroup() {
     const history = useHistory();
-    const [{ userInfo, user, showLeftSidebarGroup }, dispatch] = useStateValue();
+    const [{ userInfo, user, showLeftSidebarGroup },dispatch] = useStateValue();
+    const {id} =useParams();
     return (
         <div className='RightSidebarGroup'>
             <div className="rightSidebarGroup__header">
@@ -25,13 +27,13 @@ function RightSidebarGroup() {
                 </div>
             </div>
             <div className="rightSidebarGroup__body">
-                <div className="group__Chat" onClick={() => history.push('/grouptask')}>
-                    Given Task
+                <div className="group__Chat" onClick={() => history.push(`/grouptaskother/${id}`)}>
+                    Your Task
                 </div>
-                <div className="group__Chat" onClick={() => history.push('/groupchat')}>
+                <div className="group__Chat" onClick={() => history.push(`/groupchatother/${id}`)}>
                     Group Chat
                 </div>
-                <div className="group__Chat" onClick={() => history.push('/groupevolvement')}>
+                <div className="group__Chat" onClick={() => history.push(`/groupevolvementother/${id}`)}>
                     Envolvement
                 </div>
             </div>
