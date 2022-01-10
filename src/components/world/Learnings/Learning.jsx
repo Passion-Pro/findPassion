@@ -6,11 +6,19 @@ import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
 import db from "../../../firebase";
 import firebase from "firebase";
+import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
 function Learning({ learning, type }) {
   const history = useHistory();
   const [{ user, userInfo }, dispatch] = useStateValue();
   const [requestSent, setRequestSent] = useState(false);
+  const [fires, setFires] = useState([]);
+  const [fired, setFired] = useState(false);
+  const[joinedId , setJoinedId] = useState();
+
+  useEffect(() => {
+
+  } , [learning])
 
   useEffect(() => {
     if (user?.uid && learning?.data?.started_by?.email && userInfo) {
@@ -49,11 +57,58 @@ function Learning({ learning, type }) {
           console.log("Error getting documents: ", error);
         });
     }
-  }, [user?.uid, learning , userInfo]);
+  }, [user?.uid, learning, userInfo]);
 
   useEffect(() => {
+    if (learning?.id) {
+      db.collection("learnings")
+        .doc(learning?.id)
+        .onSnapshot((snapshot) => {
+          setFires(snapshot.data().fires);
+        });      
+    }
+  }, [learning?.id]);
 
-  })
+  useEffect(() => {
+    if(type === "joined"){
+      db.collection("learnings")
+      .where("learning", "==", learning?.data?.learning)
+      .where("started_by" , "==" , learning?.data?.started_by)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+  
+          setJoinedId(doc.id);
+
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+    }
+  } , [type]);
+
+  useEffect(() => {
+     if(type === "joined" && joinedId){
+      db.collection("learnings")
+      .doc(joinedId)
+      .onSnapshot((snapshot) => {
+        setFires(snapshot.data().fires);
+      });   
+     }  
+  } , [joinedId])
+
+  useEffect(() => {
+    if (fires?.length > 0) {
+      for (let i = 0; i < fires.length; i++) {
+        if (fires[i]?.email === userInfo?.email) {
+          setFired(true);
+        }
+      }
+    }
+  }, [fires?.length]);
 
   const send_join_request = (e) => {
     e.preventDefault();
@@ -84,20 +139,80 @@ function Learning({ learning, type }) {
       });
   };
 
+  const fireUp_learning = (e) => {
+    e.preventDefault();
+    fires.push({
+      email: userInfo?.email,
+    });
+    if(type === "joined"){
+      db.collection("learnings").doc(joinedId).update({
+        fires: fires,
+      });
+    }else{
+      db.collection("learnings").doc(learning?.id).update({
+        fires: fires,
+      });
+    }
+    setFired(true);
+  };
+
+  const removeFromFires = (e) => {
+     e.preventDefault();
+
+     for(let i = 0 ; i< fires?.length ; i++){
+      if(fires[i]?.email === userInfo?.email){
+          fires.splice(i);
+      }
+    }
+
+    if(type === "joined"){
+      db.collection("learnings").doc(joinedId).update({
+        fires: fires,
+      });
+    }else{
+      db.collection("learnings").doc(learning?.id).update({
+        fires: fires,
+      });
+    }
+
+    setFired(false);
+  }
+
+
   return (
+    <>
     <Container>
       <div className="learning_header">
-        <Avatar
-          src={
-            type === `my`
-              ? userInfo?.profilePhotoUrl
-              : learning?.data?.started_by?.profilePhotoUrl
-          }
-          className="avatar"
-        />
-        <p>
-          {type === `my` ? userInfo?.name : learning?.data?.started_by?.name}
-        </p>
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          <Avatar
+            src={
+              type === `my`
+                ? userInfo?.profilePhotoUrl
+                : learning?.data?.started_by?.profilePhotoUrl
+            }
+            className="avatar"
+          />
+          <p className="learning_name">
+            {type === `my` ? userInfo?.name : learning?.data?.started_by?.name}
+          </p>
+        </div>
+        <div className="fire_icon">
+          {fired === false ? (
+            <LocalFireDepartmentIcon
+              className="fire_icon"
+              onClick={fireUp_learning}
+            />
+          ) : (
+            <LocalFireDepartmentIcon
+              className="firedUp_icon"
+              onClick={removeFromFires}
+            />
+          )}
+        </div>
       </div>
       <div className="learning">
         <p>{learning?.data?.learning}</p>
@@ -111,21 +226,34 @@ function Learning({ learning, type }) {
         </div>
       )}
       <div className="join_button" style={{}}>
-        {type === "my" ? (
-          <button onClick={(e) => history.push(`/learning/${learning?.id}`)}>View</button>
+        {(type === "my" || type === "joined") ? (
+          <>
+           {type === "my" && (<button onClick={(e) => history.push(`/learning/${learning?.id}`)}>
+            View
+          </button>)}
+          {type === "joined" && (<button onClick={(e) => history.push(`/learning/${joinedId}`)}>
+            View
+          </button>)}
+
+          </>
         ) : (
           <>
             {requestSent === false ? (
               <button onClick={send_join_request}>Join</button>
             ) : (
-              <button onClick={() => {
-                alert("Join Request Sent!")
-              }}>Join</button>
+              <button
+                onClick={() => {
+                  alert("Join Request Sent!");
+                }}
+              >
+                Join
+              </button>
             )}
           </>
         )}
       </div>
     </Container>
+    </>
   );
 }
 
@@ -133,7 +261,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 200px;
-  height: 150px;
+  height: 180px;
   border: 1px solid lightgray;
   border-radius: 10px;
   padding: 10px;
@@ -149,6 +277,7 @@ const Container = styled.div`
 
   .learning_header {
     display: flex;
+    justify-content: space-between;
 
     .avatar {
       width: 25px;
@@ -175,7 +304,7 @@ const Container = styled.div`
 
   .started_date {
     font-size: 12px;
-    flex : 1;
+    flex: 1;
     p {
       margin-top: 5px;
       margin-bottom: 0px;
@@ -212,6 +341,30 @@ const Container = styled.div`
         background-color: #2e66ff;
       }
     }
+  }
+
+  .fire_icon {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 24.5px;
+    /* color : #ff6600; */
+    &:hover {
+      cursor: pointer;
+      color: #5c5c5c;
+    }
+  }
+
+  .firedUp_icon{
+    font-size: 24.5px;
+    color: #ff6600;
+    &:hover {
+      cursor: pointer;
+      color: #fc8434;
+    }
+  }
+
+  .learning_name{
+    margin-top : 2px !important;
   }
 `;
 

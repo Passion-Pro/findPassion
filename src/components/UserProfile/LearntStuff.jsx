@@ -1,12 +1,39 @@
 import React from "react";
 import styled from "styled-components";
+import db from "../../firebase";
+import { useStateValue } from "../../StateProvider";
 
 function LearntStuff({ learntStuff }) {
+  const [{ user, userInfo }, dispatch] = useStateValue();
+
+  const delete_learnt_stuff = (e) => {
+    db.collection("users")
+      .doc(user?.uid)
+      .collection("learntStuff")
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+
+          db.collection("users")
+            .doc(user?.uid)
+            .collection("learntStuff")
+            .doc(doc.id)
+            .delete();
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  };
+
   return (
     <Container>
       {learntStuff?.data?.platform !== "others" && (
         <div className="icon">
           <img src={learntStuff?.data?.iconUrl} alt="" />
+          <button onClick={delete_learnt_stuff}>Delete</button>
         </div>
       )}
       <div className="learning">
@@ -46,11 +73,27 @@ const Container = styled.div`
   flex-direction: column;
   padding: 10px;
   border-radius: 5px;
+  margin-bottom : 20px;
 
   .icon {
+    display: flex;
+    justify-content: space-between;
     img {
       width: 80px;
       object-fit: contain;
+    }
+
+    button{
+       width : 90px;
+       padding : 7px;
+       border-radius : 20px;
+       background-color : #fff9f9;
+       border : 1px solid lightgray;
+       
+       &:hover{
+           cursor : pointer;
+           background-color : lightgray;
+       }
     }
   }
 

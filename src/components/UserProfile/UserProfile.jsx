@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
-import db from "../../firebase";
+import db, { storage } from "../../firebase";
 import { useStateValue } from "../../StateProvider";
 import PassionPopup from "../sign/CreateAccount/PassionPopup";
 import InputLabel from "@mui/material/InputLabel";
@@ -14,18 +14,16 @@ import { actionTypes } from "../../reducer";
 import AddLearntPopup from "./AddLearntPopup";
 import LearntStuff from "./LearntStuff";
 
-
 function UserProfile() {
   const [{ passion, user, userInfo }, dispatch] = useStateValue();
   const [experience, setExperience] = useState();
   const [image, setImage] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [name, setName] = useState();
-  const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
   const [input, setInput] = useState("");
   const [learntStuff, setLearntStuff] = useState([]);
+  const [involvement, setInvolvement] = useState("");
+  const [description, setDescription] = useState("");
+  const [achievement, setAchievement] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -40,6 +38,12 @@ function UserProfile() {
             }))
           )
         );
+
+      setExperience(userInfo?.experience);
+      dispatch({
+        type: actionTypes.SET_PASSION,
+        passion: userInfo?.passion,
+      });
     }
   }, [user]);
 
@@ -60,7 +64,58 @@ function UserProfile() {
     }
   };
 
-  const update_account = (e) => {};
+  const update_account = (e) => {
+    e.preventDefault();
+    if (image) {
+      const id1 = uuid();
+
+      const upload = storage.ref(`JourneyImages/${id1}`).put(image);
+
+      upload.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log(`Progress : ${progress}%`);
+          if (snapshot.state === "RUNNING") {
+            console.log(`Progress : ${progress}%`);
+          }
+        },
+        (error) => console.log(error.code),
+        async () => {
+          const imageUrl = await upload.snapshot.ref.getDownloadURL();
+          if (imageUrl) {
+            db.collection("users").doc(user?.uid).update({
+              passion: passion,
+              experience: experience,
+              subInterest: input,
+              currentInvolvement: involvement,
+              involvementDescription: description,
+              profilePhotoUrl: imageUrl,
+              achievement : achievement
+            }).then(() => {
+              alert("Updated your account !!!")
+            })
+          }
+        }
+      );
+    } else {
+      db.collection("users").doc(user?.uid).update({
+        passion: passion,
+        experience: experience,
+        subInterest: input,
+        currentInvolvement: involvement,
+        involvementDescription: description,
+        achievement : achievement
+      }).then(() => {
+        alert("Updated your account !!!")
+      })
+    }
+
+    console.log("Passion is ", passion);
+    console.log("Experience is ", experience);
+  };
 
   const open_add_learnt_popup = (e) => {
     dispatch({
@@ -98,13 +153,38 @@ function UserProfile() {
         <div className="right_details">
           <div className="add_learnt_stuff">
             <button onClick={open_add_learnt_popup}>
-              {learntStuff?.length > 0 ? `Add to your learnings` : ` Show your learnt stuff`}
+              {learntStuff?.length > 0
+                ? `Add to your learnings`
+                : ` Show your learnt stuff`}
             </button>
           </div>
           <div className="leant_stuff">
             {learntStuff.map((learntStuff) => (
-              <LearntStuff learntStuff={learntStuff}/>
+              <LearntStuff learntStuff={learntStuff} />
             ))}
+          </div>
+          <div className="current_involvement">
+            <input
+              type="text"
+              placeholder="Enter your current involvement  Eg.internship, project"
+              value={involvement}
+              onChange={(e) => setInvolvement(e.target.value)}
+            />
+            <textarea
+              name=""
+              id=""
+              cols="30"
+              rows="10"
+              placeholder="Describe about your involvement"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></textarea>
+            <input
+              type="text"
+              placeholder="Enter any of your achievement"
+              value={achievement}
+              onChange={(e) => setAchievement(e.target.value)}
+            />
           </div>
           <div className="passion">
             <p onClick={open_passion_popup} className="select_passion">
@@ -130,7 +210,11 @@ function UserProfile() {
           <div className="experience">
             <p>Experience in your passion: </p>
             <FormControl sx={{ m: 1, minWidth: 180 }}>
-              <InputLabel id="demo-simple-select-label">Experience</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                {userInfo?.experience === 0
+                  ? `Less than 1 year`
+                  : `${userInfo?.experience} year`}
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -162,7 +246,6 @@ const Container = styled.div`
   height: 100vh;
   width: 100vw;
   display: flex;
-  /* align-items : center; */
   overflow: hidden;
 
   @media (max-width: 500px) {
@@ -337,6 +420,32 @@ const Container = styled.div`
         cursor: pointer;
         background-color: #418dff;
       }
+    }
+  }
+
+  .current_involvement {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+
+    input {
+      border-radius: 5px;
+      height: 15px;
+      padding: 10px;
+      width: 60%;
+      border: 1px solid gray;
+      margin-bottom: 20px;
+      outline: 0;
+    }
+
+    textarea {
+      resize: none;
+      border-radius: 5px;
+      width: 70%;
+      border: 1px solid gray;
+      padding: 5px;
+      outline: 0;
+      margin-bottom : 20px;
     }
   }
 `;

@@ -33,16 +33,16 @@ function StoryPopup() {
 
     setNewStoryParts(journey?.data?.storyParts);
 
-    if (user?.uid) {
+    if (journey?.aid) {
       db.collection("journeys")
         .doc(journey?.id)
-      .onSnapshot((snapshot) => {
+        .onSnapshot((snapshot) => {
           setLikes(snapshot.data().likes);
           setFires(snapshot.data().fires);
           setViews(snapshot.data().views);
         });
     }
-  }, [journey?.id]);
+  }, [journey?.id , openStoryPopup]);
 
   useEffect(() => {
     console.log("Views are", views);
@@ -95,7 +95,7 @@ function StoryPopup() {
 
   useEffect(() => {
     if (newStoryParts?.length > 0) {
-      console.log("NewStoryParts are" , newStoryParts)
+      console.log("NewStoryParts are", newStoryParts);
       newStoryParts.reverse();
       setStoryParts(newStoryParts);
     }
@@ -110,6 +110,7 @@ function StoryPopup() {
       }
     }
     if (fires?.length > 0) {
+      console.log(fires);
       for (let i = 0; i < fires.length; i++) {
         if (fires[i]?.email === userInfo?.email) {
           setFired(true);
@@ -158,12 +159,12 @@ function StoryPopup() {
     });
 
     db.collection("journeys")
-      .doc(user?.uid)
+      .doc(journey?.id)
       .update({
         likes: likes,
       })
       .then(() => {
-        db.collection("journeys").doc(user?.uid).update({
+        db.collection("journeys").doc(journey?.id).update({
           likesLength: likes?.length,
         });
       });
@@ -172,17 +173,23 @@ function StoryPopup() {
   const fireUp_journey = (e) => {
     e.preventDefault();
 
+    console.log("fired");
+    console.log(fires);
+
     fires.push({
       email: userInfo?.email,
     });
 
+    console.log(fires);
+
     db.collection("journeys")
-      .doc(user?.uid)
+      .doc(journey?.id)
       .update({
         fires: fires,
       })
       .then(() => {
-        db.collection("journeys").doc(user?.uid).update({
+        console.log("Updated");
+        db.collection("journeys").doc(journey?.id).update({
           firesLength: fires?.length,
         });
       });
@@ -195,15 +202,19 @@ function StoryPopup() {
     setLiked(false);
     console.log(liked);
 
-    likes.pop();
+    for(let i = 0 ; i< likes?.length ; i++){
+      if(likes[i] === userInfo?.email){
+          likes.splice(i);
+      }
+    }
 
     db.collection("journeys")
-      .doc(user?.uid)
+      .doc(journey?.id)
       .update({
         likes: likes,
       })
       .then(() => {
-        db.collection("journeys").doc(user?.uid).update({
+        db.collection("journeys").doc(journey?.id).update({
           likesLength: likes?.length,
         });
       });
@@ -213,15 +224,19 @@ function StoryPopup() {
     e.preventDefault();
     setFired(false);
 
-    fires.pop();
+    for(let i = 0 ; i< fires?.length ; i++){
+      if(fires[i]?.email === userInfo?.email){
+          fires.splice(i);
+      }
+    }
 
     db.collection("journeys")
-      .doc(user?.uid)
+      .doc(journey?.id)
       .update({
         fires: fires,
       })
       .then(() => {
-        db.collection("journeys").doc(user?.uid).update({
+        db.collection("journeys").doc(journey?.id).update({
           firesLength: fires?.length,
         });
       });
@@ -363,7 +378,7 @@ function StoryPopup() {
               </>
             )}
             <div className="start_button">
-              {startJourney === false? (
+              {startJourney === false ? (
                 <>
                   <button onClick={start_journey} className="start">
                     Start Journey
@@ -395,13 +410,24 @@ function StoryPopup() {
                 </>
               ) : (
                 <>
-                  <button className= {journey?.data?.journeyThrough === "video"?`start`:`started`} onClick={stop_journey}>
+                  <button
+                    className={
+                      journey?.data?.journeyThrough === "video"
+                        ? `start`
+                        : `started`
+                    }
+                    onClick={stop_journey}
+                  >
                     Stop
                   </button>
                   <div
                     className="icons"
                     style={{
-                      marginTop: `${journey?.data?.journeyThrough === "video"?"0": "270px"}`
+                      marginTop: `${
+                        journey?.data?.journeyThrough === "video"
+                          ? "0"
+                          : "270px"
+                      }`,
                     }}
                   >
                     {liked === false ? (
@@ -543,7 +569,6 @@ const Container = styled.div`
         background-color: #60bffd;
       }
     }
-
 
     .started {
       width: 120px;
@@ -765,9 +790,8 @@ const Container = styled.div`
 
   .text_card {
     overflow-y: scroll;
-    padding : 10px;
-    height : 230px;
-
+    padding: 10px;
+    height: 230px;
 
     p {
       margin-top: 0;
@@ -779,9 +803,9 @@ const Container = styled.div`
     display: none;
   }
 
-  .video_player{
-    margin-top : 20px;
-    margin-bottom : 20px;
+  .video_player {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 `;
 

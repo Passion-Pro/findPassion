@@ -13,7 +13,8 @@ function StoriesPage() {
   const [journeys, setJourneys] = useState([]);
 
   useEffect(() => {
-    db.collection("journeys")
+    if(user){
+      db.collection("journeys")
       .orderBy("likesLength", "desc")
       .onSnapshot((snapshot) =>
         setJourneys(
@@ -23,9 +24,8 @@ function StoriesPage() {
           }))
         )
       );
-
-
-  }, []);
+    }
+  }, [user]);
 
   return (
     <div>
@@ -51,7 +51,18 @@ function StoriesPage() {
         </div>
         <div className="stories">
           {journeys.map((journey) => (
-            <Story journey = {journey}/>
+           <>
+            {journey.data?.uploaderInfo?.passion === userInfo?.passion && (
+                <Story journey = {journey}/>
+            )}
+           </>
+          ))}
+          {journeys.map((journey) => (
+           <>
+            {journey.data?.uploaderInfo?.passion !== userInfo?.passion && (
+                <Story journey = {journey}/>
+            )}
+           </>
           ))}
         </div>
       </Container>
