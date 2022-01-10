@@ -33,11 +33,12 @@ function SidebarGroup() {
                         alert('This email address is not exist in platform');
                     } else {
                         querySnapshot.forEach((doc) => {
-                            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').add({
+                            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user.uid+newmember).set({
                                 date: date,
                                 name: doc.data()?.name,
                                 email: newmember,
                                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                totalmessage:0,
                             }).then(() => {
                                 db.collection('users').doc(doc.id).collection('Groups').add({
                                     date: date,
@@ -49,7 +50,7 @@ function SidebarGroup() {
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                 })
                                 setNewmember('');
-                                setShowAddMember(false)
+                                setShowAddMember(false);
                             })
                         })
                     }

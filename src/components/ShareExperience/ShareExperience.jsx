@@ -1,11 +1,12 @@
+import './ShareExperience.css';
+import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import react, { useState, useCallback, useRef, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import './CreateStoryPage.css';
 import { v4 as uuid } from "uuid";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Header from '../header/Header';
-import Button from '@mui/material/Button'; 
+import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import firebase from "firebase";
@@ -15,7 +16,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { useHistory } from 'react-router-dom';
 
-export default function CreateStoryPage() {
+export default function ShareExperience() {
     const history = useHistory();
     const [{ userInfo, user }, dispatch] = useStateValue();
 
@@ -28,7 +29,7 @@ export default function CreateStoryPage() {
     const [croppedImage, setCroppedImage] = useState(null);
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
-    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 9/16 });
+    const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 8 / 9 });
     const [completedCrop, setCompletedCrop] = useState(null);
 
     var today = new Date();
@@ -100,50 +101,53 @@ export default function CreateStoryPage() {
     if (croppedImage) {
         console.log("?", upImgImage.name);
     }
-
     const UploadImage = async () => {
         setLoading(true)
         if (croppedImage) {
             const id = uuid();
-            const imagesRef = firebase.storage().ref("StoryImages").child(id);
+            const imagesRef = firebase.storage().ref("ShareExpImages").child(id);
             await imagesRef.put(croppedImage);
             imagesRef.getDownloadURL().then((url) => {
-                if (user.uid) {
-                    db.collection("Web-development")
-                        .doc('Csb15iOnGedmpceiQOhX')
-                        .collection("Stories")
+                if (user?.uid) {
+                    db.collection('SharedExperience')
                         .doc(id)
                         .set({
+                            related:userInfo?.passion,
                             username: userInfo.name,
                             userEmail: userInfo.email,
                             imageURL: url,
                             date: datetime,
-                            postType: 'Story', 
+                            postType: 'Regular',
+                            likedUser: [],
+                            postHead: postHead,
                             postText: postText,
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
-                            profilePhotoUrl:userInfo.profilePhotoUrl,
                         })
                         .then(() => {
                             // adding post in user private collection
                             db.collection("users")
                                 .doc(user.uid)
-                                .collection("Stories")
+                                .collection('SharedExperienceCollection')
                                 .doc(id)
-                                .set({
+                                .set({ 
+                                    relatedTo:userInfo?.passion,
                                     username: userInfo.name,
                                     userEmail: userInfo.email,
                                     imageURL: url,
                                     date: datetime,
-                                    postType: 'Regular',
+                                    postType: 'ShareExperience',
+                                    likedUser: [],
+                                    postHead: postHead,
                                     postText: postText,
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                     imageName: id,
                                     imageOriginalName: upImgImage.name,
                                 })
                                 .then(() => {
-                                    setLoading(false); 
+                                    setLoading(false);
+                                    setPostHead('');
                                     setPostText('');
                                     setLoading(false);
                                     setCroppedImage(null);
@@ -213,15 +217,26 @@ export default function CreateStoryPage() {
             }
             {
                 <div className="addPost">
-                    <Header />
+                    <div className="shareExpHead">
+                        <Header />
+                    </div>
+                    <div className="shareExpHeadForMobile">
+                        <div className="ShareExp__backicon">
+                            <ArrowBackRoundedIcon />
+                        </div>
+                        <div className="ShareExpHead">
+                            Share Experience
+                        </div>
+                        <div></div>
+                    </div>
                     <div className="addPost__In">
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
-                                Regular Post
+                                Memorable moment
                                 {/* <div className="button__uploadImage"> */}
                                 <Stack direction="row">
                                     <Button variant="contained" onClick={UploadImage} endIcon={<SendIcon />}>
-                                      Send
+                                        Upload
                                     </Button>
                                 </Stack>
                                 {/* </div> */}
@@ -247,8 +262,8 @@ export default function CreateStoryPage() {
                                 </div>}
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">
-                                    {/* <textarea className='textareaHead' placeholder='Write heading of your post ' onChange={e => setPostHead(e.target.value)} /> */}
-                                    <textarea className='textareaSecond' placeholder='Write about the Status' onChange={e => setPostText(e.target.value)} />
+                                    <textarea className='textareaHead' placeholder='Write heading for your experience' onChange={e => setPostHead(e.target.value)} />
+                                    <textarea className='textareaSecond' placeholder='Write about the experience' onChange={e => setPostText(e.target.value)} />
                                 </div>
                             </div>
                         </div>

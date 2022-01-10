@@ -1,5 +1,4 @@
 import React from 'react';
-import './RightSidebarGroup.css';
 import { useHistory, useParams } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';

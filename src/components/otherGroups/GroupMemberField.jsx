@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './GroupMemberField.css';
 import styled from "styled-components";
 import Divider from '@mui/material/Divider';
 import CloseIcon from "@mui/icons-material/Close";

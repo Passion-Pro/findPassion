@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './RightSidebarGroup.css';
 import { useHistory } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -7,11 +6,12 @@ import { useStateValue } from '../../StateProvider';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import db from '../../firebase';
 import { useParams } from 'react-router-dom';
+import { actionTypes } from '../../reducer';
 
 function RightSidebarGroupTask() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails, groupMemberDetails,groupMemberDetailsId }, dispatch] = useStateValue();
+    const [{ userInfo, user, groupDetails, groupMemberDetails, groupMemberDetailsId }, dispatch] = useStateValue();
     const [dueDate, setDueDate] = useState(null);
     const { id } = useParams();
 
@@ -22,11 +22,11 @@ function RightSidebarGroupTask() {
                     Duedate: dueDate,
                     status: !groupMemberDetails.status ? 'pending' : groupMemberDetails.status
                 })
+                history.push(`/groupother/${id}`)
         } else {
             alert('Something went wrong')
         }
     }
-
 
     return (
         <>
@@ -47,7 +47,7 @@ function RightSidebarGroupTask() {
                         Task Given By :-
                         <span>{groupMemberDetails && groupMemberDetails?.givenBy}</span>
                     </div>
-                    {groupMemberDetails && groupMemberDetails[0]?.Duedate ? <div className="taskUpper">
+                    {groupMemberDetails && groupMemberDetails?.Duedate ? <div className="taskUpper">
                         Due Date :-
                         {groupMemberDetails?.Duedate}
                     </div> :
@@ -71,6 +71,7 @@ function RightSidebarGroupTask() {
                                         .doc(groupMemberDetailsId).update({
                                             status: 'Done',
                                         })
+                                        history.push(`/groupother/${id}`)
                                 } else {
                                     alert('Something went wrong')
                                 }
@@ -81,6 +82,7 @@ function RightSidebarGroupTask() {
                                         .doc(groupMemberDetailsId).update({
                                             status: "Doing"
                                         })
+                                        history.push(`/groupother/${id}`)
                                 } else {
                                     alert('Something went wrong')
                                 }

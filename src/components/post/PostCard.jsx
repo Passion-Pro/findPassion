@@ -14,24 +14,24 @@ function PostCard({ data }) {
 
     const handleLike = () => {
         const currentLikeStatus = !data.data.likedUser.includes(
-            user.email
+            user?.email
         )
         db.collection("Web-development")
             .doc('Csb15iOnGedmpceiQOhX')
             .collection("Posts").doc(data.id).update({
                 likedUser: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(
-                    user.email
+                    user?.email
                 ) : firebase.firestore.FieldValue.arrayRemove(
-                    user.email
+                    user?.email
                 ),
             }).then(() => {
                 db.collection("users")
                     .doc(user.uid)
                     .collection("Posts").doc(data.id).update({
                         likedUser: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(
-                            user.email
+                            user?.email
                         ) : firebase.firestore.FieldValue.arrayRemove(
-                            user.email
+                            user?.email
                         ),
                     })
                 console.log("sucess",user.uid,data.id);
@@ -47,28 +47,28 @@ function PostCard({ data }) {
                     <div className="PeopleStartedSameIn__Accountname">
                         {data.Profileimage ? <ProfileImage image={data.Profileimage} size={30} /> : <AccountCircleRoundedIcon style={{ fontSize: 30 }} />}
                         <div className="PeopleStartedSameIn__Accountname__name">
-                            {data.data.username}
+                            {data?.data?.username}
                             <br />
-                            <span>{data.data.date}</span>
+                            <span>{data?.data?.date}</span>
                         </div>
                     </div>
                     <Divider />
                     <div className="PostCard__lower">
                         <div className="PostCard__lower__In">
                             <div className="PostCard__lower__head">
-                                {data.data.postHead}
+                                {data?.data?.postHead}
                             </div>
                             <div className="postCard__Text">
-                                {data.data.postText}
+                                {data?.data?.postText}
                             </div>
                             <div className="PostCard__image">
-                                <img src={data?.data.imageURL} />
+                                <img src={data?.data?.imageURL} />
                             </div>
                             <div className="postCard__icons">
                                 <div className="postCard__likeicon" onClick={handleLike}>
-                                    {!data.data.likedUser.includes(
-            firebase.auth().currentUser.email) ? <ThumbUpOutlinedIcon/>:<ThumbUpRoundedIcon />}
-                                    <span>{data.data.likedUser.length}</span>
+                                    {!data?.data?.likedUser.includes(
+            firebase.auth().currentUser?.email) ? <ThumbUpOutlinedIcon/>:<ThumbUpRoundedIcon />}
+                                    <span>{data?.data?.likedUser.length}</span>
                                 </div>
                             </div>
                         </div>
