@@ -12,6 +12,7 @@
     border-radius:8px;
     min-height:10vh ;
     /* padding: 1%; */
+    padding: 12px;
 }
 .PeopleStartedSameIn__Accountname{
     display: flex;

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import './Group.css';
-import './GroupChat.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import { useStateValue } from '../../StateProvider';

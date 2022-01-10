@@ -14,7 +14,7 @@ function RightSidebarGroupEnvolvement() {
 
     const history = useHistory();
     const [{ userInfo, user, groupMember, groupDetails }, dispatch] = useStateValue();
-    
+
     return (
         <div className='RightSidebarGroup'>
             <div className="rightSidebarGroup__header">
@@ -31,18 +31,15 @@ function RightSidebarGroupEnvolvement() {
             <div className="rightSidebarGroup__bodyEnvolve">
                 <div className="rightSidebarGroup__bodyEnvolvement2">
 
-                    <Button variant="outlined">{groupDetails?.name}</Button>
-                    {groupMember&& groupMember.map((groupMember) => (
-                        <Button variant="outlined">{groupMember?.data?.name}</Button>
-                    ))}
+                    <Button variant="outlined">{" Add "}</Button>
+                    Improve your performance by discuss the skill you have common with others.
                 </div>
                 <div className="rightSidebarGroup__bodyEnvolvement1">
-                    <div className="rightSidebarGroup__bodyEnvolvement1Div">
-                        <EnvolveGraph height={80} date={'date'} />
-                    </div>
-                    <div className="rightSidebarGroup__bodyEnvolvement1Div">
-                        <EnvolveGraph height={100} date={"date"} />
-                    </div>
+                    {groupMember && groupMember.map((data) => (
+                        <div className="rightSidebarGroup__bodyEnvolvement1Div">
+                            <EnvolveGraph data={data} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

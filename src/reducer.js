@@ -20,10 +20,12 @@ export const initialState = {
   showLeftSidebarGroup:true,
   showExpandGroup:false,
   groupDetails:null,
+  groupDetailsmain:null,
   groupMember:null,
   groupMemberDetails:null,
   groupMemberDetailsId:null,
   openAddLearntPopup : false,
+  mygroupDetail:null,
 };
 
 export const actionTypes = {
@@ -54,15 +56,27 @@ export const actionTypes = {
   SET_GROUP_MEMBER:'SET_GROUP_MEMBER',
   SET_GROUP_MEMBERDETAILS:'SET_GROUP_MEMBERDETAILS',
   SET_GROUP_MEMBERDETAILS_ID:'SET_GROUP_MEMBERDETAILS_ID',
-  OPEN_ADD_LEARNT_POPUP : 'OPEN_ADD_LEARNT_POPUP'
+  OPEN_ADD_LEARNT_POPUP : 'OPEN_ADD_LEARNT_POPUP',
+  SET_MY_GROUP_DETAILS:"SET_MY_GROUP_DETAILS",
+  SET_MY_GROUP_DETAILS_MAIN:"SET_MY_GROUP_DETAILS_MAIN",
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.SET_MY_GROUP_DETAILS_MAIN:
+      return {
+        ...state,
+        groupDetailsmain: action.groupDetailsmain,
+      };
     case actionTypes.SET_GROUP_MEMBERDETAILS:
       return {
         ...state,
         groupMemberDetails: action.groupMemberDetails,
+      };
+    case actionTypes.SET_MY_GROUP_DETAILS:
+      return {
+        ...state,
+        mygroupDetail: action.mygroupDetail,
       };
     case actionTypes.SET_GROUP_MEMBERDETAILS_ID:
       return {

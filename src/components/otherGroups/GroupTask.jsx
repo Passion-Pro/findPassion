@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Group.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';

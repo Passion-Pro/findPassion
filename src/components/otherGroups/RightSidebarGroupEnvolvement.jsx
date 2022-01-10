@@ -1,5 +1,4 @@
 import React from 'react';
-import './RightSidebarGroupEnvolvement.css';
 import { useHistory, useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { useStateValue } from '../../StateProvider';
@@ -9,7 +8,7 @@ import EnvolveGraph from './EnvolveGraph';
 function RightSidebarGroupEnvolvement() {
 
     const history = useHistory();
-    const [{groupMember, groupDetails }, dispatch] = useStateValue();
+    const [{ groupMember, groupDetails }, dispatch] = useStateValue();
 
     const { id } = useParams();
 
@@ -22,24 +21,19 @@ function RightSidebarGroupEnvolvement() {
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                    {groupDetails?.GroupName} Evolvement
+                    {groupDetails?.GroupName} Involvement
                 </div>
                 <div></div>
             </div>
             <div className="rightSidebarGroup__bodyEnvolve">
                 <div className="rightSidebarGroup__bodyEnvolvement2">
 
-                    <Button variant="outlined">{"Admin"}</Button>
-                    {groupMember && groupMember.map((groupMember) => (
-                        <Button variant="outlined">{groupMember?.data?.name}</Button>
-                    ))}
+                    <Button variant="outlined">{" Add "}</Button>
+                    Improve your performance by discuss the skill you have common with others.
                 </div>
                 <div className="rightSidebarGroup__bodyEnvolvement1">
                     <div className="rightSidebarGroup__bodyEnvolvement1Div">
-                        <EnvolveGraph height={80} date={'date'} />
-                    </div>
-                    <div className="rightSidebarGroup__bodyEnvolvement1Div">
-                        <EnvolveGraph height={100} date={"date"} />
+                        <EnvolveGraph />
                     </div>
                 </div>
             </div>

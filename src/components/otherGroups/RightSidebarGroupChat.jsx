@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './RightSidebarGroup.css';
 import { useHistory } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -16,7 +15,7 @@ import { useParams } from 'react-router-dom';
 function RightSidebarGroupChat() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails }, dispatch] = useStateValue();
+    const [{ userInfo, user, groupDetails,groupDetailsmain }, dispatch] = useStateValue();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
@@ -34,6 +33,13 @@ function RightSidebarGroupChat() {
                 sendby: user.email,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             }).then(() => {
+                db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'Details').update({
+                    totalmessage:groupDetailsmain?.totalmessage+1,
+                })
+                db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').doc(groupDetails?.GroupId+user?.email).update({
+                    totalmessage:groupDetailsmain?.totalmessage+1,
+                })
+
                 setInput('')
             })
         }else{

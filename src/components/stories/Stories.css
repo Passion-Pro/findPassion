@@ -1,6 +1,13 @@
-.CreateProfile>img{
+.Stories{
+    display: flex;
     width: 100%;
     height: 100%;
+    flex-direction: column;
+    /* margin: 1px 1px 0 3px; */
+}
+.CreateProfile{ 
+    height: fit-content;
+    width: fit-content;
     overflow: hidden;
     border-radius: 50%;
 }

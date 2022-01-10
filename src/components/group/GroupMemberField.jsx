@@ -21,6 +21,8 @@ function GroupMemberField({ member, serial }) {
             task:task,
             date:date,
             givenBy:user?.email,
+            Duedate: null,
+            status: 'pending'
         }).then(()=>{
           setshowAddTask(false);
         })

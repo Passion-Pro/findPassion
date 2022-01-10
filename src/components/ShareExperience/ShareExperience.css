@@ -1,0 +1,21 @@
+.shareExpHeadForMobile{
+    display: none;
+}
+.ShareExp__backicon{
+    display: flex;
+    padding-left: 12px;
+}
+@media(max-width:800px){
+    .shareExpHead{
+        display: none;
+    }
+    .shareExpHeadForMobile{
+        display: flex;
+        height: 10vh;
+        align-items: center ;
+        width: 100%;
+        justify-content: space-between !important;
+        background-color:#0088CC;
+        color: white;
+    }
+}

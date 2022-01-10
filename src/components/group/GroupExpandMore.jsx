@@ -9,12 +9,27 @@ import CloseIcon from "@mui/icons-material/Close";
 import db from '../../firebase';
 import firebase from 'firebase';
 import GroupNameField from './GroupNameField';
+import { useHistory } from 'react-router-dom';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 
 function GroupExpandMore() {
-  const [{ showExpandGroup, user, groupDetails }, dispatch] = useStateValue();
+  const history = useHistory();
+  const [{ showExpandGroup, user, groupDetails, mygroupDetail }, dispatch] = useStateValue();
   const [showAddGroup, setShowAddGroup] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groups, setGroups] = useState([]);
+
+  useEffect(() => {
+    if (user) {
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details')
+        .onSnapshot((snapshot) => {
+          dispatch({
+            type: actionTypes.SET_MY_GROUP_DETAILS,
+            mygroupDetail: snapshot.data(),
+          })
+        })
+    }
+  }, [user])
 
   const AddGroup = () => {
     if (user) {
@@ -23,19 +38,21 @@ function GroupExpandMore() {
         GroupStatus: "Our passion makes us happy which no one else can do.",
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         startedby: user.email,
+        totalmessage:0,
+        totalmessageAdmin:0,
       }).then(() => {
         setGroupName('')
         setShowAddGroup(false)
       }).catch(err => {
-        console.log(err.message)
+        console.log(err.message);
       })
     } else {
-      alert('Something went wrong')
+      alert('Something went wrong');
     }
   }
+
   useEffect(() => {
     if (user?.uid) {
-
       db.collection('users').doc(user.uid).collection('Groups')
         .onSnapshot((snapshot) => (
           setGroups(
@@ -85,14 +102,20 @@ function GroupExpandMore() {
       </div>
       {showExpandGroup &&
         <div className="showExpandGroup">
-           {!groupDetails?.name &&
-          <div className="showExpandGroup__AddGroup" onClick={() => {
+          {!mygroupDetail?.GroupName ?
+            <div className="showExpandGroup__AddGroup" onClick={() => {
               setShowAddGroup(true)
-          }}>
+            }}>
               <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
-                        Add Group
-          </div>
-                    }
+              Add Group
+            </div> :
+            <div className="showExpandGroup__AddGroup" onClick={() => {
+              history.push('/group')
+            }}>
+              <VisibilityRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
+              View Group
+            </div>
+          }
           <div className="showExpandGroup__OtherGroup">
             <div className="showExpandGroup__OtherGroup__Head">
               Groups

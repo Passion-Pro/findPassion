@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import GroupMemberField from './GroupMemberField';
-import './SidebarGroup.css';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
@@ -36,10 +35,21 @@ function SidebarGroup() {
               groupDetails:snapshot.data(),
             })
       })}
-  },[user])
+  },[user,id])
+
+  useEffect(()=>{
+    if(user?.uid && id && groupDetails){
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'Details')
+      .onSnapshot((snapshot) =>{
+          dispatch({
+              type: actionTypes.SET_MY_GROUP_DETAILS_MAIN,
+              groupDetailsmain:snapshot.data(),
+            })
+      })}
+  },[user,groupDetails])
 
   useEffect(() => {
-    if (groupDetails) {
+    if (groupDetails?.email) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').where('email', '==', groupDetails?.email)
         .get()
         .then((querySnapshot) => {
@@ -55,7 +65,7 @@ function SidebarGroup() {
           })
         })
     }
-  }, [groupDetails]);
+  }, [groupDetails?.email]);
 
   useEffect(() => {
     if (groupDetails?.startedby) {

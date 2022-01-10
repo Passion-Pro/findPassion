@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './GroupChat.css'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import firebase from 'firebase';
 import DeleteIcon from '@mui/icons-material/Delete';

@@ -36,11 +36,18 @@ import GroupEnvolvement from "./components/group/GroupEnvolvement";
 import GroupTaskOther from "./components/otherGroups/GroupTask";
 import GroupChatOther from "./components/otherGroups/GroupChat";
 import GroupEnvolvementOther from "./components/otherGroups/GroupEnvolvement";
+import ShareExperience from "./components/ShareExperience/ShareExperience";
+import CreateStoryPage from "./components/stories/CreateStoryPage";
+import ViewProfile from "./components/profile/ViewProfile";
+import ShowStories from "./components/stories/ShowStories";
+import {useHistory} from "react-router-dom"
 
 function App() {
 
-  const [{ user, courseDiv ,showExpandGroup }, dispatch] =useStateValue();
-   
+  const [{ user, courseDiv, showExpandGroup }, dispatch] = useStateValue();
+
+  const history=useHistory();
+
   useEffect(() => {
     // will only run once when the app component loads...
     auth.onAuthStateChanged((auth) => {
@@ -50,6 +57,7 @@ function App() {
           user: auth,
         });
       } else {
+        history.push('/withoutloginhome')
       }
     });
   }, []);
@@ -62,8 +70,11 @@ function App() {
           dispatch({
             type: actionTypes.SET_USER_INFO,
             userInfo: snapshot.data(),
-          });
-        });
+          })
+        }
+        );
+    }else{
+
     }
   }, [user?.uid]);
 
@@ -86,9 +97,21 @@ function App() {
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-        <Switch>  
+        <Switch>
+          <Route path='/createStory'>
+            <CreateStoryPage />
+          </Route>
+          <Route path='/viewstory/:id'>
+            <ShowStories />
+          </Route>
+          <Route path='/viewprofile/:id'>
+            <ViewProfile />
+          </Route>
           <Route path='/withoutloginhome'>
-            <WithoutLogin/>
+            <WithoutLogin />
+          </Route>
+          <Route path='/shareexperience'>
+            <ShareExperience/>
           </Route>
           <Route path='/grouptaskother/:id'>
             <GroupTaskOther />
@@ -171,8 +194,8 @@ function App() {
           <Route path="/userProfile">
             <UserProfile/>
           </Route>
-          <Route path="/">
-            <Login />
+          <Route path='/'>
+            {user?.email ? <Home /> : <WithoutLogin />}
           </Route>
         </Switch>
       </Router>
