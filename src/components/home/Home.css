@@ -32,11 +32,16 @@
 }
 .stories__div{
     display: flex;
+    overflow-x: scroll;
 }
+.stories__div::-webkit-scrollbar {
+    display: none;
+  }
+  
 @media(max-width:800px){
     .recommendPeople{
         flex-direction: column;
-        padding: 5vh;
+        padding: 1vh;
         padding-top: 1vh;
     }
     .recommendPosts{
@@ -44,5 +49,10 @@
         flex-direction: column;
         margin-top: 12px;
         margin-bottom: 100px;
+    }
+    .recommendPeople{
+        display: flex;
+        overflow-x: hidden;
+        padding-top: 0;
     }
 }

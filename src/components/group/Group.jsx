@@ -19,7 +19,7 @@ function Group() {
       <Header />
       <div className="group__body">
       <GroupTopBody/>
-      {groupDetails?.name ? <>
+      {groupDetails?.GroupName ? <>
         <div className="group__lower">
           {<div className="group__lower__leftSidebar">
           <SidebarGroup/>

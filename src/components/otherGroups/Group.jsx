@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './Group.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';
@@ -17,7 +16,7 @@ function Group() {
   const {id} = useParams();
 
   useEffect(() => {
-    if (groupDetails) {
+    if (groupDetails?.email) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').where('email','==',groupDetails?.email)
       .get()
       .then((querySnapshot)=>{
@@ -29,7 +28,7 @@ function Group() {
         })
       })
     }
-  }, [groupDetails]);
+  }, [groupDetails?.email]);
 
   return (
     <div className='group'>

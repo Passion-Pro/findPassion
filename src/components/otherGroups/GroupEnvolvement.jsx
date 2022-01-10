@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './Group.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';
@@ -37,9 +36,7 @@ function GroupEnvolvement() {
           </div>}
         </div>
         </div>
-        <div className="groupHead__More">
-        <ExpandMoreRoundedIcon className="groupHead__More__Icon"/>
-        </div>
+        <GroupExpandMore />
       </div>
     )
 }

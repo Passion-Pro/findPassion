@@ -27,11 +27,7 @@
     color: rgb(44, 37, 37);
     font-weight: 700;
     font-size: large;
-    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     padding-bottom: 3px;
     justify-content: flex-start !important;
-    /* margin-bottom: 6px; */
-    /* width: fit-content; */
-    /* border-bottom: 2px solid gray; */
 }

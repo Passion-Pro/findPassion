@@ -17,7 +17,7 @@ function GroupTopBody({id}) {
                 groupDetails:snapshot.data(),
               })
         })}
-    },[user])
+    },[user]);
 
     const backgroundImage="https://cdn.w600.comps.canstockphoto.com/find-your-passion-in-splashs-background-stock-illustrations_csp78297071.jpg";
     const image='https://mcdn.wallpapersafari.com/medium/46/34/648IOD.jpg';

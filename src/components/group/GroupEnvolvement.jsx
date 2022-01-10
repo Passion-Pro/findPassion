@@ -37,9 +37,7 @@ function GroupEnvolvement() {
           </div>}
         </div>
         </div>
-        <div className="groupHead__More">
-        <ExpandMoreRoundedIcon className="groupHead__More__Icon"/>
-        </div>
+        <GroupExpandMore />
       </div>
     )
 }

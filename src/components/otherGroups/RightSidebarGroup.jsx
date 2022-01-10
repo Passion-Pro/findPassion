@@ -1,5 +1,4 @@
 import React from 'react';
-import './RightSidebarGroup.css';
 import { useHistory } from 'react-router-dom';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';

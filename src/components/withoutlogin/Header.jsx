@@ -26,7 +26,7 @@ function Header() {
                     </div>
                 </div>
                 <div className="header__profile">
-                    <button>Sign In</button>
+                    <button onClick={()=>history.push('/login')}>Sign In</button>
                 </div>
             </div>
         </div>

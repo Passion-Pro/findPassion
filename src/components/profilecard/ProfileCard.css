@@ -16,12 +16,12 @@
     justify-content: center;
     height: 160px;
 }
-.profileimage__profilecard>img{
+/* .profileimage__profilecard>img{
     display: flex; 
     height: 120px;
     width: 120px;
     border-radius: 50%;
-}
+} */
 @media(max-width:769px){
     .profilecard{
         min-width: 96%;

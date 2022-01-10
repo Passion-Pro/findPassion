@@ -7,7 +7,6 @@
 .rightSidebarGroup__bodyEnvolvement2{
     display: flex;
     height: 13%;
-    /* margin: 2%; */
     max-width: 100%;
     overflow-x:scroll;
     padding:1%;
@@ -22,6 +21,7 @@
     width: 100%;
     /* margin: 2%; */
     background-color: rgb(16, 93, 156);
+    overflow-x: scroll;
 }
 .rightSidebarGroup__bodyEnvolvement1Div{
     display: flex;
