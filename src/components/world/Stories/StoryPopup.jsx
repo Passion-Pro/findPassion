@@ -13,6 +13,7 @@ import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import db from "../../../firebase";
 
+
 function StoryPopup() {
   const [{ openStoryPopup, startJourney, journey, userInfo, user }, dispatch] =
     useStateValue();
@@ -27,13 +28,16 @@ function StoryPopup() {
   const [p, setP] = useState(0);
   const [storyParts, setStoryParts] = useState([]);
   const [newStoryParts, setNewStoryParts] = useState([]);
+  const[profilePhotoUrl , setProfilePhotoUrl] = useState();
 
   useEffect(() => {
     setNewImages(journey?.data?.imagesInfo);
 
+    setProfilePhotoUrl();
+
     setNewStoryParts(journey?.data?.storyParts);
 
-    if (journey?.aid) {
+    if (journey?.id) {
       db.collection("journeys")
         .doc(journey?.id)
         .onSnapshot((snapshot) => {
@@ -42,7 +46,27 @@ function StoryPopup() {
           setViews(snapshot.data().views);
         });
     }
+
+    if(journey?.data?.uploaderInfo?.email){
+      console.log("Journey is " , journey?.data?.uploaderInfo?.email);
+      db.collection("users")
+      .where("email", "==", journey?.data?.uploaderInfo?.email)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+
+          setProfilePhotoUrl(doc.data().profilePhotoUrl)
+
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+    }
   }, [journey?.id , openStoryPopup]);
+  
 
   useEffect(() => {
     console.log("Views are", views);
@@ -203,7 +227,7 @@ function StoryPopup() {
     console.log(liked);
 
     for(let i = 0 ; i< likes?.length ; i++){
-      if(likes[i] === userInfo?.email){
+      if(likes[i]?.email === userInfo?.email){
           likes.splice(i);
       }
     }
@@ -251,7 +275,7 @@ function StoryPopup() {
               <div className="user_info">
                 <Avatar
                   className="user_info_avatar"
-                  src={userInfo?.profilePhotoUrl}
+                  src={profilePhotoUrl}
                 />
                 <p>{userInfo?.name}</p>
                 {likes?.length > 0 && (

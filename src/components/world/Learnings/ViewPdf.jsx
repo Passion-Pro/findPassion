@@ -13,25 +13,58 @@ import firebase from "firebase";
 
 function ViewPdf() {
   const fileType = ["application/pdf"];
+  const [{ user }, dispatch] = useStateValue();
 
-  const {learningId} = useParams();
-  const{ messageId} = useParams();
+  const { learningId } = useParams();
+  const { messageId } = useParams();
+  const { chatEmail } = useParams();
   const history = useHistory();
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const [pdfUrl, setPdfUrl] = useState();
 
   useEffect(() => {
-    if(learningId && messageId) {
-    db.collection("learnings")
-      .doc(learningId)
-      .collection("messages")
-      .doc(messageId)
-      .onSnapshot((snapshot) => {
-        setPdfUrl(snapshot.data().pdfUrl);
-      });
+    if (learningId && messageId) {
+      db.collection("learnings")
+        .doc(learningId)
+        .collection("messages")
+        .doc(messageId)
+        .onSnapshot((snapshot) => {
+          setPdfUrl(snapshot.data().pdfUrl);
+        });
     }
-  }, [learningId , messageId]);
+  }, [learningId, messageId]);
+
+  useEffect(() => {
+    if (chatEmail && messageId && user?.uid) {
+      console.log(chatEmail);
+      db.collection("users")
+        .doc(user?.uid)
+        .collection("chats")
+        .where("email", "==", chatEmail)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            db.collection("users")
+              .doc(user?.uid)
+              .collection("chats")
+              .doc(doc.id)
+              .collection("messages")
+              .doc(messageId)
+              .onSnapshot((snapshot) => {
+                setPdfUrl(snapshot.data().pdfUrl);
+                console.log(snapshot.data().pdfUrl);
+              });
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }
+  }, [chatEmail, messageId, user?.uid]);
 
   const back_to_previous_page = () => {
     history.goBack();

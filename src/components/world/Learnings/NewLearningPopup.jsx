@@ -14,6 +14,7 @@ function NewLearningPopup() {
   const [input, setInput] = useState();
   const [imageUrl, setImageUrl] = useState("");
   const [learnings, setLearnings] = useState([]);
+  const[launch , setLaunch] = useState(false);
 
   useEffect(() => {
     if (user && openNewLearningPopup === true) {
@@ -31,6 +32,8 @@ function NewLearningPopup() {
     }
   }, [user]);
 
+
+
   const close_popup = () => {
     dispatch({
       type: actionTypes.OPEN_NEW_LEARNING_POPUP,
@@ -42,6 +45,7 @@ function NewLearningPopup() {
     e.preventDefault();
     console.log("Image URl is ", imageUrl);
     if (learnings?.length < 5) {
+      setLaunch(true);
       if (image) {
         const id = uuid();
 
@@ -121,10 +125,12 @@ function NewLearningPopup() {
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         });
       }
-      dispatch({
-        type: actionTypes.OPEN_NEW_LEARNING_POPUP,
-        openNewLearningPopup: false,
-      });
+      setTimeout(() => {
+        dispatch({
+          type: actionTypes.OPEN_NEW_LEARNING_POPUP,
+          openNewLearningPopup: false,
+        });
+      } , 1000)
     }
   };
 
@@ -138,7 +144,7 @@ function NewLearningPopup() {
     <>
       {openNewLearningPopup === true && (
         <Container>
-          <div className="addLearning">
+          <div className= {launch === false ? `addLearning` : `addLearning_launch`}>
             <div className="add_learning_header">
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
@@ -206,6 +212,90 @@ const Container = styled.div`
     flex-direction: column;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
+
+    @media (max-width: 500px) {
+      width: 85vw;
+    }
+
+    .add_learning_header {
+      display: flex;
+      justify-content: flex-end;
+
+      .close_icon {
+        margin-right: 5px;
+        &:hover {
+          color: #6d6969;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .group_photo {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+
+      .group_photo_avatar {
+        width: 150px;
+        height: 150px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      label {
+        p {
+          color: #006eff;
+          text-align: center;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    .learning_detail {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      input {
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 10px;
+        border: 1px solid gray;
+        padding: 10px;
+        width: 80%;
+        outline: 0;
+      }
+    }
+  }
+
+
+  .addLearning_launch{
+    background-color: #fff;
+    width: 400px;
+    height: fit-content;
+    margin: auto;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
+    padding: 10px;
+    position : absolute;
+    animation : fly 1s 0.005s ease-in-out;
+
+    @keyframes fly{
+      0%{
+        margin : auto;
+        bottom : 30%;
+      }
+      100%{
+        bottom : 100%;
+        margin-left : auto;
+        margin-right : auto;
+      }
+    }
+
 
     @media (max-width: 500px) {
       width: 85vw;

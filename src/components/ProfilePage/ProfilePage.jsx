@@ -1,28 +1,86 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import MyLearning from "./MyLearning";
 import { useHistory } from "react-router-dom";
 import db from "../../firebase";
 import { useStateValue } from "../../StateProvider";
+import LearntStuff from "../UserProfile/LearntStuff";
 
 
-
-
-
-
-function ProfilePage() {
+function ProfilePage({ id }) {
   const history = useHistory();
-  const[{user , userInfo} , dispatch] = useStateValue();
+  const [{ user, userInfo }, dispatch] = useStateValue();
+  const [viewerInfo, setViewerInfo] = useState([]);
+  const [learntStuff, setLearntStuff] = useState([]);
+  const [chats, setChats] = useState([]);
+  const[x , setX] = useState(0);
 
-  const generate_chat= (e) => {
+  useEffect(() => {
+    if(user?.uid){
+       db.collection("users").doc(user?.uid).collection("chats").onSnapshot((snapshot) => (
+         setChats(
+          snapshot.docs.map((doc) => ({
+            data: doc.data(),
+            id: doc.id,
+          }))
+         )
+       ))
+    }
+  } , [user?.uid]);
+
+  useEffect(() => {
+     if(chats?.length > 0){
+       for(let i = 0 ; i < chats?.length ; i++){
+         if(chats[i]?.data?.name === viewerInfo?.name){
+           setX(1);
+           console.log("Set x to 1");
+         }
+       }
+     }
+  } , [chats?.length , viewerInfo?.name]);
+
+
+
+  useEffect(() => {
+    if (id) {
+      console.log(id);
+      db.collection("users")
+        .doc(id)
+        .onSnapshot((snapshot) => {
+          setViewerInfo(snapshot.data());
+        });
+
+      db.collection("users")
+        .doc(id)
+        .collection("learntStuff")
+        .onSnapshot((snapshot) =>
+          setLearntStuff(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            }))
+          )
+        );
+    }
+  }, [id]);
+
+  const generate_chat = (e) => {
     e.preventDefault();
-    
+
+   if(x === 0){
     db.collection("users").doc(user?.uid).collection("chats").add({
-       
+      name : viewerInfo?.name,
+      email : viewerInfo?.email,
+    }).then(() => {
+      history.push(`/chat/${id}`)
     })
+   }else if(x === 1){
+    history.push(`/chat/${id}`)
+   }
+
     
-  }
+  };
 
   return (
     <div>
@@ -30,27 +88,21 @@ function ProfilePage() {
         <div className="profile">
           <div className="profile_pic">
             <div className="circle_border">
-              <Avatar
-                className="avatar"
-                src="https://bsmedia.business-standard.com/_media/bs/img/article/2018-03/22/full/1521664011-0145.jpg"
-              />
+              <Avatar className="avatar" src={viewerInfo?.profilePhotoUrl} />
             </div>
             <div className="name">
-              <p>Mark</p>
+              <p>{viewerInfo?.name}</p>
             </div>
             <div className="chat_button">
-              <button onClick = {generate_chat}>Chat</button>
+              <button onClick={generate_chat}>Chat</button>
             </div>
           </div>
           <div className="profile_info">
             <div className="learnings">
               <div className="current_status">
-                <p className="title">Working on Frelancing Project</p>
+                <p className="title">{viewerInfo?.currentInvolvement}</p>
                 <p className="description">
-                  The project is basically a startup from Dubai for Educating
-                  students for NEET, JEE and Boards . I and Nishant are building
-                  website for them which has similar functionality as Teams
-                  software except video calling.
+                  {viewerInfo?.involvementDescription}
                 </p>
               </div>
               <div className="current_learnings_mobile">
@@ -58,35 +110,10 @@ function ProfilePage() {
                 <MyLearning />
                 {/* <MyLearning/> */}
               </div>
-              <div className="learnt_stuff">
-                <div className="learning">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/2560px-YouTube_full-color_icon_%282017%29.svg.png"
-                    alt=""
-                  />
-                  <p>Learnt HTML, CSS from #CodeWithHarry</p>
-                </div>
-                <div className="learning">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/2560px-YouTube_full-color_icon_%282017%29.svg.png"
-                    alt=""
-                  />
-                  <p>Learnt JavaScript from #cleverprogrammer</p>
-                </div>
-                <div className="learning">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/2560px-YouTube_full-color_icon_%282017%29.svg.png"
-                    alt=""
-                  />
-                  <p>Learnt React from #CleverProgrammer , #Anil Siddhu</p>
-                </div>
-                <div className="learning">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/2560px-YouTube_full-color_icon_%282017%29.svg.png"
-                    alt=""
-                  />
-                  <p>Learnt firebase from #CleverProgrammer</p>
-                </div>
+              <div className="learnings">
+              {learntStuff.map((learntStuff) => (
+              <LearntStuff learntStuff={learntStuff} from = "viewProfile"/>
+            ))}
               </div>
               {/* <div className="branch">
                 <p className = "branch_name">GT</p>
@@ -106,8 +133,7 @@ function ProfilePage() {
                     alt=""
                   />
                   <p>
-                    Completed 2 months internship as frontend web developer at
-                    Deinfra
+                    {viewerInfo?.achievement}
                   </p>
                 </div>
               </div>
@@ -116,7 +142,11 @@ function ProfilePage() {
                   src="https://5.imimg.com/data5/SM/ZI/DY/SELLER-42012147/ribbon-gold-medal-500x500.jpg"
                   alt=""
                 />
-                <p>1 year of experience</p>
+                <p>
+                  {userInfo?.experience === 0 && `Begginer`}
+                  {userInfo?.experience === 1 && `1 year of experience`}
+                  {userInfo?.experience > 1 && `${userInfo?.experience} years of experience`}
+                </p>
               </div>
             </div>
           </div>

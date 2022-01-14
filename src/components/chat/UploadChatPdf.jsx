@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useStateValue } from "../../../StateProvider";
-import { actionTypes } from "../../../reducer";
-import db, { storage } from "../../../firebase";
+import { useStateValue } from "../../StateProvider";
+import { actionTypes } from "../../reducer";
+import db, { storage } from "../../firebase";
 import firebase from "firebase";
 import { useHistory, useParams } from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
@@ -11,17 +11,16 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { Worker } from "@react-pdf-viewer/core";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Loading from "../../../Loading";
+import Loading from "../../Loading";
 
 
-function UploadPdf() {
+function UploadChatPdf() {
   const history = useHistory();
   const [{ userInfo, user }, dispatch] = useStateValue();
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfFileError, setPdfFileError] = useState("");
   const [fileName, setFileName] = useState();
   const [file, setFile] = useState();
-  const { learningId } = useParams();
   const { chatId } = useParams();
   const { chatEmail } = useParams();
   // const [fileUrl, setFileUrl] = useState();
@@ -36,7 +35,7 @@ function UploadPdf() {
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-  const[loading ,setLoading] = useState(false);
+  const[loading , setLoading] = useState(false);
 
   useEffect(() => {
     console.log(chatId);
@@ -126,8 +125,7 @@ function UploadPdf() {
       upload.on(
         "state_changed",
         (snapshot) => {
-          setLoading(true);
-          console.log(loading);
+        setLoading(true);
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
@@ -142,26 +140,7 @@ function UploadPdf() {
 
           if (downloadURL) {
             console.log("ChatId is " , chatId);
-            if (learningId) {
-              db.collection("learnings")
-                .doc(learningId)
-                .collection("messages")
-                .add({
-                  name: userInfo?.name,
-                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                  type: "pdf",
-                  pdfUrl: downloadURL,
-                  pdfName: fileName,
-                })
-                .then(() => {
-                  history.goBack();
-                  dispatch({
-                    type: actionTypes.OPEN_ATTACH_POPUP,
-                    openAttachPopup: false,
-                  });
-                  setLoading(false);
-                });
-            } else if (chatId) {
+       if (chatId) {
               if (messages?.length === 0) {
                 console.log("X is ", 0);
                 db.collection("users")
@@ -231,6 +210,7 @@ function UploadPdf() {
                       });
                   });
                   setLoading(false);
+                  history.goBack();
               } else {
                 db.collection("users")
                   .doc(user?.uid)
@@ -290,6 +270,7 @@ function UploadPdf() {
                     console.log("Error getting documents: ", error);
                   });
                   setLoading(false);
+                  history.goBack(); 
               }
             }
           }
@@ -300,7 +281,7 @@ function UploadPdf() {
 
   return (
     <>
-      {loading === false ? (<Container>
+      {loading === false ?(<Container>
         <>
           <div className="submit_assignment_page_header">
             <ArrowBackIcon
@@ -341,7 +322,7 @@ function UploadPdf() {
             <button onClick={send_pdf}>Send</button>
           </div>
         </>
-      </Container>):(<Loading/>)}
+      </Container>): (<Loading/>)}
     </>
   );
 }
@@ -468,4 +449,4 @@ const Container = styled.div`
   }
 `;
 
-export default UploadPdf;
+export default UploadChatPdf;

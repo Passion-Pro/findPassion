@@ -1,14 +1,38 @@
-import React  from 'react'
+import React , {useState , useEffect}  from 'react'
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import Avatar from "@mui/material/Avatar";
 import {useHistory} from "react-router-dom"
+import db from '../../../firebase';
+
 
 
 function Story({journey}) {
 const[{userInfo} , dispatch] = useStateValue();
-const history = useHistory()
+const history = useHistory();
+const[profilePhotoUrl , setProfilePhotoUrl] = useState();
+
+useEffect(() => {
+console.log(journey);
+   if(journey){
+    db.collection("users")
+    .where("email", "==", journey?.data?.uploaderInfo?.email)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+
+        setProfilePhotoUrl(doc.data().profilePhotoUrl)
+
+      });
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+    }); 
+   }
+} , [journey])
     
     const open_story_popup = () => {
         dispatch({
@@ -30,7 +54,7 @@ const history = useHistory()
              
           </div>
            <div className="user_info">
-               <Avatar className="user_info_avatar" src= {journey?.data?.uploaderInfo?.profilePhotoUrl}/>
+               <Avatar className="user_info_avatar" src= {profilePhotoUrl}/>
                <p>{journey?.data?.uploaderInfo?.name}</p>
            </div>
            <div className="journey_period">

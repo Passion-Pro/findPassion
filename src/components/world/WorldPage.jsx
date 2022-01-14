@@ -28,54 +28,51 @@ function WorldPage() {
   const [learnings12, setLearnings12] = useState([]);
   const [learnings13, setLearnings13] = useState([]);
   const [newLearnings, setNewLearnings] = useState([]);
+  const [x, setX] = useState(0);
   // let newLearnings = allLearnings
 
   useEffect(() => {
     db.collection("learnings").onSnapshot((snapshot) =>
-    setAllLearnings(
-      snapshot.docs.map((doc) => ({
-        data: doc.data(),
-        id: doc.id,
-      }))
-    )
-  );
+      setAllLearnings(
+        snapshot.docs.map((doc) => ({
+          data: doc.data(),
+          id: doc.id,
+        }))
+      )
+    );
 
-  db.collection("learnings").onSnapshot((snapshot) =>
-  setLearnings(
-    snapshot.docs.map((doc) => ({
-      data: doc.data(),
-      id: doc.id,
-    }))
-  )
-);  
-  } , [])
+    db.collection("learnings").onSnapshot((snapshot) =>
+      setNewLearnings(
+        snapshot.docs.map((doc) => ({
+          data: doc.data(),
+          id: doc.id,
+        }))
+      )
+    );
+  }, []);
 
-
-  
   useEffect(() => {
     if (user?.uid) {
-
-      db.collection("users")
-      .doc(user?.uid)
-      .onSnapshot((snapshot) => {
-        dispatch({
-          type: actionTypes.SET_USER_INFO,
-          userInfo: snapshot.data(),
-        });
-      });
-
-
       db.collection("users")
         .doc(user?.uid)
-        .collection("myLearnings")
-        .onSnapshot((snapshot) =>
-          setMyLearnings(
-            snapshot.docs.map((doc) => ({
-              data: doc.data(),
-              id: doc.id,
-            }))
-          )
-        );
+        .onSnapshot((snapshot) => {
+          dispatch({
+            type: actionTypes.SET_USER_INFO,
+            userInfo: snapshot.data(),
+          });
+        });
+
+      // db.collection("users")
+      //   .doc(user?.uid)
+      //   .collection("myLearnings")
+      //   .onSnapshot((snapshot) =>
+      //     setMyLearnings(
+      //       snapshot.docs.map((doc) => ({
+      //         data: doc.data(),
+      //         id: doc.id,
+      //       }))
+      //     )
+      //   );
 
       db.collection("users")
         .doc(user?.uid)
@@ -93,52 +90,67 @@ function WorldPage() {
     console.log("My Learnings is ", myLearnings);
   }, [user?.uid]);
 
-
-
-
   useEffect(() => {
     if (allLearnings?.length > 0 && joinedLearnings?.length > 0) {
       for (let i = 0; i < allLearnings?.length; i++) {
         for (let j = 0; j < joinedLearnings?.length; j++) {
           if (
-            learnings[i]?.data?.learning ===
+            newLearnings[i]?.data?.learning ===
             joinedLearnings[j]?.data?.learning?.data?.learning
           ) {
-            learnings.splice(i);
-            console.log("Spliced" , learnings);
+            newLearnings.splice(i);
+            console.log("Spliced", newLearnings);
           }
         }
       }
     }
-  }, [learnings?.length, user , joinedLearnings?.length , allLearnings?.length]);
+  }, [
+    newLearnings?.length,
+    user,
+    joinedLearnings?.length,
+    allLearnings?.length,
+  ]);
 
-  // useEffect(() => {
-  //   if (newLearnings?.length === allLearnings?.length - learnings?.length) {
-  //     setLearnings(newLearnings);
-  //   }
-  // }, [newLearnings?.length]);
+  useEffect(() => {
+    if (
+      newLearnings?.length > 0 &&
+      allLearnings?.length > 0 &&
+      joinedLearnings?.length > 0
+    ) {
+      if (
+        newLearnings?.length ===
+        allLearnings?.length - joinedLearnings?.length
+      ) {
+        setLearnings(newLearnings);
+      }
+    }
+  }, [newLearnings?.length, joinedLearnings?.length, allLearnings?.length]);
 
   useEffect(() => {
     // console.log("All Learnings Length is ", allLearnings?.length);
     // console.log("Joined Learnings Length is ", joinedLearnings?.length);
     // console.log("Learnings Length is", learnings?.length);
-    if (learnings?.length > 0 && userInfo?.passion && userInfo?.experience) {
+    if (
+      learnings?.length > 0 &&
+      userInfo?.passion &&
+      userInfo?.experience &&
+      newLearnings?.length > 0
+    ) {
       console.log("OK");
       for (let i = 0; i < learnings?.length; i++) {
         // console.log("Ran");
         // console.log(learnings[i]?.data?.started_by?.email);
         // console.log(user?.email);
         if (learnings[i]?.data?.started_by?.email !== user?.email) {
+          setX(1);
           if (
             learnings[i]?.data?.started_by?.passion === userInfo?.passion &&
             learnings[i]?.data?.started_by?.experience === userInfo?.experience
-          )
-           {
+          ) {
             console.log("First Cases");
             learnings1.push(learnings[i]);
             console.log("Learnings 1 are", learnings1);
-          }
-           else if (
+          } else if (
             learnings[i]?.data?.started_by?.passion === userInfo?.passion &&
             learnings[i]?.data?.started_by?.experience !== userInfo?.experience
           ) {
@@ -178,7 +190,7 @@ function WorldPage() {
         }
       }
     }
-  }, [learnings?.length, userInfo?.passion , userInfo?.experience , user]);
+  }, [learnings?.length, userInfo?.passion, userInfo?.experience, user ,  joinedLearnings?.length]);
 
   const add_learning = () => {
     dispatch({
@@ -188,7 +200,6 @@ function WorldPage() {
   };
 
   return (
-    <div>
       <Container>
         <div className="passion_logo">
           <p>WEB DEVLOPMENT</p>
@@ -207,7 +218,7 @@ function WorldPage() {
             </button>
           </div>
         </div>
-        {myLearnings?.length > 0 && (
+        {x === 1 && learnings?.length > 0 && (
           <div className="my_learnings">
             <p>My Learnings</p>
             <div className="my_learnings_learnings">
@@ -219,68 +230,72 @@ function WorldPage() {
                 </>
               ))}
               {joinedLearnings.map((learning) => (
-                  <Learning learning={learning?.data?.learning} type="joined" />
+                <Learning learning={learning?.data?.learning} type="joined" />
               ))}
             </div>
           </div>
         )}
-        <div className="all_learnings">
-          {learnings1.map((learning) => (
-            <Learning learning={learning} type = "all"/>
-          ))}
-        </div>
-        {/* <div className="all_learnings">
-          {learnings1.map(({ learning }) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings2.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings3.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings4.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings5.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings6.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings7.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings8.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings9.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings10.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings11.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-          {learnings12.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
+        {x === 1 && learnings?.length > 0 && userInfo?.passion !== "Don't  know" && (
+          <div className="all_learnings">
+            {learnings1.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
 
-          {learnings13.map((learning) => (
-            <Learning learning={learning} type="all" />
-          ))}
-        </div> */}
+            {learnings2.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings3.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings4.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings5.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings6.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings7.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings8.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings9.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings10.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings11.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+            {learnings12.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+
+            {learnings13.map((learning) => (
+              <Learning learning={learning} type="all" />
+            ))}
+          </div>
+        )}
+        {userInfo?.passion === "Don't know" && (
+           <div className="all_learnings">
+           {allLearnings.map(({ learning }) => (
+             <Learning learning={learning} type="all" />
+           ))}  
+         </div>
+        )}
         <NewLearningPopup />
       </Container>
-    </div>
   );
 }
 
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
-  max-height: 100vh;
+  height: fit-content;
+  /* max-height: 100vh; */
   display: flex;
   flex-direction: column;
 

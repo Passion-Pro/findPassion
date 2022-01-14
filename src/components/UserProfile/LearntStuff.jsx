@@ -3,7 +3,7 @@ import styled from "styled-components";
 import db from "../../firebase";
 import { useStateValue } from "../../StateProvider";
 
-function LearntStuff({ learntStuff }) {
+function LearntStuff({ learntStuff , from }) {
   const [{ user, userInfo }, dispatch] = useStateValue();
 
   const delete_learnt_stuff = (e) => {
@@ -33,7 +33,7 @@ function LearntStuff({ learntStuff }) {
       {learntStuff?.data?.platform !== "others" && (
         <div className="icon">
           <img src={learntStuff?.data?.iconUrl} alt="" />
-          <button onClick={delete_learnt_stuff}>Delete</button>
+         { from === "viewProfile" ?(""): ( <button onClick={delete_learnt_stuff}>Delete</button>)}
         </div>
       )}
       <div className="learning">

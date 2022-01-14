@@ -15,10 +15,7 @@ function Learning({ learning, type }) {
   const [fires, setFires] = useState([]);
   const [fired, setFired] = useState(false);
   const[joinedId , setJoinedId] = useState();
-
-  useEffect(() => {
-
-  } , [learning])
+  const[profilePhotoUrl , setProfilePhotoUrl] = useState();
 
   useEffect(() => {
     if (user?.uid && learning?.data?.started_by?.email && userInfo) {
@@ -29,6 +26,8 @@ function Learning({ learning, type }) {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
+
+            setProfilePhotoUrl(doc.data().profilePhotoUrl)
 
             db.collection("users")
               .doc(doc.id)
@@ -189,11 +188,7 @@ function Learning({ learning, type }) {
           }}
         >
           <Avatar
-            src={
-              type === `my`
-                ? userInfo?.profilePhotoUrl
-                : learning?.data?.started_by?.profilePhotoUrl
-            }
+            src={profilePhotoUrl}
             className="avatar"
           />
           <p className="learning_name">

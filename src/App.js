@@ -41,6 +41,8 @@ import CreateStoryPage from "./components/stories/CreateStoryPage";
 import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
 import {useHistory} from "react-router-dom"
+import UploadChatPdf from "./components/chat/UploadChatPdf";
+
 
 function App() {
 
@@ -155,7 +157,10 @@ function App() {
           <Route path="/newAccount">
             <CreateAccount />
           </Route>
-          <Route path="/chat">
+          <Route path="/signIn">
+            <Login />
+          </Route>
+          <Route path="/chat/:chatId">
             <Chat />
           </Route>
           <Route path="/messages">
@@ -185,10 +190,16 @@ function App() {
           <Route path="/requests">
             <RequestsPage />
           </Route>
-          <Route path="/learnings/uploadPdf/:learningId">
+          <Route path="/learningsUploadPdf/:learningId">
             <UploadPdf />
           </Route>
+          <Route path="/messagesUploadPdf/:chatId/:chatEmail">
+            <UploadChatPdf />
+          </Route>
           <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
+            <ViewPdf/>
+          </Route>
+          <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
             <ViewPdf/>
           </Route>
           <Route path="/userProfile">

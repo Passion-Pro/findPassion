@@ -13,17 +13,17 @@ function StoriesPage() {
   const [journeys, setJourneys] = useState([]);
 
   useEffect(() => {
-    if(user){
+    if (user) {
       db.collection("journeys")
-      .orderBy("likesLength", "desc")
-      .onSnapshot((snapshot) =>
-        setJourneys(
-          snapshot.docs.map((doc) => ({
-            id: doc.id,
-            data: doc.data(),
-          }))
-        )
-      );
+        .orderBy("likesLength", "desc")
+        .onSnapshot((snapshot) =>
+          setJourneys(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              data: doc.data(),
+            }))
+          )
+        );
     }
   }, [user]);
 
@@ -49,22 +49,31 @@ function StoriesPage() {
           </button>
           <button className="stories_button">Stories</button>
         </div>
-        <div className="stories">
-          {journeys.map((journey) => (
-           <>
-            {journey.data?.uploaderInfo?.passion === userInfo?.passion && (
-                <Story journey = {journey}/>
-            )}
-           </>
-          ))}
-          {journeys.map((journey) => (
-           <>
-            {journey.data?.uploaderInfo?.passion !== userInfo?.passion && (
-                <Story journey = {journey}/>
-            )}
-           </>
-          ))}
-        </div>
+        {userInfo?.passion !== "Don't know" && (
+          <div className="stories">
+            {journeys.map((journey) => (
+              <>
+                {journey.data?.uploaderInfo?.passion === userInfo?.passion && (
+                  <Story journey={journey} />
+                )}
+              </>
+            ))}
+            {journeys.map((journey) => (
+              <>
+                {journey.data?.uploaderInfo?.passion !== userInfo?.passion && (
+                  <Story journey={journey} />
+                )}
+              </>
+            ))}
+          </div>
+        )}
+        {userInfo?.passion === "Don't know" && (
+          <div className="stories">
+            {journeys.map((journey) => (
+              <Story journey={journey} />
+            ))}
+          </div>
+        )}
       </Container>
       <StoryPopup />
     </div>

@@ -6,9 +6,17 @@ import VideoPlayer from "../world/Stories/VideoPlayer";
 import {useHistory} from "react-router-dom"
 
 
-function Message({ message , learningId}) {
+function Message({ message , learningId , chatEmail}) {
 
   const history = useHistory();
+
+  const view_pdf = (e) => {
+    if(learningId){
+      history.push(`/learnings/viewPdf/${learningId}/messages/${message?.id}`)
+    }else if(chatEmail){
+      history.push(`/chats/viewPdf/${chatEmail}/messages/${message?.id}`)
+    }
+  }
 
   return (
     <Container>
@@ -42,7 +50,7 @@ function Message({ message , learningId}) {
         <div className="message">
           <p className="message_name">{message?.data?.name}</p>
           <div className="message_message fileName">
-            <p onClick = {(e) => history.push(`/learnings/viewPdf/${learningId}/messages/${message?.id}`)}>{message?.data?.pdfName}</p>
+            <p onClick = {view_pdf}>{message?.data?.pdfName}</p>
           </div>
         </div>
       )}

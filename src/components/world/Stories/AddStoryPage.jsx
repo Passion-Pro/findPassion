@@ -7,6 +7,7 @@ import TinderCard from "react-tinder-card";
 import { useHistory } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import db, { storage } from "../../../firebase";
+import Loading from "../../../Loading";
 
 function AddStoryPage() {
   const [{ journeyUpload, userInfo, user }, dispatch] = useStateValue();
@@ -25,6 +26,7 @@ function AddStoryPage() {
   const [imageCaptions, setImageCaptions] = useState([]);
   const [imagesInfo, setImagesInfo] = useState([]);
   const [image1, setImage1] = useState();
+  const [loading, setLoading] = useState(false);
   const [parts, setParts] = useState([
     {
       imageUrl:
@@ -139,7 +141,14 @@ function AddStoryPage() {
   };
 
   const post_photo_cards = () => {
-    if (journeyPeriod > 0 && images?.length > 0 && image1) {
+    if (
+      journeyPeriod > 0 &&
+      images?.length > 0 &&
+      image1 &&
+      userInfo?.passion &&
+      userInfo?.passion !== "Don't know" &&
+      userInfo?.experience > 1
+    ) {
       for (let i = 0; i < images?.length; i++) {
         const id = uuid();
 
@@ -153,6 +162,7 @@ function AddStoryPage() {
           upload.on(
             "state_changed",
             (snapshot) => {
+              setLoading(true);
               const progress =
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
@@ -196,24 +206,30 @@ function AddStoryPage() {
         (error) => console.log(error.code),
         async () => {
           const image1Url = await upload.snapshot.ref.getDownloadURL();
-          console.log("Image1Url is " , image1Url)
+          console.log("Image1Url is ", image1Url);
           if (image1Url) {
-            db.collection("journeys").doc(user?.uid).set({
-              journeyPeriod: journeyPeriod,
-              imagesInfo: imagesInfo,
-              journeyThrough: "photos",
-              likes: [],
-              fires: [],
-              likesLength: 0,
-              firesLength: 0,
-              memorablePhotoUrl: image1Url,
-              uploaderInfo : userInfo,
-              views : [{
-                email : userInfo?.email,
-              }]
-            }).then(() => {
-              history.push("/stories")
-            })
+            db.collection("journeys")
+              .doc(user?.uid)
+              .set({
+                journeyPeriod: journeyPeriod,
+                imagesInfo: imagesInfo,
+                journeyThrough: "photos",
+                likes: [],
+                fires: [],
+                likesLength: 0,
+                firesLength: 0,
+                memorablePhotoUrl: image1Url,
+                uploaderInfo: userInfo,
+                views: [
+                  {
+                    email: userInfo?.email,
+                  },
+                ],
+              })
+              .then(() => {
+                history.push("/stories");
+                setLoading(false);
+              });
 
             db.collection("users").doc(user?.uid).update({
               journeyImages: imagesInfo,
@@ -236,20 +252,27 @@ function AddStoryPage() {
     });
 
     setImageCaption("");
-   
+
     console.log("Images are finally", images);
   };
 
   const post_video = (e) => {
     e.preventDefault();
-    if (journeyPeriod > 0 && video && image1) {
-      
+    if (
+      journeyPeriod > 0 &&
+      video &&
+      image1 &&
+      userInfo?.passion &&
+      userInfo?.passion !== "Don't know" &&
+      userInfo?.experience > 1
+    ) {
       const id = uuid();
       const upload = storage.ref(`JourneyVideos/${id}`).put(video);
 
       upload.on(
         "state_changed",
         (snapshot) => {
+          setLoading(true);
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
@@ -263,56 +286,59 @@ function AddStoryPage() {
           const url = await upload.snapshot.ref.getDownloadURL();
           console.log("URL is ", url);
           if (url) {
-            db.collection("journeys").doc(user?.uid).set({
-              journeyPeriod: journeyPeriod,
-              videoUrl: url,
-              journeyThrough: "video",
-              likes: [],
-              fires: [],
-              likesLength: 0,
-              firesLength: 0,
-              uploaderInfo : userInfo,
-              views : [],
-            }).then(() => {
-               
-              const id1 = uuid();
+            db.collection("journeys")
+              .doc(user?.uid)
+              .set({
+                journeyPeriod: journeyPeriod,
+                videoUrl: url,
+                journeyThrough: "video",
+                likes: [],
+                fires: [],
+                likesLength: 0,
+                firesLength: 0,
+                uploaderInfo: userInfo,
+                views: [],
+              })
+              .then(() => {
+                const id1 = uuid();
 
-              const upload2 = storage.ref(`JourneyImages/${id1}`).put(image1);
-              
-              upload2.on(
-                "state_changed",
-                (snapshot) => {
-                  const progress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        
-                  console.log(`Progress : ${progress}%`);
-                  if (snapshot.state === "RUNNING") {
+                const upload2 = storage.ref(`JourneyImages/${id1}`).put(image1);
+
+                upload2.on(
+                  "state_changed",
+                  (snapshot) => {
+                    const progress =
+                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
                     console.log(`Progress : ${progress}%`);
-                  }
-                },
-                (error) => console.log(error.code),
-                async () => {
-                  const image1Url = await upload2.snapshot.ref.getDownloadURL();
-                  console.log("IMAGE1YRL is " , image1Url);
-                  if (image1Url) {
-                    db.collection("journeys")
-                      .doc(user?.uid)
-                      .update({
+                    if (snapshot.state === "RUNNING") {
+                      console.log(`Progress : ${progress}%`);
+                    }
+                  },
+                  (error) => console.log(error.code),
+                  async () => {
+                    const image1Url =
+                      await upload2.snapshot.ref.getDownloadURL();
+                    console.log("IMAGE1YRL is ", image1Url);
+                    if (image1Url) {
+                      db.collection("journeys").doc(user?.uid).update({
                         memorablePhotoUrl: image1Url,
-                      })
+                      });
+                    }
                   }
-                }
-              );
+                );
+              });
 
-
-            })
-
-            db.collection("users").doc(user?.uid).update({
-              journeyUrl: url,
-              journeyThrough: "video",
-            }) .then(() => {
-              history.push("/stories");
-            });
+            db.collection("users")
+              .doc(user?.uid)
+              .update({
+                journeyUrl: url,
+                journeyThrough: "video",
+              })
+              .then(() => {
+                setLoading(false);
+                history.push("/stories");
+              });
           }
         }
       );
@@ -322,7 +348,14 @@ function AddStoryPage() {
   };
 
   const post_text = () => {
-    if (journeyPeriod > 0 && storyParts?.length > 0 && image1) {
+    if (
+      journeyPeriod > 0 &&
+      storyParts?.length > 0 &&
+      image1 &&
+      userInfo?.passion &&
+      userInfo?.passion !== "Don't know" &&
+      userInfo?.experience > 1
+    ) {
       db.collection("journeys").doc(user?.uid).set({
         journeyPeriod: journeyPeriod,
         storyParts: storyParts,
@@ -331,8 +364,8 @@ function AddStoryPage() {
         fires: [],
         likesLength: 0,
         firesLength: 0,
-        uploaderInfo : userInfo,
-        views : []
+        uploaderInfo: userInfo,
+        views: [],
       });
 
       const id2 = uuid();
@@ -341,6 +374,7 @@ function AddStoryPage() {
       upload.on(
         "state_changed",
         (snapshot) => {
+          setLoading(true);
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
@@ -365,10 +399,15 @@ function AddStoryPage() {
         }
       );
 
-      db.collection("users").doc(user?.uid).update({
-        storyParts: storyParts,
-        journeyThrough: "text",
-      });
+      db.collection("users")
+        .doc(user?.uid)
+        .update({
+          storyParts: storyParts,
+          journeyThrough: "text",
+        })
+        .then(() => {
+          setLoading(false);
+        });
     } else {
       alert("Please fill all the details");
     }
@@ -376,302 +415,311 @@ function AddStoryPage() {
 
   return (
     <div>
-      <Container>
-        <div className="addStory">
-          <div className="years_of_journey">
-            <p>Enter years of your journey in Web Development</p>
-            <input
-              type="number"
-              min={2}
-              value={journeyPeriod}
-              onChange={(e) => setJourneyPeriod(e.target.value)}
-            />
-          </div>
-          <div className="upload_current_image">
-            <input
-              type="file"
-              id={"image1"}
-              style={{ display: "none" }}
-              onChange={selectImage1}
-              accept="image/git , image/jpeg , image/png"
-            />
-            <label htmlFor="image1">
-              Upload most memorable photo of your journey
-            </label>
-            {image1 && <img src={URL.createObjectURL(image1)} alt="" />}
-          </div>
-          <div className="show_journey_buttons">
-            {console.log(journeyUpload)}
-            <button
-              className={
-                journeyUpload === "video"
-                  ? `non_active_button`
-                  : `active_button`
-              }
-              onClick={upload_journey_through_video}
-            >
-              Show your journey through a video
-            </button>
-            <button
-              className={
-                journeyUpload === "photos"
-                  ? `non_active_button`
-                  : `active_button`
-              }
-              onClick={upload_journey_through_photos}
-            >
-              Show your journey through photos
-            </button>
-            <button
-              className={
-                journeyUpload === "text" ? `non_active_button` : `active_button`
-              }
-              onClick={upload_journey_through_text}
-            >
-              Show your journey through text
-            </button>
-          </div>
-          <div className="upload_journey">
-            {journeyUpload === "video" && (
-              <div className="upload_through_video">
-                <input
-                  type="file"
-                  id={"video"}
-                  style={{ display: "none" }}
-                  onChange={selectVideo}
-                  accept="video/mp4"
-                />
+      {loading === false ? (
+        <Container>
+          <div className="addStory">
+            <div className="years_of_journey">
+              <p>Enter years of your journey in Web Development</p>
+              <input
+                type="number"
+                min={2}
+                value={journeyPeriod}
+                onChange={(e) => setJourneyPeriod(e.target.value)}
+              />
+            </div>
+            <div className="upload_current_image">
+              <input
+                type="file"
+                id={"image1"}
+                style={{ display: "none" }}
+                onChange={selectImage1}
+                accept="image/git , image/jpeg , image/png"
+              />
+              <label htmlFor="image1">
+                Upload most memorable photo of your journey
+              </label>
+              {image1 && <img src={URL.createObjectURL(image1)} alt="" />}
+            </div>
+            <div className="show_journey_buttons">
+              {console.log(journeyUpload)}
+              <button
+                className={
+                  journeyUpload === "video"
+                    ? `non_active_button`
+                    : `active_button`
+                }
+                onClick={upload_journey_through_video}
+              >
+                Show your journey through a video
+              </button>
+              <button
+                className={
+                  journeyUpload === "photos"
+                    ? `non_active_button`
+                    : `active_button`
+                }
+                onClick={upload_journey_through_photos}
+              >
+                Show your journey through photos
+              </button>
+              <button
+                className={
+                  journeyUpload === "text"
+                    ? `non_active_button`
+                    : `active_button`
+                }
+                onClick={upload_journey_through_text}
+              >
+                Show your journey through text
+              </button>
+            </div>
+            <div className="upload_journey">
+              {journeyUpload === "video" && (
+                <div className="upload_through_video">
+                  <input
+                    type="file"
+                    id={"video"}
+                    style={{ display: "none" }}
+                    onChange={selectVideo}
+                    accept="video/mp4"
+                  />
 
-                <button className="upload_video">
-                  <label htmlFor="video">Upload Video</label>
-                </button>
-                {video && (
-                  <div className="video_player">
-                    <VideoPlayer videoUrl={URL.createObjectURL(video)} />
-                  </div>
-                )}
-                <div className="post_button">
-                  <button onClick={post_video}>Post</button>
-                </div>
-              </div>
-            )}
-            {journeyUpload === "photos" && (
-              <div className="upload_through_photos">
-                <input
-                  type="file"
-                  id={"image"}
-                  style={{ display: "none" }}
-                  onChange={selectImage}
-                  accept="image/git , image/jpeg , image/png"
-                />
-
-                <button className="upload_image">
-                  <label htmlFor="image">
-                    {uploadedPhotos?.length === 0
-                      ? `Upload Image`
-                      : `Upload Next Image`}
-                  </label>
-                </button>
-
-                <div className="journey_cards">
-                  <div className="tinderCards_cardContainer">
-                    {images.map((image, index) => (
-                      <>
-                        <TinderCard
-                          className="swipe"
-                          // key={part.caption}
-                          preventSwipe={["up", "down"]}
-                          //  onCardLeftScreen = {() => outOfFrame(person.name)}
-                          onSwipe={() => {
-                            if (index === 0) {
-                              console.log("Index is ", index);
-                              const newImages = images;
-                              setImages([]);
-                              setImages(newImages);
-                            }
-                          }}
-                        >
-                          {image?.imageCaption === "" ? (
-                            <div className="card_without_caption">
-                              <div
-                                className="card_image"
-                                style={{
-                                  backgroundImage: `url(${URL.createObjectURL(
-                                    image.image
-                                  )})`,
-                                }}
-                              ></div>
-                            </div>
-                          ) : (
-                            <div className="card">
-                              <div
-                                className="card_image"
-                                style={{
-                                  backgroundImage: `url(${URL.createObjectURL(
-                                    image.image
-                                  )})`,
-                                }}
-                              ></div>
-                              {console.log(
-                                "ImageCaption in code is ",
-                                image.imageCaption
-                              )}
-                              <div className="image_caption">
-                                <p>{image?.imageCaption}</p>
-                              </div>
-                            </div>
-                          )}
-                        </TinderCard>
-                      </>
-                    ))}
-                  </div>
-                </div>
-
-                {image && (
-                  <div className="add_caption">
-                    <textarea
-                      name=""
-                      id=""
-                      cols="30"
-                      rows="10"
-                      placeholder="Add Caption with the selected image"
-                      value={imageCaption}
-                      onChange={(e) => setImageCaption(e.target.value)}
-                    ></textarea>
-                    <div className="add_button">
-                      <button onClick={add_imageCaption}>Add</button>
+                  <button className="upload_video">
+                    <label htmlFor="video">Upload Video</label>
+                  </button>
+                  {video && (
+                    <div className="video_player">
+                      <VideoPlayer videoUrl={URL.createObjectURL(video)} />
                     </div>
+                  )}
+                  <div className="post_button">
+                    <button onClick={post_video}>Post</button>
                   </div>
-                )}
+                </div>
+              )}
+              {journeyUpload === "photos" && (
+                <div className="upload_through_photos">
+                  <input
+                    type="file"
+                    id={"image"}
+                    style={{ display: "none" }}
+                    onChange={selectImage}
+                    accept="image/git , image/jpeg , image/png"
+                  />
 
-                <div className="uploaded_photos">
-                  {image && (
-                    <>
-                      {/* <img src={URL.createObjectURL(image)} alt="" /> */}
-                      {images.map((image) => (
-                        <div className="uploaded_photo">
-                          <img src={URL.createObjectURL(image.image)} alt="" />
-                          <div className="caption">
-                            <p>
-                              {image?.imageCaption?.length <= 20 ? (
-                                <>{image?.imageCaption}</>
-                              ) : (
-                                <>{image?.imageCaption?.slice(0, 70)}...</>
-                              )}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              setX(1);
-                              let y;
-                              for (let i = 0; i < images.length; i++) {
-                                if (images[i].image === image.image) {
-                                  y = i;
+                  <button className="upload_image">
+                    <label htmlFor="image">
+                      {uploadedPhotos?.length === 0
+                        ? `Upload Image`
+                        : `Upload Next Image`}
+                    </label>
+                  </button>
 
-                                  console.log("Y is", y);
-
-                                  images.splice(y, 1);
-
-                                  console.log(images);
-                                }
+                  <div className="journey_cards">
+                    <div className="tinderCards_cardContainer">
+                      {images.map((image, index) => (
+                        <>
+                          <TinderCard
+                            className="swipe"
+                            // key={part.caption}
+                            preventSwipe={["up", "down"]}
+                            //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                            onSwipe={() => {
+                              if (index === 0) {
+                                console.log("Index is ", index);
+                                const newImages = images;
+                                setImages([]);
+                                setImages(newImages);
                               }
                             }}
                           >
-                            Remove
-                          </button>
-                        </div>
+                            {image?.imageCaption === "" ? (
+                              <div className="card_without_caption">
+                                <div
+                                  className="card_image"
+                                  style={{
+                                    backgroundImage: `url(${URL.createObjectURL(
+                                      image.image
+                                    )})`,
+                                  }}
+                                ></div>
+                              </div>
+                            ) : (
+                              <div className="card">
+                                <div
+                                  className="card_image"
+                                  style={{
+                                    backgroundImage: `url(${URL.createObjectURL(
+                                      image.image
+                                    )})`,
+                                  }}
+                                ></div>
+                                {console.log(
+                                  "ImageCaption in code is ",
+                                  image.imageCaption
+                                )}
+                                <div className="image_caption">
+                                  <p>{image?.imageCaption}</p>
+                                </div>
+                              </div>
+                            )}
+                          </TinderCard>
+                        </>
                       ))}
-                    </>
+                    </div>
+                  </div>
+
+                  {image && (
+                    <div className="add_caption">
+                      <textarea
+                        name=""
+                        id=""
+                        cols="30"
+                        rows="10"
+                        placeholder="Add Caption with the selected image"
+                        value={imageCaption}
+                        onChange={(e) => setImageCaption(e.target.value)}
+                      ></textarea>
+                      <div className="add_button">
+                        <button onClick={add_imageCaption}>Add</button>
+                      </div>
+                    </div>
                   )}
-                </div>
-                <div className="post_button_photos">
-                  <button onClick={post_photo_cards}>Post</button>
-                </div>
-              </div>
-            )}
-            {journeyUpload === "text" && (
-              <>
-                <div className="journey_cards">
-                  <div className="tinderCards_cardContainer">
-                    {storyParts?.length > 0 && (
+
+                  <div className="uploaded_photos">
+                    {image && (
                       <>
-                        {storyParts.map((part, index) => (
-                          <>
-                            <TinderCard
-                              className="swipe"
-                              // key={part.caption}
-                              preventSwipe={["up", "down"]}
-                              //  onCardLeftScreen = {() => outOfFrame(person.name)}
-                              onSwipe={() => {
-                                setP(0);
-                                console.log("Index is ", index);
-                                if (index === 0) {
-                                  const newStoryParts = storyParts;
-                                  setStoryParts([]);
-                                  setStoryParts(newStoryParts);
+                        {/* <img src={URL.createObjectURL(image)} alt="" /> */}
+                        {images.map((image) => (
+                          <div className="uploaded_photo">
+                            <img
+                              src={URL.createObjectURL(image.image)}
+                              alt=""
+                            />
+                            <div className="caption">
+                              <p>
+                                {image?.imageCaption?.length <= 20 ? (
+                                  <>{image?.imageCaption}</>
+                                ) : (
+                                  <>{image?.imageCaption?.slice(0, 70)}...</>
+                                )}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setX(1);
+                                let y;
+                                for (let i = 0; i < images.length; i++) {
+                                  if (images[i].image === image.image) {
+                                    y = i;
+
+                                    console.log("Y is", y);
+
+                                    images.splice(y, 1);
+
+                                    console.log(images);
+                                  }
                                 }
                               }}
                             >
-                              <div className="card text_card">
-                                <p>{part}</p>
-                              </div>
-                            </TinderCard>
-                          </>
+                              Remove
+                            </button>
+                          </div>
                         ))}
                       </>
                     )}
                   </div>
+                  <div className="post_button_photos">
+                    <button onClick={post_photo_cards}>Post</button>
+                  </div>
                 </div>
-                {storyParts?.length > 0 ? (
-                  <div className="write_text add_caption">
-                    <textarea
-                      name=""
-                      id=""
-                      cols="30"
-                      rows="10"
-                      placeholder="Add Caption with the selected image"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                    ></textarea>
-                    <div className="add_button_text">
-                      <button onClick={cancel} className="delete">
-                        Cancel
-                      </button>
-                      <button onClick={add_text}>Add</button>
-                    </div>
-                    <div className="post_button_text">
-                      <button onClick={post_text}>Post</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="write_text add_caption"
-                    style={{
-                      marginTop: "20px",
-                    }}
-                  >
-                    <textarea
-                      name=""
-                      id=""
-                      cols="30"
-                      rows="10"
-                      placeholder="Add Caption with the selected image"
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                    ></textarea>
-                    <div className="add_button_text">
-                      <button onClick={cancel} className="delete">
-                        Cancel
-                      </button>
-                      <button onClick={add_text}>Add</button>
+              )}
+              {journeyUpload === "text" && (
+                <>
+                  <div className="journey_cards">
+                    <div className="tinderCards_cardContainer">
+                      {storyParts?.length > 0 && (
+                        <>
+                          {storyParts.map((part, index) => (
+                            <>
+                              <TinderCard
+                                className="swipe"
+                                // key={part.caption}
+                                preventSwipe={["up", "down"]}
+                                //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                                onSwipe={() => {
+                                  setP(0);
+                                  console.log("Index is ", index);
+                                  if (index === 0) {
+                                    const newStoryParts = storyParts;
+                                    setStoryParts([]);
+                                    setStoryParts(newStoryParts);
+                                  }
+                                }}
+                              >
+                                <div className="card text_card">
+                                  <p>{part}</p>
+                                </div>
+                              </TinderCard>
+                            </>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
-                )}
-              </>
-            )}
+                  {storyParts?.length > 0 ? (
+                    <div className="write_text add_caption">
+                      <textarea
+                        name=""
+                        id=""
+                        cols="30"
+                        rows="10"
+                        placeholder="Add Caption with the selected image"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                      ></textarea>
+                      <div className="add_button_text">
+                        <button onClick={cancel} className="delete">
+                          Cancel
+                        </button>
+                        <button onClick={add_text}>Add</button>
+                      </div>
+                      <div className="post_button_text">
+                        <button onClick={post_text}>Post</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className="write_text add_caption"
+                      style={{
+                        marginTop: "20px",
+                      }}
+                    >
+                      <textarea
+                        name=""
+                        id=""
+                        cols="30"
+                        rows="10"
+                        placeholder="Add Caption with the selected image"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                      ></textarea>
+                      <div className="add_button_text">
+                        <button onClick={cancel} className="delete">
+                          Cancel
+                        </button>
+                        <button onClick={add_text}>Add</button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 }
@@ -1096,8 +1144,8 @@ const Container = styled.div`
     }
 
     img {
-      width : 70%;
-      max-height : 300px;
+      width: 70%;
+      max-height: 300px;
       object-fit: contain;
       margin-left: auto;
       margin-right: auto;

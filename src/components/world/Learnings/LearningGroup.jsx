@@ -12,6 +12,7 @@ import Message from "../../chat/Message";
 import { useHistory, useParams } from "react-router-dom";
 import db from "../../../firebase";
 import firebase from "firebase";
+import Picker from "emoji-picker-react";
 
 function LearningGroup() {
   const [{ user, userInfo }, dispatch] = useStateValue();
@@ -21,6 +22,13 @@ function LearningGroup() {
   const [learners, setLearners] = useState([]);
   const [input, setInput] = useState();
   const [messages, setMessages] = useState([]);
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [openEmojis, setOpenEmojis] = useState(false);
+
+  const onEmojiClick = (event, emojiObject) => {
+    setChosenEmoji(emojiObject);
+    setInput(input + emojiObject?.emoji);
+  };
 
   useEffect(() => {
     if (learningId && user) {
@@ -46,14 +54,13 @@ function LearningGroup() {
         .doc(learningId)
         .collection("messages")
         .orderBy("timestamp", "desc")
-        .onSnapshot(
-          (snapshot) =>
-            setMessages(
-              snapshot.docs.map((doc) => ({
-                id: doc.id,
-                data: doc.data(),
-              }))
-            )
+        .onSnapshot((snapshot) =>
+          setMessages(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              data: doc.data(),
+            }))
+          )
         );
     }
   }, [learningId, user]);
@@ -79,7 +86,7 @@ function LearningGroup() {
       type: "text",
     });
 
-    setInput()
+    setInput();
   };
 
   return (
@@ -125,7 +132,7 @@ function LearningGroup() {
             </div>
             <div className="group_chat_chat">
               {messages.map((message) => (
-                <Message message={message} learningId = {learningId}/>
+                <Message message={message} learningId={learningId} />
               ))}
             </div>
             <div className="group_chat_footer">
@@ -134,7 +141,10 @@ function LearningGroup() {
                 onClick={open_attachPopup}
               />
               <div className="message_input">
-                <InsertEmoticonIcon className="emoji_icon" />
+                <InsertEmoticonIcon
+                  className="emoji_icon"
+                  onClick={(e) => setOpenEmojis(!openEmojis)}
+                />
                 <input
                   type="text"
                   value={input}
@@ -143,9 +153,10 @@ function LearningGroup() {
               </div>
               <SendIcon className="send_icon" onClick={send_message} />
             </div>
+            {openEmojis === true && <Picker onEmojiClick={onEmojiClick} />}
           </div>
         </div>
-        <AttachPopup learningId = {learningId} />
+        <AttachPopup learningId={learningId} from="learningGroup" />
       </Container>
     </div>
   );
