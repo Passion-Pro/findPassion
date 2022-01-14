@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './Group.css';
-import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';
 import { useStateValue } from '../../StateProvider';
@@ -13,10 +12,8 @@ function Group() {
   const backgroundImage="https://cdn.w600.comps.canstockphoto.com/find-your-passion-in-splashs-background-stock-illustrations_csp78297071.jpg";
   const image='https://mcdn.wallpapersafari.com/medium/46/34/648IOD.jpg';
 
-  console.log(groupDetails?.GroupName)
   return (
-    <div className='group'>
-      <Header />
+    <div className='group'> 
       <div className="group__body">
       <GroupTopBody/>
       {groupDetails?.GroupName ? <>

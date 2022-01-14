@@ -8,7 +8,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 function RightSidebarGroup() {
     const history = useHistory();
-    const [{ userInfo, user, showLeftSidebarGroup }, dispatch] = useStateValue();
+    const [{ groupDetails }, dispatch] = useStateValue();
     return (
         <div className='RightSidebarGroup'>
             <div className="rightSidebarGroup__header">
@@ -21,7 +21,7 @@ function RightSidebarGroup() {
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                    Passion Chat
+                {groupDetails?.GroupName} Chat
                 </div>
             </div>
             <div className="rightSidebarGroup__body">
@@ -32,7 +32,7 @@ function RightSidebarGroup() {
                     Group Chat
                 </div>
                 <div className="group__Chat" onClick={() => history.push('/groupevolvement')}>
-                    Envolvement
+                    Involvement
                 </div>
             </div>
         </div>

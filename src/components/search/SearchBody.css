@@ -1,0 +1,9 @@
+.SearchBody{
+    flex: 0.7;
+    width: 100%;
+}
+@media(max-width:1080px){
+    .SearchBody{
+        flex: 1;
+    }
+}

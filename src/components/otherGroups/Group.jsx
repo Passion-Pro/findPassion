@@ -32,7 +32,7 @@ function Group() {
 
   return (
     <div className='group'>
-      <Header />
+      {/* <Header /> */}
       <div className="group__body">
       <GroupTopBody id = {id}/>
         <div className="group__lower">

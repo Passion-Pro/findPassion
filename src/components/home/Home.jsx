@@ -20,13 +20,14 @@ import { v4 as uuid } from "uuid";
 import { useStateValue } from '../../StateProvider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import ShowStoriesSeries from '../stories/ShowStoriesSeries';
 
 function Home() {
   const history = useHistory();
   const [{ userInfo, user }] = useStateValue();
-  const [postHome,setPostHome]=useState([]);
+  const [postHome, setPostHome] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [upImgImage,setUpImgImage]=useState(null);
+  const [upImgImage, setUpImgImage] = useState(null);
   const [statusCaption, setStatusCaption] = useState('');
   const [popUpImageCrop, setPopUpImageCrop] = useState(false);
   const [upImg, setUpImg] = useState(null);
@@ -40,157 +41,126 @@ function Home() {
   var today = new Date();
   var datetime = today.toLocaleString();
 
-  useState(()=>{
-    db.collection("Web-development")
-    .doc('Csb15iOnGedmpceiQOhX')
-    .collection("Posts")
-    .orderBy("timestamp", "desc")
-    .onSnapshot((snapshot) =>
-       setPostHome(
-         snapshot.docs.map((doc)=>({
-           data:doc.data(),
-           id:doc.id,
-         }))
-       )
-      )
-  },[])
-
-  function generateDownload(canvas, crop) {
-    if (!crop || !canvas) {
-      return;
-    }
-
-    canvas.toBlob(
-      (blob) => {
-        setCroppedImage(blob);
-        setPopUpImageCrop(false);
-      },
-      'image/png',
-      1
-    );
-  }
-  const onLoad = useCallback((img) => {
-    imgRef.current = img;
-  }, []);
-
-  const onSelectFile = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setUpImgImage(e.target.files[0])
-      const reader = new FileReader();
-      reader.addEventListener('load', () => setUpImg(reader.result));
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
   useEffect(() => {
-    if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
-      return;
+    if (userInfo?.name) {
+      db.collection(userInfo?.passion)
+        .doc('Csb15iOnGedmpceiQOhX')
+        .collection("Posts")
+        .orderBy("timestamp", "desc")
+        .onSnapshot((snapshot) =>
+          setPostHome(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            }))
+          )
+        )
     }
+  }, [userInfo])
 
-    const image = imgRef.current;
-    const canvas = previewCanvasRef.current;
-    const crop = completedCrop;
+  // function generateDownload(canvas, crop) {
+  //   if (!crop || !canvas) {
+  //     return;
+  //   }
 
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    const ctx = canvas.getContext('2d');
-    const pixelRatio = window.devicePixelRatio;
+  //   canvas.toBlob(
+  //     (blob) => {
+  //       setCroppedImage(blob);
+  //       setPopUpImageCrop(false);
+  //     },
+  //     'image/png',
+  //     1
+  //   );
+  // }
+  // const onLoad = useCallback((img) => {
+  //   imgRef.current = img;
+  // }, []);
 
-    canvas.width = crop.width * pixelRatio * scaleX;
-    canvas.height = crop.height * pixelRatio * scaleY;
+  // const onSelectFile = (e) => {
+  //   if (e.target.files && e.target.files.length > 0) {
+  //     setUpImgImage(e.target.files[0])
+  //     const reader = new FileReader();
+  //     reader.addEventListener('load', () => setUpImg(reader.result));
+  //     reader.readAsDataURL(e.target.files[0]);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
+  //     return;
+  //   }
 
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    ctx.imageSmoothingQuality = 'high';
+  //   const image = imgRef.current;
+  //   const canvas = previewCanvasRef.current;
+  //   const crop = completedCrop;
 
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width * scaleX,
-      crop.height * scaleY
-    );
-  }, [completedCrop]);
+  //   const scaleX = image.naturalWidth / image.width;
+  //   const scaleY = image.naturalHeight / image.height;
+  //   const ctx = canvas.getContext('2d');
+  //   const pixelRatio = window.devicePixelRatio;
 
-  const data = [{
-    profileimage: 'https://media-cldnry.s-nbcnews.com/image/upload/t_fit-1240w,f_auto,q_auto:best/newscms/2021_06/3448565/210208-elon-musk-2020-ac-452p.jpg',
-    backgroundimage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1SYGixYUE2icjnz94mx07p1yW8D-t3osfw&usqp=CAU",
-    name: 'Elon Musk',
-    learning: 'I have made a shop-app.',
-    learned: `In this shop app anyone can make their shop add item in their shop.
-        During making this app i enjoyed a lot.
-        I have used Reactjs, firebase, react-contest-api`,
-  }, {
-    profileimage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO799T-uV7Plu4cvPk0Pe7FYWDkRjJ_PH9hA&usqp=CAU',
-    backgroundimage: "https://bolnews.s3.amazonaws.com/wp-content/uploads/2019/12/Facebook-suspends-official-page.jpg",
-    name: 'Mark Zuckerberg',
-    learning: 'I am leaning blockchain, html, CSS, Nodejs Programming...',
-    learned: 'Piro in reactjs if you have feel free to contact me.I also good in ....',
-  }, {
-    profileimage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS317DrQ07lEMCXBmZn44xy-lrXD7ERfW476w&usqp=CAU',
-    backgroundimage: "https://www.accountancydaily.co/sites/default/files/styles/media_thumbnail/public/field/image/amazon_adobestock_291428005_editorial_use_only.jpeg?itok=-GgDInnO",
-    name: 'Jeff',
-    learning: 'I am leaning blockchain, Competitive Programming...',
-    learned: 'I am leaning blockchain, Competitive Programming...',
-  }, {
-    profileimage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRO799T-uV7Plu4cvPk0Pe7FYWDkRjJ_PH9hA&usqp=CAU',
-    backgroundimage: "https://bolnews.s3.amazonaws.com/wp-content/uploads/2019/12/Facebook-suspends-official-page.jpg",
-    name: 'Mark Zuckerberg',
-    learning: 'I am leaning blockchain, html, CSS, Nodejs Programming...',
-    learned: 'Piro in reactjs if you have feel free to contact me.I also good in ....',
-  }, {
-    profileimage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS317DrQ07lEMCXBmZn44xy-lrXD7ERfW476w&usqp=CAU',
-    backgroundimage: "https://www.accountancydaily.co/sites/default/files/styles/media_thumbnail/public/field/image/amazon_adobestock_291428005_editorial_use_only.jpeg?itok=-GgDInnO",
-    name: 'Jeff',
-    learning: 'I am leaning blockchain, Competitive Programming...',
-    learned: 'I am leaning blockchain, Competitive Programming...',
-  }
-  ]
+  //   canvas.width = crop.width * pixelRatio * scaleX;
+  //   canvas.height = crop.height * pixelRatio * scaleY;
 
-   const sendStory = async () => {
-    setLoading(true)
-    if (croppedImage) {
-      const id = uuid();
-      const imagesRef = firebase.storage().ref("PostImages").child(id);
-      await imagesRef.put(croppedImage);
-      imagesRef.getDownloadURL().then((url) => {
-        if (user.uid) {
-          // adding Status in user private collection
-          db.collection("users")
-            .doc(user.uid)
-            .collection("Status")
-            .add({
-              username: userInfo.name,
-              userEmail: userInfo.email,
-              imageURL: url,
-              date: datetime,
-              postType: 'Status',
-              statusCaption:statusCaption,
-              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              imageName: id,
-              imageOriginalName: upImgImage.name,
-            })
-            .then(() => {
-              setLoading(false);
-              showAddStory(false);
-              setStatusCaption('');
-              setUpImg(null)
-            });
-        } else {
-          alert('Try with another method.');
-          setLoading(false);
-        }
-      });
-    } else {
-      alert('Select photo')
-      setLoading(false);
-    }
-  }
+  //   ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  //   ctx.imageSmoothingQuality = 'high';
+
+  //   ctx.drawImage(
+  //     image,
+  //     crop.x * scaleX,
+  //     crop.y * scaleY,
+  //     crop.width * scaleX,
+  //     crop.height * scaleY,
+  //     0,
+  //     0,
+  //     crop.width * scaleX,
+  //     crop.height * scaleY
+  //   );
+  // }, [completedCrop]);
+
+
+  //  const sendStory = async () => {
+  //   setLoading(true)
+  //   if (croppedImage) {
+  //     const id = uuid();
+  //     const imagesRef = firebase.storage().ref("PostImages").child(id);
+  //     await imagesRef.put(croppedImage);
+  //     imagesRef.getDownloadURL().then((url) => {
+  //       if (user.uid) {
+  //         // adding Status in user private collection
+  //         db.collection("users")
+  //           .doc(user.uid)
+  //           .collection("Status")
+  //           .add({
+  //             username: userInfo.name,
+  //             userEmail: userInfo.email,
+  //             imageURL: url,
+  //             date: datetime,
+  //             postType: 'Status',
+  //             statusCaption:statusCaption,
+  //             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+  //             imageName: id,
+  //             imageOriginalName: upImgImage.name,
+  //           })
+  //           .then(() => {
+  //             setLoading(false);
+  //             showAddStory(false);
+  //             setStatusCaption('');
+  //             setUpImg(null)
+  //           });
+  //       } else {
+  //         alert('Try with another method.');
+  //         setLoading(false);
+  //       }
+  //     });
+  //   } else {
+  //     alert('Select photo')
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
     <>
+      {/*     
     {loading &&
             <div className="popupImageCrop">
                 <Box sx={{ display: 'flex' }}>
@@ -254,9 +224,6 @@ function Home() {
             </div>
             <div className="group_photo">
               <div className="popUpTOP">
-                {/* <div className="popUpTOP__first">
-                  {userInfo.name}
-                </div> */}
               </div>
               <div className="group_photo_Image" style={{ alignItems: "center", justifyContent: "center" }}>
                 {
@@ -294,24 +261,18 @@ function Home() {
           </div>
         </Container>
       )
-      }
+      } */}
       <div className='home'>
-        <Header />
+        {/* <Header /> */}
         <HeaderSecond />
         <div className="homeBody">
           <div className="stories">
-            <div className="createStory" onClick={() => {
-              setShowAddStory(true)
-            }}>
+            <div className="createStory" >
               <CreateStory />
             </div>
-            <div className='stories__div'>
-              {data && data.map((data) => (
-                <Stories data={data} />
-              ))
-              }
-            </div>
+            <ShowStoriesSeries />
           </div>
+          {/* background-color: rgba(128, 128, 128, 0.329); */}
 
           {<div className="recommendPosts">
             {postHome && postHome.map((data) => (

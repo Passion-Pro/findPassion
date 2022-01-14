@@ -10,13 +10,13 @@ import { useStateValue } from '../../StateProvider';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 
 function PostCard({ data }) {
-    const [{user}]=useStateValue();
+    const [{user,userInfo}]=useStateValue();
 
     const handleLike = () => {
         const currentLikeStatus = !data.data.likedUser.includes(
             user?.email
         )
-        db.collection("Web-development")
+        db.collection(userInfo?.passion)
             .doc('Csb15iOnGedmpceiQOhX')
             .collection("Posts").doc(data.id).update({
                 likedUser: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(
@@ -61,9 +61,15 @@ function PostCard({ data }) {
                             <div className="postCard__Text">
                                 {data?.data?.postText}
                             </div>
-                            <div className="PostCard__image">
+                            {data?.data?.postType=='Regular' &&<div className="PostCard__image">
                                 <img src={data?.data?.imageURL} />
-                            </div>
+                            </div>}
+                            {data?.data?.postType=='landscape' &&<div className="LandscapePostCard__image">
+                                <img src={data?.data?.imageURL} />
+                            </div>}
+                            {data?.data?.postType=='portrait' &&<div className="PortraitPostCard__image">
+                                <img src={data?.data?.imageURL} />
+                            </div>}
                             <div className="postCard__icons">
                                 <div className="postCard__likeicon" onClick={handleLike}>
                                     {!data?.data?.likedUser.includes(

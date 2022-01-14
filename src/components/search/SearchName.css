@@ -1,0 +1,63 @@
+.searchName{
+    width: 92%;
+    background-color:white;
+    margin: 2%;
+    padding: 8px 2% 8px 2%;
+    border-radius: 4px;
+    box-shadow: 0 0 10px -6px #608db1;
+    border: 1px solid #c9d8e5;
+}
+.searchNamefirstdiv{
+    display:flex;
+    width:'100%';
+}
+.searchNamefirstdiv__photo{
+    display: flex;
+    padding-right: 12px;
+}
+.searchNamefirstdiv__rightInfo{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.searchName__SpanName{
+    display: flex;
+    color: indigo !important;
+    font-weight: bold !important;
+    width: 100%;
+}
+.searchName__SpanDiv{
+    display: flex;
+    width: 100%;
+    font-size: small;
+    padding: 4px 4px 4px 0;
+}
+.searchName__SpanStatus{
+    display: flex;
+    
+    width: fit-content;
+    font-weight: bold !important;
+    color: gray;
+}
+.searchName__SpanStatus_text{
+    display: flex;
+    width: fit-content;
+    flex: 0.9;
+    width: 100%;
+    color: rgb(34, 27, 27);
+}
+/* @media(max-width:800px){
+    .searchName__SpanStatus{
+        display: flex;
+        flex: 0.2;
+        font-weight: bold !important;
+        color: gray;
+        width: 100%;
+    }
+    .searchName__SpanStatus_text{
+        display: flex;
+        flex: 0.8;
+        width: 100%;
+        color: rgb(34, 27, 27);
+    }
+} */
