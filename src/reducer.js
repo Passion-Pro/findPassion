@@ -65,6 +65,11 @@ export const actionTypes = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.SET_SEARCH_INPUT:
+      return {
+        ...state,
+        searchInput: action.searchInput,
+      };
     case actionTypes.SET_MY_GROUP_DETAILS_MAIN:
       return {
         ...state,

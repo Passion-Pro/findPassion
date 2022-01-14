@@ -65,7 +65,7 @@ function WithoutLogin() {
 
     return (
         <div className='without__home'>
-            <Header />
+            {/* <Header /> */}
             <div className="without__homeBody">
                 <div className="without__Head__Riv" onClick={() => setCurrent('web')}>
                     Web Devlopment

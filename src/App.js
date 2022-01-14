@@ -43,11 +43,12 @@ import ShowStories from "./components/stories/ShowStories";
 import {useHistory} from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 
+import SearchPage from "./components/search/SearchPage";
+import Header from "./components/header/Header";
 
 function App() {
 
   const [{ user, courseDiv, showExpandGroup }, dispatch] = useStateValue();
-
   const history=useHistory();
 
   useEffect(() => {
@@ -99,7 +100,11 @@ function App() {
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
+          <Header/>
         <Switch>
+          <Route path='/searchPage'>
+            <SearchPage />
+          </Route>
           <Route path='/createStory'>
             <CreateStoryPage />
           </Route>
