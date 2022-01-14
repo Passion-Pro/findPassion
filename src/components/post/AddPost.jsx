@@ -104,13 +104,13 @@ export default function AddPost() {
 
     const UploadImage = async () => {
         setLoading(true)
-        if (croppedImage) {
+        if (croppedImage && userInfo?.passion) {
             const id = uuid();
             const imagesRef = firebase.storage().ref("PostImages").child(id);
             await imagesRef.put(croppedImage);
             imagesRef.getDownloadURL().then((url) => {
                 if (user.uid) {
-                    db.collection("Web-development")
+                    db.collection(userInfo?.passion)
                         .doc('Csb15iOnGedmpceiQOhX')
                         .collection("Posts")
                         .doc(id)
@@ -218,7 +218,7 @@ export default function AddPost() {
             }
             {
                 <div className="addPost">
-                    <Header />
+                    {/* <Header /> */}
                     <div className="addPost__In">
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
@@ -232,16 +232,16 @@ export default function AddPost() {
                                 {/* </div> */}
                             </div>
                             <div className="addPost__Image">
-                                {!croppedImage && <div className="Upload__ImageIcon" onClick={() => {
-                                    setPopUpImageCrop(true)
-                                }}>
+                                {!croppedImage && 
                                     <label htmlFor="image">
+                                <div className="Upload__ImageIcon"  onClick={() => {
+                                                setPopUpImageCrop(true)
+                                            }}>
                                         <AddAPhotoIcon
                                             className="footer_icon"
                                             style={{ fontSize: 15 }}
                                         />
                                         Add Photo
-                                    </label>
                                     <input
                                         type="file"
                                         id={"image"}
@@ -249,7 +249,9 @@ export default function AddPost() {
                                         onChange={onSelectFile}
                                         accept="image/git , image/jpeg , image/png"
                                     />
-                                </div>}
+                                        </div>
+                                        </label>
+                                }
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">
                                     <textarea className='textareaHead' placeholder='Write heading of your post ' onChange={e => setPostHead(e.target.value)} />

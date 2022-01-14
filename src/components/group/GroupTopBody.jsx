@@ -30,11 +30,9 @@ function GroupTopBody() {
         <img src={backgroundImage} alt="background image" />
         <AddAPhotoRoundedIcon/>
       </div>
-      <div className="group__headImg">
-        {/* <div> */}
+      <div className="group__headImg"> 
         <img src={image} alt="profile image" />
-        <AddAPhotoRoundedIcon/>
-        {/* </div> */}
+        <AddAPhotoRoundedIcon/> 
         <div className="group__details">
           <div className="Group__Details__Name">
             {groupDetails?.GroupName}

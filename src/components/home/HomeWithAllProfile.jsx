@@ -7,7 +7,8 @@ import Stories from '../stories/Stories';
 import PostCard from '../post/PostCard';
 import HeaderSecond from '../header/HeaderSecond';
 import db from '../../firebase';
-import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx'
+import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
 function HomeWithAllProfile() {
 
@@ -25,10 +26,34 @@ function HomeWithAllProfile() {
                 );
             })
     }, []);
-    
+
+    function sideScroll(element,direction,speed,distance,step){
+        console.log("2")
+       var scrollAmount=0;
+        var slideTimer=setInterval(function(){
+            if(direction=='left'){
+                element.scrollLeft-=step;
+            }else{
+                element.scrollleft+=step;
+            }
+            scrollAmount+=step;
+            if(scrollAmount>=distance){
+                window.clearInterval(slideTimer);
+            }
+        },speed);
+    }
+
+    const funct=()=>{
+        console.log("object")
+        document.getElementById('box').scrollLeft+=900;
+    }
+    const funct1=()=>{
+        console.log("object")
+        document.getElementById('box1').scrollLeft+=900;
+    }
+
     return (
         <div className='home'>
-            <Header />
             <HeaderSecond />
             <div className="homeBody">
                 <div className="stories">
@@ -38,18 +63,32 @@ function HomeWithAllProfile() {
                     <ShowStoriesSeries />
                 </div>
                 <div className="header__ProfileName">
-                    <div className="recommendPeople">
+                    <div className='header__ProfileName__Head'>
+                        People have the same passion
+                    </div>
+                    <div className="recommendPeople" id='box1'>
                         {data.map((data) => (
                             <ProfileCard data={data} />
                         ))}
+                         <div className="Arrow__showrecommendProfile" onClick={funct1}>
+                            <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />
+                        </div>
                     </div>
                 </div>
-                <div className="recommendPeople">
-                    {data.map((data) => (
-                        <ProfileCard data={data} />
-                    ))}
+                <div className="header__ProfileName">
+                    <div className='header__ProfileName__Head'>
+                        People have the other passion
+                    </div>
+                    <div className="recommendPeople" id='box'>
+                        {data.map((data) => (
+                            <ProfileCard data={data} />
+                        ))}
+                        <div className="Arrow__showrecommendProfile"  onClick={funct}>
+                            <ArrowForwardRoundedIcon 
+                            className='Arrow__showrecommendInProfile' />
+                        </div>
+                    </div>
                 </div>
-
             </div>
         </div>
     )

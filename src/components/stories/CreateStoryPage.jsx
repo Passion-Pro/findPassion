@@ -20,8 +20,7 @@ export default function CreateStoryPage() {
     const [{ userInfo, user }, dispatch] = useStateValue();
 
     const [loading, setLoading] = useState(false);
-    const [postHead, setPostHead] = useState('')
-    const [postText, setPostText] = useState('')
+    const [postText, setPostText] = useState('');
     const [popUpImageCrop, setPopUpImageCrop] = useState(false);
     const [upImg, setUpImg] = useState(null);
     const [upImgImage, setUpImgImage] = useState(null);
@@ -43,7 +42,6 @@ export default function CreateStoryPage() {
             (blob) => {
                 setCroppedImage(blob);
                 setPopUpImageCrop(false);
-
             },
             'image/png',
             1
@@ -103,13 +101,13 @@ export default function CreateStoryPage() {
 
     const UploadImage = async () => {
         setLoading(true)
-        if (croppedImage) {
+        if (croppedImage && userInfo) {
             const id = uuid();
             const imagesRef = firebase.storage().ref("StoryImages").child(id);
             await imagesRef.put(croppedImage);
             imagesRef.getDownloadURL().then((url) => {
                 if (user.uid) {
-                    db.collection("Web-development")
+                    db.collection(userInfo?.passion)
                         .doc('Csb15iOnGedmpceiQOhX')
                         .collection("Stories")
                         .doc(id)
@@ -128,19 +126,9 @@ export default function CreateStoryPage() {
                         .then(() => {
                             // adding post in user private collection
                             db.collection("users")
-                                .doc(user.uid)
-                                .collection("Stories")
-                                .doc(id)
-                                .set({
-                                    username: userInfo.name,
-                                    userEmail: userInfo.email,
-                                    imageURL: url,
-                                    date: datetime,
-                                    postType: 'Regular',
-                                    postText: postText,
-                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                    imageName: id,
-                                    imageOriginalName: upImgImage.name,
+                                .doc(user.uid) 
+                                .update({
+                                    statusID: id, 
                                 })
                                 .then(() => {
                                     setLoading(false); 
@@ -213,7 +201,7 @@ export default function CreateStoryPage() {
             }
             {
                 <div className="addPost">
-                    <Header />
+                    {/* <Header /> */}
                     <div className="addPost__In">
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
@@ -247,7 +235,6 @@ export default function CreateStoryPage() {
                                 </div>}
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">
-                                    {/* <textarea className='textareaHead' placeholder='Write heading of your post ' onChange={e => setPostHead(e.target.value)} /> */}
                                     <textarea className='textareaSecond' placeholder='Write about the Status' onChange={e => setPostText(e.target.value)} />
                                 </div>
                             </div>

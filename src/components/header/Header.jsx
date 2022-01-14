@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Header.css';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
@@ -15,11 +15,23 @@ import { actionTypes } from '../../reducer';
 
 function Header() {
     const [{  user, courseDiv  }, dispatch] =useStateValue();
-    const history = useHistory();
+    const history = useHistory();    
+    const [input,setInput]=useState('');
+    
+    useEffect(()=>{
+      if(input){
+          history.push('/searchPage')
+        dispatch({
+            type: actionTypes.SET_SEARCH_INPUT,
+            searchInput: input,
+          })
+      }else if(!input && window.location.pathname=='/searchPage'){
+          history.push('/')
+      }
+    },[input])
 
     const signupimage = 'https://image.cnbcfm.com/api/v1/image/105815446-1553624918736gettyimages-1078542150.jpeg?v=1612303414';
     
-    console.log("courseDiv",courseDiv)
     return (
         <>
             <div className='Loginheader' >
@@ -30,7 +42,7 @@ function Header() {
                     <div className='searchHeader__divOut__ForLoginHeader' >
                         <div className='searchHeader__div'>
                             <SearchRoundedIcon />
-                            <input placeholder='Search' className='searchHeader__input' />
+                            <input placeholder='Search' className='searchHeader__input' onChange={e=>setInput(e.target.value)}/>
                         </div>
                     </div>
 
