@@ -1,23 +1,48 @@
-import React from "react";
+import React , {useState , useEffect} from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
+import db from "../../../firebase";
 
 
-function Member() {
+function Member({learner}) {
   const history = useHistory();
+  const[profilePhotoUrl , setProfilePhotoUrl] = useState("");
+
+  
+
+  useEffect(() => {
+    if(learner?.data?.learner?.email){
+      db.collection("users")
+      .where("email", "==", learner?.data?.learner?.email)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+
+          setProfilePhotoUrl(doc.data().profilePhotoUrl)
+
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      }); 
+    }
+  } , [learner])
 
   return (
     <>
-      <Container>
+      <Container onClick={(e) => history.push("/profile") }>
         <Avatar
           className="avatar"
-          src="https://bsmedia.business-standard.com/_media/bs/img/article/2018-03/22/full/1521664011-0145.jpg"
+          src= {profilePhotoUrl}
         />
+        {console.log(learner)}
         <div className="chatName_info">
-          <p>Ronak</p>
+          <p>{learner?.data?.learner?.name}</p>
         </div>
       </Container>
     </>

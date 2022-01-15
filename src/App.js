@@ -1,21 +1,26 @@
+import "./App.css";
 import React, { useState, useEffect } from "react";
-import CreateAccount from './components/sign/CreateAccount/CreateAcount';
-import Login from './components/sign/Login';
-import { BrowserRouter as Router, Switch, Route,useHistory } from "react-router-dom";
-import Chat from './components/chat/Chat';
-import ChatPage from './components/chat/ChatPage';
-import WorldPage from './components/world/WorldPage';
-import LearningGroup from './components/world/Learnings/LearningGroup';
-import StoriesPage from './components/world/StoriesPage';
-import VideoPlayer from './components/world/Stories/VideoPlayer';
-import StoryPage from './components/world/Stories/StoryPage';
-import LearnersPage from './components/world/Learnings/LearnersPage';
-import AddStoryPage from './components/world/Stories/AddStoryPage';
-import ProfilePage from './components/ProfilePage/ProfilePage';
-import { useStateValue } from './StateProvider';
-import db, { auth } from './firebase';
-import { actionTypes } from './reducer';
-import RequestsPage from './components/RequestsPage/RequestsPage';
+import CreateAccount from "./components/sign/CreateAccount/CreateAcount";
+import Login from "./components/sign/Login";
+import "./App.css";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Chat from "./components/chat/Chat";
+import ChatPage from "./components/chat/ChatPage";
+import WorldPage from "./components/world/WorldPage";
+import LearningGroup from "./components/world/Learnings/LearningGroup";
+import StoriesPage from "./components/world/StoriesPage";
+import VideoPlayer from "./components/world/Stories/VideoPlayer";
+import StoryPage from "./components/world/Stories/StoryPage";
+import LearnersPage from "./components/world/Learnings/LearnersPage";
+import AddStoryPage from "./components/world/Stories/AddStoryPage";
+import ProfilePage from "./components/ProfilePage/ProfilePage";
+import { useStateValue } from "./StateProvider";
+import db, { auth } from "./firebase";
+import { actionTypes } from "./reducer";
+import RequestsPage from "./components/RequestsPage/RequestsPage";
+import UploadPdf from "./components/world/Learnings/UploadPdf";
+import ViewPdf from "./components/world/Learnings/ViewPdf";
+import UserProfile from "./components/UserProfile/UserProfile";
 import WithoutLogin from './components/withoutlogin/WithoutLoginHome';
 import Group from './components/group/Group';
 import GroupOther from './components/otherGroups/Group';
@@ -35,6 +40,9 @@ import ShareExperience from "./components/ShareExperience/ShareExperience";
 import CreateStoryPage from "./components/stories/CreateStoryPage";
 import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
+import {useHistory} from "react-router-dom"
+import UploadChatPdf from "./components/chat/UploadChatPdf";
+
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
 
@@ -72,6 +80,7 @@ function App() {
 
     }
   }, [user?.uid]);
+
 
   const handleCourseDiv = () => {
     if (courseDiv) {
@@ -153,7 +162,10 @@ function App() {
           <Route path="/newAccount">
             <CreateAccount />
           </Route>
-          <Route path="/chat">
+          <Route path="/signIn">
+            <Login />
+          </Route>
+          <Route path="/chat/:chatId">
             <Chat />
           </Route>
           <Route path="/messages">
@@ -168,7 +180,7 @@ function App() {
           <Route path="/stories">
             <StoriesPage />
           </Route>
-          <Route path="/learningGroup">
+          <Route path="/learning/:learningId">
             <LearningGroup />
           </Route>
           <Route path="/learners">
@@ -183,15 +195,27 @@ function App() {
           <Route path="/requests">
             <RequestsPage />
           </Route>
-          <Route path="/login">
-            <Login />
+          <Route path="/learningsUploadPdf/:learningId">
+            <UploadPdf />
+          </Route>
+          <Route path="/messagesUploadPdf/:chatId/:chatEmail">
+            <UploadChatPdf />
+          </Route>
+          <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
+            <ViewPdf/>
+          </Route>
+          <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
+            <ViewPdf/>
+          </Route>
+          <Route path="/userProfile">
+            <UserProfile/>
           </Route>
           <Route path='/'>
             {user?.email ? <Home /> : <WithoutLogin />}
           </Route>
         </Switch>
       </Router>
-    </div >
+    </div>
   );
 }
 
