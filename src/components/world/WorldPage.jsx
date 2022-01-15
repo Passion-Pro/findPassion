@@ -190,7 +190,13 @@ function WorldPage() {
         }
       }
     }
-  }, [learnings?.length, userInfo?.passion, userInfo?.experience, user ,  joinedLearnings?.length]);
+  }, [
+    learnings?.length,
+    userInfo?.passion,
+    userInfo?.experience,
+    user,
+    joinedLearnings?.length,
+  ]);
 
   const add_learning = () => {
     dispatch({
@@ -200,95 +206,101 @@ function WorldPage() {
   };
 
   return (
-      <Container>
-        <div className="passion_logo">
+    <Container>
+      <div className="passion_logo">
+        {/* <div className="passion_title">
           <p>WEB DEVLOPMENT</p>
-          <div className="add_learning">
+          </div> */}
+        {/* <div className="add_learning">
             <button onClick={add_learning}>Start learning together 🚀</button>
+          </div> */}
+      </div>
+      <div className="options_header">
+        <div className="options_buttons">
+          <button className="learnings_button">Learnings</button>
+          <button
+            className="stories_button"
+            onClick={(e) => history.push("/stories")}
+          >
+            Stories
+          </button>
+        </div>
+
+          <div className="add_learning_button">
+            {/* <button onClick={add_learning}>Start learning together 🚀</button> */}
+          </div>
+      </div>
+      {x === 1 && learnings?.length > 0 && (
+        <div className="my_learnings">
+          <p className = "my_learnings_title">My Learnings</p>
+          <div className="my_learnings_learnings">
+            {learnings.map((learning) => (
+              <>
+                {learning.data.started_by.email === userInfo.email && (
+                  <Learning learning={learning} type="my" />
+                )}
+              </>
+            ))}
+            {joinedLearnings.map((learning) => (
+              <Learning learning={learning?.data?.learning} type="joined" />
+            ))}
           </div>
         </div>
-        <div className="options_header">
-          <div className="options_buttons">
-            <button className="learnings_button">Learnings</button>
-            <button
-              className="stories_button"
-              onClick={(e) => history.push("/stories")}
-            >
-              Stories
-            </button>
-          </div>
+      )}
+      {x === 1 && learnings?.length > 0 && userInfo?.passion !== "Don't  know" && (
+        <div className="all_learnings">
+          {learnings1.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+
+          {learnings2.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings3.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings4.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings5.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings6.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings7.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings8.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings9.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings10.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings11.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+          {learnings12.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
+
+          {learnings13.map((learning) => (
+            <Learning learning={learning} type="all" />
+          ))}
         </div>
-        {x === 1 && learnings?.length > 0 && (
-          <div className="my_learnings">
-            <p>My Learnings</p>
-            <div className="my_learnings_learnings">
-              {learnings.map((learning) => (
-                <>
-                  {learning.data.started_by.email === userInfo.email && (
-                    <Learning learning={learning} type="my" />
-                  )}
-                </>
-              ))}
-              {joinedLearnings.map((learning) => (
-                <Learning learning={learning?.data?.learning} type="joined" />
-              ))}
-            </div>
-          </div>
-        )}
-        {x === 1 && learnings?.length > 0 && userInfo?.passion !== "Don't  know" && (
-          <div className="all_learnings">
-            {learnings1.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-
-            {learnings2.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings3.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings4.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings5.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings6.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings7.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings8.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings9.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings10.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings11.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-            {learnings12.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-
-            {learnings13.map((learning) => (
-              <Learning learning={learning} type="all" />
-            ))}
-          </div>
-        )}
-        {userInfo?.passion === "Don't know" && (
-           <div className="all_learnings">
-           {allLearnings.map(({ learning }) => (
-             <Learning learning={learning} type="all" />
-           ))}  
-         </div>
-        )}
-        <NewLearningPopup />
-      </Container>
+      )}
+      {userInfo?.passion === "Don't know" && (
+        <div className="all_learnings">
+          {allLearnings.map(({ learning }) => (
+            <Learning learning={learning} type="all" />
+          ))}
+        </div>
+      )}
+      <NewLearningPopup />
+    </Container>
   );
 }
 
@@ -298,61 +310,47 @@ const Container = styled.div`
   /* max-height: 100vh; */
   display: flex;
   flex-direction: column;
+  background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  
+  @media(max-width: 500px){
+    margin-bottom : 50px;
+  }
 
   .passion_logo {
-    height: 25vh;
-    background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
+    /* height: 35vh; */
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
     background-position: center;
 
-    p {
-      color: white;
-      font-size: 30px;
-      font-weight: 500;
-      letter-spacing: 2px;
-    }
-
-    .add_learning {
-      width: 100%;
+    .passion_title {
+      flex: 1;
       display: flex;
-      justify-content: flex-end;
-
-      @media (max-width: 500px) {
-        margin-bottom: 20px;
-      }
-
-      button {
-        width: 180px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        border-radius: 20px;
-        border: 0;
-        background-color: #6868fa;
+      justify-content: center;
+      align-items: center;
+      p {
         color: white;
-        margin-right: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
-
-        &:hover {
-          cursor: pointer;
-          background-color: #9595ff;
-        }
+        font-size: 30px;
+        font-weight: 500;
+        letter-spacing: 2px;
       }
     }
   }
 
   .options_header {
     display: flex;
-    justify-content: center;
     padding: 20px;
     padding-bottom: 0;
+    justify-content : space-between;
+    /* width : 100%; */
 
     .options_buttons {
       display: flex;
+
     }
 
     .learnings_button {
@@ -364,6 +362,7 @@ const Container = styled.div`
       border: 0;
       background-color: #252525;
       color: white;
+      height : 40px;
     }
 
     .stories_button {
@@ -372,10 +371,33 @@ const Container = styled.div`
       padding-bottom: 10px;
       border-radius: 20px;
       border: 0;
+      height : 40px;
 
       &:hover {
         cursor: pointer;
         background-color: #dfdede;
+      }
+    }
+  }
+
+  .add_learning_button {
+    display: flex;
+    margin-right: 10px;
+
+    button {
+      width: 180px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-radius: 20px;
+      border: 0;
+      background-color: #6868fa;
+      color: white;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
+      margin-bottom: 20px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #9595ff;
       }
     }
   }
@@ -396,10 +418,18 @@ const Container = styled.div`
     padding: 20px;
     padding-left: 30px;
     padding-right: 40px;
+
+    @media(max-width: 500px){
+      padding-left : 10px;
+      padding-right : 0px;
+      justify-content: flex-start;
+    }
   }
 
   .my_learnings_learnings {
     display: flex;
+    /* overflow-x : scroll;
+    width : 100vw; */
     flex-wrap: wrap;
   }
 
@@ -409,6 +439,17 @@ const Container = styled.div`
     padding: 20px;
     padding-left: 30px;
     padding-right: 40px;
+
+    @media(max-width: 500px){
+      padding-left : 10px;
+      padding-right : 0px;
+      justify-content: flex-start;
+    }
+  }
+
+  .my_learnings_title{
+    color : white;
+    padding-left: 10px;
   }
 `;
 

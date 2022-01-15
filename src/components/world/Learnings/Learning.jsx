@@ -256,16 +256,17 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 200px;
-  height: 180px;
+  height: 190px;
   border: 1px solid lightgray;
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
-  margin-right: 30px;
-  margin-bottom: 30px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  background-color : white;
 
   @media (max-width: 500px) {
-    width: 95vw;
+    width: 40vw;
     margin-right: auto;
     margin-left: auto;
   }

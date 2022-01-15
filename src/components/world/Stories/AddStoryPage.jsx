@@ -146,8 +146,7 @@ function AddStoryPage() {
       images?.length > 0 &&
       image1 &&
       userInfo?.passion &&
-      userInfo?.passion !== "Don't know" &&
-      userInfo?.experience > 1
+      userInfo?.passion !== "Don't know"
     ) {
       for (let i = 0; i < images?.length; i++) {
         const id = uuid();
@@ -263,8 +262,8 @@ function AddStoryPage() {
       video &&
       image1 &&
       userInfo?.passion &&
-      userInfo?.passion !== "Don't know" &&
-      userInfo?.experience > 1
+      userInfo?.passion !== "Don't know" 
+      // userInfo?.experience > 1
     ) {
       const id = uuid();
       const upload = storage.ref(`JourneyVideos/${id}`).put(video);
@@ -353,8 +352,8 @@ function AddStoryPage() {
       storyParts?.length > 0 &&
       image1 &&
       userInfo?.passion &&
-      userInfo?.passion !== "Don't know" &&
-      userInfo?.experience > 1
+      userInfo?.passion !== "Don't know" 
+      // userInfo?.experience > 1
     ) {
       db.collection("journeys").doc(user?.uid).set({
         journeyPeriod: journeyPeriod,

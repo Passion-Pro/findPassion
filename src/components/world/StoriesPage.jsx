@@ -50,7 +50,7 @@ function StoriesPage() {
           <button className="stories_button">Stories</button>
         </div>
         {userInfo?.passion !== "Don't know" && (
-          <div className="stories">
+          <div className="journeys">
             {journeys.map((journey) => (
               <>
                 {journey.data?.uploaderInfo?.passion === userInfo?.passion && (
@@ -87,7 +87,7 @@ const Container = styled.div`
   flex-direction: column;
 
   .passion_logo {
-    height: 25vh;
+    height: 35vh;
     background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
     background-repeat: no-repeat;
     background-size: cover;
@@ -162,7 +162,7 @@ const Container = styled.div`
     }
   }
 
-  .stories {
+  .journeys {
     display: flex;
     flex-wrap: wrap;
     padding: 20px;
