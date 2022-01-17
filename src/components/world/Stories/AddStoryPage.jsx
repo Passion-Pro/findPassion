@@ -27,6 +27,8 @@ function AddStoryPage() {
   const [imagesInfo, setImagesInfo] = useState([]);
   const [image1, setImage1] = useState();
   const [loading, setLoading] = useState(false);
+  const[Url  , setUrl] = useState(null);
+  const[lastImageUrl , setLastImageUrl] = useState("");
   const [parts, setParts] = useState([
     {
       imageUrl:
@@ -44,6 +46,10 @@ function AddStoryPage() {
       caption: "Start of facebook through web D in 2004",
     },
   ]);
+
+  let w = 0;
+  let y = 0;
+  var i = 0;
 
   const [storyParts, setStoryParts] = useState([
     // {
@@ -68,11 +74,46 @@ function AddStoryPage() {
   useEffect(() => {
     if (image) {
       setSelectedImageUrl(URL.createObjectURL(image));
-      images.push({
-        image: image,
-        imageCaption: imageCaption,
-      });
-      setImageCaption("");
+
+      const id = uuid();
+
+      const upload = storage
+      .ref(`JourneyImages/${id}`)
+      .put(image);
+
+
+      upload.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log(`Progress : ${progress}%`);
+          if (snapshot.state === "RUNNING") {
+            console.log(`Progress : ${progress}%`);
+          }
+        } ,
+        (error) => console.log(error.code),
+        async () => {
+           await upload.snapshot.ref.getDownloadURL().then((url) => {
+              console.log("URL is ", url);
+            if (url) {
+              setLastImageUrl(url)
+              imagesInfo.push({
+                imageUrl: url,
+                imageCaption: imageCaption,
+              });
+
+                setImageCaption("You")
+                setImageCaption("");
+            }
+           })
+          console.log("ImagesInfo is", imagesInfo);
+        }
+      );
+
+
+       
       console.log("images are", images);
     }
   }, [image]);
@@ -139,53 +180,22 @@ function AddStoryPage() {
   const cancel = () => {
     setStoryParts([]);
   };
-
   const post_photo_cards = () => {
     if (
       journeyPeriod > 0 &&
-      images?.length > 0 &&
+      imagesInfo?.length > 0 &&
       image1 &&
       userInfo?.passion &&
-      userInfo?.passion !== "Don't know"
+    userInfo?.passion !== "Don't know"
     ) {
-      for (let i = 0; i < images?.length; i++) {
-        const id = uuid();
-
-        console.log("IMAGES{I}.IMAGE IS ", images[i]?.image);
-
-        if (images[i]?.image) {
-          const upload = storage
-            .ref(`JourneyImages/${id}`)
-            .put(images[i]?.image);
-
-          upload.on(
-            "state_changed",
-            (snapshot) => {
-              setLoading(true);
-              const progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
-              console.log(`Progress : ${progress}%`);
-              if (snapshot.state === "RUNNING") {
-                console.log(`Progress : ${progress}%`);
-              }
-            },
-            (error) => console.log(error.code),
-            async () => {
-              const url = await upload.snapshot.ref.getDownloadURL();
-              console.log("URL is ", url);
-              if (url) {
-                imagesInfo.push({
-                  imageUrl: url,
-                  imageCaption: images[i]?.imageCaption,
-                });
-              }
-            }
-          );
-        }
-      }
-
-      console.log("ImagesInfo is", imagesInfo);
+      // const l = imagesInfo?.length
+      // setImagesInfo([]);
+      // for(let i = 0; i < imagesInfo.length; i++) {
+      //     imagesInfo.push({
+      //        imageUrl : imagesInfo[i].imageUrl,
+      //        imageCaption : imagesInfo[i].imageCaption
+      //     })
+      // }
 
       const id1 = uuid();
 
@@ -205,7 +215,7 @@ function AddStoryPage() {
         (error) => console.log(error.code),
         async () => {
           const image1Url = await upload.snapshot.ref.getDownloadURL();
-          console.log("Image1Url is ", image1Url);
+          console.log("ImagesInfo is ", imagesInfo);
           if (image1Url) {
             db.collection("journeys")
               .doc(user?.uid)
@@ -243,16 +253,23 @@ function AddStoryPage() {
   };
 
   const add_imageCaption = () => {
-    images.pop();
+    // images.pop();
+    // console.log("Image Caption is ", imageCaption);
+    // images.push({
+    //   image: image,
+    //   imageCaption: imageCaption,
+    // });
+
+    imagesInfo.pop();
     console.log("Image Caption is ", imageCaption);
-    images.push({
-      image: image,
+    imagesInfo.push({
+      imageUrl: lastImageUrl,
       imageCaption: imageCaption,
     });
 
     setImageCaption("");
 
-    console.log("Images are finally", images);
+    console.log("ImagesInfo are finally", imagesInfo);
   };
 
   const post_video = (e) => {
@@ -516,7 +533,7 @@ function AddStoryPage() {
 
                   <div className="journey_cards">
                     <div className="tinderCards_cardContainer">
-                      {images.map((image, index) => (
+                      {imagesInfo.map((imageInfo, index) => (
                         <>
                           <TinderCard
                             className="swipe"
@@ -526,39 +543,41 @@ function AddStoryPage() {
                             onSwipe={() => {
                               if (index === 0) {
                                 console.log("Index is ", index);
-                                const newImages = images;
-                                setImages([]);
-                                setImages(newImages);
+                                const newImages = imagesInfo;
+                                setImagesInfo([]);
+                                setImagesInfo(newImages);
                               }
                             }}
                           >
-                            {image?.imageCaption === "" ? (
+                            {imageInfo?.imageCaption === "" ? (
                               <div className="card_without_caption">
-                                <div
+                                {imageInfo?.imageUrl && (
+                                  <div
                                   className="card_image"
                                   style={{
-                                    backgroundImage: `url(${URL.createObjectURL(
-                                      image.image
-                                    )})`,
+                                    backgroundImage:  `url(${imageInfo?.imageUrl})`             
                                   }}
                                 ></div>
+                                )}
                               </div>
                             ) : (
                               <div className="card">
-                                <div
+                                {imageInfo?.imageUrl && (
+                                  <div
                                   className="card_image"
                                   style={{
-                                    backgroundImage: `url(${URL.createObjectURL(
-                                      image.image
-                                    )})`,
+                                    backgroundImage: 
+                                    `url(${imageInfo?.imageUrl})`
+                                   
                                   }}
                                 ></div>
+                                )}
                                 {console.log(
                                   "ImageCaption in code is ",
-                                  image.imageCaption
+                                  imageInfo.imageCaption
                                 )}
                                 <div className="image_caption">
-                                  <p>{image?.imageCaption}</p>
+                                  <p>{imageInfo?.imageCaption}</p>
                                 </div>
                               </div>
                             )}
@@ -586,21 +605,21 @@ function AddStoryPage() {
                   )}
 
                   <div className="uploaded_photos">
-                    {image && (
+                    {imagesInfo && (
                       <>
                         {/* <img src={URL.createObjectURL(image)} alt="" /> */}
-                        {images.map((image) => (
+                        {imagesInfo.map((imageInfo) => (
                           <div className="uploaded_photo">
                             <img
-                              src={URL.createObjectURL(image.image)}
+                              src={imageInfo?.imageUrl}
                               alt=""
                             />
                             <div className="caption">
                               <p>
-                                {image?.imageCaption?.length <= 20 ? (
-                                  <>{image?.imageCaption}</>
+                                {imageInfo?.imageCaption?.length <= 20 ? (
+                                  <>{imageInfo?.imageCaption}</>
                                 ) : (
-                                  <>{image?.imageCaption?.slice(0, 70)}...</>
+                                  <>{imageInfo?.imageCaption?.slice(0, 70)}...</>
                                 )}
                               </p>
                             </div>
@@ -608,15 +627,15 @@ function AddStoryPage() {
                               onClick={() => {
                                 setX(1);
                                 let y;
-                                for (let i = 0; i < images.length; i++) {
-                                  if (images[i].image === image.image) {
+                                for (let i = 0; i < imagesInfo.length; i++) {
+                                  if (imagesInfo[i].imageUrl === imageInfo.imageUrl) {
                                     y = i;
 
                                     console.log("Y is", y);
 
-                                    images.splice(y, 1);
+                                    imagesInfo.splice(y, 1);
 
-                                    console.log(images);
+                                    console.log(imagesInfo);
                                   }
                                 }
                               }}
@@ -874,6 +893,7 @@ const Container = styled.div`
         margin-bottom: 0;
         text-align: center;
         overflow-y: scroll;
+        height : 50px;
 
         ::-webkit-scrollbar {
           display: none;

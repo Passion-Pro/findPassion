@@ -227,7 +227,7 @@ function WorldPage() {
         </div>
 
           <div className="add_learning_button">
-            {/* <button onClick={add_learning}>Start learning together 🚀</button> */}
+            <button onClick={add_learning}>Start learning together 🚀</button>
           </div>
       </div>
       {x === 1 && learnings?.length > 0 && (
@@ -306,16 +306,18 @@ function WorldPage() {
 
 const Container = styled.div`
   width: 100vw;
-  height: fit-content;
-  /* max-height: 100vh; */
+  flex: 1;
+  min-height: 90vh;
+  height : fit-content;
   display: flex;
   flex-direction: column;
   background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+
   
-  @media(max-width: 500px){
+  @media(max-width: 700px){
     margin-bottom : 50px;
   }
 
@@ -348,8 +350,16 @@ const Container = styled.div`
     justify-content : space-between;
     /* width : 100%; */
 
+    @media (max-width: 500px){
+      flex-direction : column;
+    }
+
     .options_buttons {
       display: flex;
+
+     @media (max-width: 500px){
+       margin-bottom : 30px;
+     }
 
     }
 
@@ -395,6 +405,11 @@ const Container = styled.div`
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
       margin-bottom: 20px;
 
+      @media (max-width: 500px){
+       width : 85vw;
+       margin-bottom: 0px;
+     }
+
       &:hover {
         cursor: pointer;
         background-color: #9595ff;
@@ -423,6 +438,7 @@ const Container = styled.div`
       padding-left : 10px;
       padding-right : 0px;
       justify-content: flex-start;
+      padding-top : 0px;
     }
   }
 

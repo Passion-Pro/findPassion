@@ -30,7 +30,7 @@ function StoriesPage() {
   return (
     <div>
       <Container>
-        <div className="passion_logo">
+        {/* <div className="passion_logo">
           <p>WEB DEVLOPMENT</p>
           <div className="add_story">
             {userInfo?.experience > 1 && (
@@ -39,8 +39,9 @@ function StoriesPage() {
               </button>
             )}
           </div>
-        </div>
+        </div> */}
         <div className="options_header">
+          <div className="options_buttons">
           <button
             className="learnings_button"
             onClick={(e) => history.push("/world")}
@@ -48,6 +49,14 @@ function StoriesPage() {
             Learnings
           </button>
           <button className="stories_button">Stories</button>
+          </div>
+          <div className="add_story_button">
+          {userInfo?.experience > 0 && (
+              <button onClick={(e) => history.push("/addStory")}>
+                Add your journey 🔥
+              </button>
+            )}
+          </div>
         </div>
         {userInfo?.passion !== "Don't know" && (
           <div className="journeys">
@@ -82,9 +91,18 @@ function StoriesPage() {
 
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
+  min-height: 90vh;
+  height : fit-content;
   display: flex;
   flex-direction: column;
+  background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  @media (max-width: 700px) {
+    margin-bottom: 50px;
+  }
 
   .passion_logo {
     height: 35vh;
@@ -112,30 +130,26 @@ const Container = styled.div`
       @media (max-width: 500px) {
         margin-bottom: 20px;
       }
-
-      button {
-        width: 150px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        border-radius: 20px;
-        border: 0;
-        background-color: #6868fa;
-        color: white;
-        margin-right: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
-
-        &:hover {
-          cursor: pointer;
-          background-color: #9595ff;
-        }
-      }
     }
   }
 
   .options_header {
     display: flex;
-    justify-content: center;
     padding: 20px;
+    padding-bottom: 0;
+    justify-content: space-between;
+
+    @media (max-width: 500px){
+      flex-direction : column;
+    }
+
+    .options_buttons {
+      display: flex;
+
+      @media (max-width: 500px){
+       margin-bottom : 30px;
+     }
+    }
 
     .stories_button {
       width: 100px;
@@ -168,11 +182,36 @@ const Container = styled.div`
     padding: 20px;
     padding-left: 30px;
     padding-right: 40px;
-    overflow-y: scroll;
   }
 
   .stories::-webkit-scrollbar {
     display: none;
+  }
+
+  .add_story_button{
+    display: flex;
+    margin-right: 10px;
+    button {
+        width: 150px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-radius: 20px;
+        border: 0;
+        background-color: #6868fa;
+        color: white;
+        margin-right: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
+
+        @media (max-width: 500px){
+       width : 85vw;
+       margin-bottom: 0px;
+     }
+
+        &:hover {
+          cursor: pointer;
+          background-color: #9595ff;
+        }
+      }
   }
 `;
 

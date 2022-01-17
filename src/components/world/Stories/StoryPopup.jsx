@@ -29,6 +29,17 @@ function StoryPopup() {
   const [storyParts, setStoryParts] = useState([]);
   const [newStoryParts, setNewStoryParts] = useState([]);
   const[profilePhotoUrl , setProfilePhotoUrl] = useState();
+  const[showGif , setShowGif] = useState(false);
+
+  useEffect(() => {
+      setShowGif(false);
+      
+      dispatch({
+        type: actionTypes.START_JOURNEY,
+        startJourney: false,
+      });
+
+  } , [openStoryPopup])
 
   useEffect(() => {
     setNewImages(journey?.data?.imagesInfo);
@@ -151,13 +162,17 @@ function StoryPopup() {
   };
 
   const start_journey = () => {
-    dispatch({
-      type: actionTypes.START_JOURNEY,
-      startJourney: true,
-    });
+    setShowGif(true);
+    setTimeout(() => {
+      dispatch({
+        type: actionTypes.START_JOURNEY,
+        startJourney: true,
+      });
+    } , 6000)
   };
 
   const stop_journey = () => {
+    setShowGif(false);
     dispatch({
       type: actionTypes.START_JOURNEY,
       startJourney: false,
@@ -291,12 +306,23 @@ function StoryPopup() {
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
             {startJourney === false ? (
-              <div
-                className="journey"
-                style={{
-                  backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
-                }}
-              ></div>
+              <>
+               {showGif === false ? (
+                 <div
+                 className="journey"
+                 style={{
+                   backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+                 }}
+               ></div>
+               ):(
+                 <img src="https://media0.giphy.com/media/RiEW6mSQqjRiDy51MI/giphy.gif?cid=ecf05e47gn1c8k7y7yeelxrs0h4juvuwqpxuhp03ti8p6jkk&rid=giphy.gif" alt="" style = {{
+                   height : '200px',
+                   objectFit : "contain",
+                   marginBottom : '10px',
+                   marginTop : '15px'
+                 }}/>
+               )}
+              </>
             ) : (
               <>
                 {journey?.data?.journeyThrough === "photos" && (
@@ -510,6 +536,10 @@ const Container = styled.div`
     flex-direction: column;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
+
+    @media(max-width: 500px){
+      width : 90vw;
+    }
   }
 
   .storyPopup_header {
@@ -666,6 +696,7 @@ const Container = styled.div`
       margin-bottom: 0;
       text-align: center;
       overflow-y: scroll;
+      height : 50px;
 
       ::-webkit-scrollbar {
         display: none;

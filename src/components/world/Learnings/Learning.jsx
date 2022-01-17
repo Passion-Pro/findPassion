@@ -261,9 +261,14 @@ const Container = styled.div`
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin-right: 30px;
+  margin-bottom: 20px;
   background-color : white;
+
+  @media(max-width: 700px){
+    margin-right: 10px;
+    margin-bottom : 10px;
+  }
 
   @media (max-width: 500px) {
     width: 40vw;
