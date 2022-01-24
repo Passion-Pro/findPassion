@@ -8,13 +8,14 @@ export const initialState = {
   openLearningsPopup: false,
   learnings: [],
   openStoryPopup: false,
-  startJourney : false,
-  journeyUpload : "video",
-  showStoryCaption:false,
-  showStory:false,
-  openNewLearningPopup : false,
-  userInfo : [],
-  courseDiv:false,
+  startJourney: false,
+  journeyUpload: "video",
+  showStoryCaption: false,
+  showStory: false,
+  openNewLearningPopup: false,
+  userInfo: [],
+  journey: [],
+  courseDiv: false,
   showDiv: false,
   showLeftSidebarGroup:true,
   showExpandGroup:false,
@@ -30,6 +31,8 @@ export const initialState = {
   // for backgroundimage and profile image
   groupsOtherDetails:null,
   showgroupMoreRight:true,
+  openAddLearntPopup: false,
+  chatId: null,
 };
 
 export const actionTypes = {
@@ -37,9 +40,9 @@ export const actionTypes = {
   SET_SHOW_TOP:"SET_SHOW_TOP",
   SET_SEARCH_INPUT:'SET_SEARCH_INPUT',
   SET_SHOW_MORE_OPTION:'SET_MORE_OPTION',
-  SET_COURSEDIV:"SET_COURSEDIV",
   SET_SHOWSTORY:'SET_SHOWSTORY',
   SET_SHOWSTORY_CAPTION:'SET_SHOWSTORY_CAPTION',
+  SET_COURSEDIV: "SET_COURSEDIV",
   OPEN_QUALITIES_POPUP: "OPEN_QUALITIES_POPUP",
   ADD_QUALITY: "ADD_QUALITY",
   REMOVE_QUALITY: "REMOVE_QUALITY",
@@ -53,20 +56,23 @@ export const actionTypes = {
   REMOVE_LEARNING: "REMOVE_LEARNING",
   OPEN_STORY_POPUP: "OPEN_STORY_POPUP",
   START_JOURNEY: "START_JOURNEY",
-  SET_JOURNEY_UPLOAD : "SET_JOURNEY_UPLOAD",
+  SET_JOURNEY_UPLOAD: "SET_JOURNEY_UPLOAD",
   OPEN_NEW_LEARNING_POPUP: "OPEN_NEW_LEARNING_POPUP",
-  SET_USER_INFO : "SET_USER_INFO",
-  SET_SHOW_DIV: 'SET_SHOW_DIV',
-  SET_SHOW_LEFTSIDEBARGROUP:'SET_SHOW_LEFTSIDEBARGROUP',
-  SET_SHOW_EXPANDGROUP:"SET_SHOW_EXPANDGROUP",
-  SET_GROUP_DETAILS:'SET_GROUP_DETAILS',
-  SET_GROUP_MEMBER:'SET_GROUP_MEMBER',
-  SET_GROUP_MEMBERDETAILS:'SET_GROUP_MEMBERDETAILS',
-  SET_MY_GROUP_DETAILS:"SET_MY_GROUP_DETAILS",
-  SET_MY_GROUP_DETAILS_MAIN:"SET_MY_GROUP_DETAILS_MAIN",
   SET_MY_GROUP_OTHER_DETAILS:"SET_MY_GROUP_OTHER_DETAILS",
   // showgroupMoreRight
   SET_SHOW_GROUP_MORE_RIGHT:"SET_SHOW_GROUP_MORE_RIGHT",
+  SET_USER_INFO: "SET_USER_INFO",
+  SET_JOURNEY: "SET_JOURNEY",
+  SET_SHOW_DIV: "SET_SHOW_DIV",
+  SET_SHOW_LEFTSIDEBARGROUP: "SET_SHOW_LEFTSIDEBARGROUP",
+  SET_SHOW_EXPANDGROUP: "SET_SHOW_EXPANDGROUP",
+  SET_GROUP_DETAILS: "SET_GROUP_DETAILS",
+  SET_GROUP_MEMBER: "SET_GROUP_MEMBER",
+  SET_GROUP_MEMBERDETAILS: "SET_GROUP_MEMBERDETAILS",
+  OPEN_ADD_LEARNT_POPUP: "OPEN_ADD_LEARNT_POPUP",
+  SET_MY_GROUP_DETAILS: "SET_MY_GROUP_DETAILS",
+  SET_MY_GROUP_DETAILS_MAIN: "SET_MY_GROUP_DETAILS_MAIN",
+  SET_CHAT_ID: "SEt_CHAT_ID",
 };
 
 const reducer = (state, action) => {
@@ -136,7 +142,7 @@ const reducer = (state, action) => {
         ...state,
         showLeftSidebarGroup: action.showLeftSidebarGroup,
       };
-      // showExpandGroup
+    // showExpandGroup
     case actionTypes.SET_COURSEDIV:
       return {
         ...state,
@@ -240,31 +246,46 @@ const reducer = (state, action) => {
         ...state,
         learnings: newlearnings,
       };
-      case actionTypes.OPEN_STORY_POPUP:
-        return {
-          ...state,
-          openStoryPopup : action.openStoryPopup
-        }
-      case actionTypes.START_JOURNEY:
-        return {
-          ...state,
-          startJourney : action.startJourney
-        }
-        case actionTypes.SET_JOURNEY_UPLOAD:
-          return {
-            ...state,
-            journeyUpload : action.journeyUpload
-          }
-        case actionTypes.OPEN_NEW_LEARNING_POPUP:
-          return{
-            ...state,
-            openNewLearningPopup : action.openNewLearningPopup
-          }
-        case actionTypes.SET_USER_INFO:
-          return{
-            ...state,
-            userInfo : action.userInfo
-          }
+    case actionTypes.OPEN_STORY_POPUP:
+      return {
+        ...state,
+        openStoryPopup: action.openStoryPopup,
+      };
+    case actionTypes.START_JOURNEY:
+      return {
+        ...state,
+        startJourney: action.startJourney,
+      };
+    case actionTypes.SET_JOURNEY_UPLOAD:
+      return {
+        ...state,
+        journeyUpload: action.journeyUpload,
+      };
+    case actionTypes.OPEN_NEW_LEARNING_POPUP:
+      return {
+        ...state,
+        openNewLearningPopup: action.openNewLearningPopup,
+      };
+    case actionTypes.SET_USER_INFO:
+      return {
+        ...state,
+        userInfo: action.userInfo,
+      };
+    case actionTypes.SET_JOURNEY:
+      return {
+        ...state,
+        journey: action.journey,
+      };
+    case actionTypes.OPEN_ADD_LEARNT_POPUP:
+      return {
+        ...state,
+        openAddLearntPopup: action.openAddLearntPopup,
+      };
+    case actionTypes.SET_CHAT_ID:
+      return {
+        ...state,
+        chatId: action.chatId,
+      };
     default:
       return state;
   }

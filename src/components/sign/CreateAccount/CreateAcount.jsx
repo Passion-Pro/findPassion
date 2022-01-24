@@ -18,6 +18,7 @@ import { useHistory } from "react-router-dom";
 import LearningsPopup from "./LearningsPopup";
 import Learning from "./Learning";
 import Skill from "./Skill";
+import firebase from "firebase";
 
 function CreateAccount() {
   const [{ selectedQualities, passion, user, learnings }, dispatch] =
@@ -30,6 +31,17 @@ function CreateAccount() {
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
   const [input, setInput] = useState("");
+  const[year , setYear] = useState();
+  const[branch , setBranch] = useState();
+
+  useEffect(() => {
+    if(year === 1){
+      dispatch({
+        type : actionTypes.SET_PASSION,
+        passion : "Don't know"
+      })
+    }
+  } , [year])
 
   const openQaulitiesPopup = () => {
     dispatch({
@@ -65,7 +77,7 @@ function CreateAccount() {
   const create_account = (e) => {
     e.preventDefault();
 
-    if (email && password && name && selectedQualities.length > 0 && passion) {
+    if (email && password && name && selectedQualities.length > 0 && passion && branch && year) {
       console.log(experience);
       if (
         (passion !== "Don't know" && experience) ||
@@ -86,7 +98,10 @@ function CreateAccount() {
                   email: email,
                   qualities: selectedQualities,
                   passion: passion,
-                  subInterest : input
+                  subInterest : input,
+                  branch : branch,
+                  year : year,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 });
               } else {
                 db.collection("users").doc(auth.user.uid).set({
@@ -95,7 +110,10 @@ function CreateAccount() {
                   qualities: selectedQualities,
                   passion: passion,
                   experience: experience,
-                  subInterest : input
+                  subInterest : input,
+                  branch : branch,
+                  year : year,
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 });
               }
 
@@ -192,6 +210,24 @@ function CreateAccount() {
               onChange={(e) => setName(e.target.value)}
             />
           </div>
+          <div className="info">
+            <p>Branch:</p>
+            <input
+              type="text"
+              placeholder="Enter branch"
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+            />
+          </div>
+          <div className="info">
+            <p>Year:</p>
+            <input
+              type="text"
+              placeholder="Enter email"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            />
+          </div>
           <div className="description">
             <p onClick={openQaulitiesPopup} className="let_us">
               Let us know more about you
@@ -209,12 +245,12 @@ function CreateAccount() {
               </div>
             )}
           </div>
-          <div className="passion">
+         {year > 1 && ( <div className="passion">
             <p onClick={open_passion_popup} className="select_passion">
               Select your passion , interest:{" "}
             </p>
             <p>{passion}</p>
-          </div>
+          </div>)}
           {passion && passion !== "Don't know" && (
             <>
               <div className="subfield">

@@ -42,7 +42,11 @@ function RequestsPage() {
         </div>
         {requests?.length > 0 ?(<div className="requests">
             {requests.map((request) => (
-                <Request request = {request}/>
+                <>
+                 {request?.data?.status === "pending" && (
+                   <Request request = {request}/>
+                 )}
+                </>
             ))}
         </div>):(
             <p className = "no_requests">No Requests</p>

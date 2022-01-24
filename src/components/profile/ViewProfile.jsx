@@ -1,5 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
+import ProfilePage from '../ProfilePage/ProfilePage';
 import './ViewProfile.css'
 
 function ViewProfile() {
@@ -7,9 +8,7 @@ function ViewProfile() {
 
     return (
         <div className='viewprofile'>
-            <div className="viewprofileHead">
-
-            </div>
+           <ProfilePage id = {id}/>
         </div>
     )
 }
