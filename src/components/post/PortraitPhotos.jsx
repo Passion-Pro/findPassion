@@ -125,6 +125,7 @@ export default function PortraitPhotos() {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
+                            userimage:userInfo.profilePhotoUrl,
                         })
                         .then(() => {
                             // adding post in user private collection

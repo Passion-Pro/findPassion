@@ -7,27 +7,27 @@ import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
 
 function GroupChat() {
-  
-  const [{ userInfo, user ,showLeftSidebarGroup},dispatch] = useStateValue();
+
+  const [{ showTop, user, showLeftSidebarGroup }, dispatch] = useStateValue();
 
   return (
     <div className='group'>
-      <Header />
-      <div className="group__body">
-     <GroupTopBody/>
+      {showTop &&
+        <GroupTopBody />}
+      <div className={showTop ? "group__body" : 'group__bodyTwo'}>
         <div className="group__lower">
           {<div className="group__lower__leftSidebar">
-          <SidebarGroup/>
+            <SidebarGroup />
           </div>}
           {<div className="group__lower__rightSidebar">
-          <RightSidebarGroupChat/>
+            <RightSidebarGroupChat />
           </div>}
         </div>
         <div className="group__lowerForMobile">
-          {showLeftSidebarGroup?<div className="group__lower__leftSidebarForMobile">
-          <SidebarGroup/>
-          </div>:<div className="group__lower__rightSidebarForMobile">
-          <RightSidebarGroupChat/>
+          {showLeftSidebarGroup ? <div className="group__lower__leftSidebarForMobile">
+            <SidebarGroup />
+          </div> : <div className="group__lower__rightSidebarForMobile">
+            <RightSidebarGroupChat />
           </div>}
         </div>
       </div>

@@ -14,18 +14,28 @@ import db from '../../firebase';
 import firebase from 'firebase';
 
 function SidebarGroup() {
-    const [{ userInfo, user, groupDetails, groupMember }, dispatch] = useStateValue();
+    const [{ showTop, user, groupDetails, groupMember }, dispatch] = useStateValue();
     const [showAddMember, setShowAddMember] = useState(false);
     const [showInventor, setShowInventor] = useState(false);
     const [showMember, setShowMember] = useState(false);
     const [newmember, setNewmember] = useState('');
-    // const [members,setMembers]=useState([]);
+    const [alreadymember, setAlreadymember] = useState(false);
 
     var today = new Date();
     var date = today.toLocaleString();
+    const Amember = null;
+    console.log(groupMember);
+    if (newmember) {
 
+        function checkMember(groupMember) {
+            return groupMember?.data?.email == newmember;
+        }
+        const Amember = groupMember.filter(checkMember);
+        console.log(Amember && Amember[0]?.data?.name)
+    }
     const AddMember = () => {
-        if (newmember) {
+
+        if (newmember && Amember && Amember[0]?.data?.name != newmember) {
             db.collection('users').where('email', '==', newmember)
                 .get()
                 .then((querySnapshot) => {
@@ -33,14 +43,14 @@ function SidebarGroup() {
                         alert('This email address is not exist in platform');
                     } else {
                         querySnapshot.forEach((doc) => {
-                            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user.uid+newmember).set({
+                            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user.uid + newmember).set({
                                 date: date,
                                 name: doc.data()?.name,
                                 email: newmember,
                                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                totalmessage:0,
+                                totalmessage: 0,
                             }).then(() => {
-                                db.collection('users').doc(doc.id).collection('Groups').add({
+                                db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id + user?.email).set({
                                     date: date,
                                     name: doc.data()?.name,
                                     email: newmember,
@@ -48,6 +58,9 @@ function SidebarGroup() {
                                     GroupId: user?.uid,
                                     GroupName: groupDetails?.GroupName,
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                    backgroundImage: groupDetails?.backgroundImage,
+                                    ProfileImage: groupDetails?.ProfileImage,
+                                    DefaultbackgroundImage: groupDetails?.DefaultbackgroundImage,
                                 })
                                 setNewmember('');
                                 setShowAddMember(false);
@@ -55,6 +68,8 @@ function SidebarGroup() {
                         })
                     }
                 })
+        } else {
+            alert('Already member')
         }
     }
 
@@ -89,7 +104,7 @@ function SidebarGroup() {
                             <div className="learning_detail">
                                 <input
                                     type="text"
-                                    placeholder="Group Name"
+                                    placeholder="Email of the new member"
                                     maxlength="70"
                                     onChange={e => setNewmember(e.target.value)}
                                 />
@@ -102,7 +117,7 @@ function SidebarGroup() {
                 </Container>
             )}
             <div className='SidebarGroup'>
-                <div className="leftSidebarGroup__header">
+                <div className={showTop ? 'leftSidebarGroup__headerShow' : "leftSidebarGroup__header"}>
                     {groupDetails?.GroupName} Family
                     <div className="leftSidebarGroup__headeRIcon">
                         <ArrowForwardRoundedIcon
@@ -115,47 +130,47 @@ function SidebarGroup() {
                         />
                     </div>
                 </div>
-                <div className="leftSidebarGroup__Admin"
-                    onClick={() => {
-                        setShowInventor(!showInventor)
-                        setShowMember(false)
-                    }}
-                >
-                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
-
-                        Inventor
-                        {
-                            !showInventor ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
-                        }
+                <div style={{ display: 'flex', flexDirection: 'column', height: "85%", marginTop: "5%" }}>
+                    <div className="leftSidebarGroup__Admin"
+                        onClick={() => {
+                            setShowInventor(!showInventor)
+                            setShowMember(false)
+                        }}
+                    >
+                        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+                            Inventor
+                            {
+                                !showInventor ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
+                            }
+                        </div>
+                        <div>
+                        </div>
                     </div>
-                    <div>
+                    {showInventor && <div className="leftSidebarGroup__body" >
+                    </div>}
+                    <div className="leftSidebarGroup__Admin"
+                        onClick={() => {
+                            setShowMember(!showMember)
+                            setShowInventor(false)
+                        }}>
+                        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+                            Member
+                            {
+                                !showMember ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
+                            }
+                        </div>
+                        {user?.email == groupDetails?.startedby && <div onClick={() => {
+                            setShowAddMember(true)
+                        }}>
+                            <AddRoundedIcon />
+                        </div>}
                     </div>
-                </div>
-                {showInventor && <div className="leftSidebarGroup__body" >
-                    {/* <GroupMemberField inventor={"name"}/>  */}
-                </div>}
-                <div className="leftSidebarGroup__Admin"
-                    onClick={() => {
-                        setShowMember(!showMember)
-                        setShowInventor(false)
-                    }}>
-                    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
-                        Member
-                        {
-                            !showMember ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
-                        }
-                    </div>
-                    {user?.email == groupDetails?.startedby && <div onClick={() => {
-                        setShowAddMember(true)
-                    }}>
-                        <AddRoundedIcon />
+                    {showMember && <div className="leftSidebarGroup__body">
+                        {groupMember.map((member, serial) => (
+                            <GroupMemberField member={member} serial={serial} />
+                        ))}
                     </div>}
                 </div>
-                {showMember && <div className="leftSidebarGroup__body">
-                    {groupMember.map((member, serial) => (
-                        <GroupMemberField member={member} serial={serial} />
-                    ))}
-                </div>}
             </div>
         </>
     )
@@ -208,13 +223,13 @@ z-index:101;
   .group_photo {
     display: flex;
     justify-content: center;
-    align-item:center;
+    align-items:center;
     flex-direction: column;
     width:100%;
     .group_photo_Image{
         display:flex;
         flex-direction: column;
-        align-item:center !important;
+        align-items:center !important;
         justify-content:center;
         padding:4px 0 8px 0 ;
     }

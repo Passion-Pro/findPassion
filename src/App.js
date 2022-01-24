@@ -7,7 +7,6 @@ import ChatPage from './components/chat/ChatPage';
 import WorldPage from './components/world/WorldPage';
 import LearningGroup from './components/world/Learnings/LearningGroup';
 import StoriesPage from './components/world/StoriesPage';
-import VideoPlayer from './components/world/Stories/VideoPlayer';
 import StoryPage from './components/world/Stories/StoryPage';
 import LearnersPage from './components/world/Learnings/LearnersPage';
 import AddStoryPage from './components/world/Stories/AddStoryPage';
@@ -40,7 +39,7 @@ import Header from "./components/header/Header";
 
 function App() {
 
-  const [{ user, courseDiv, showExpandGroup }, dispatch] = useStateValue();
+  const [{ user, courseDiv, showExpandGroup,showMoreoption,showgroupMoreRight }, dispatch] = useStateValue();
   const history=useHistory();
 
   useEffect(() => {
@@ -86,13 +85,25 @@ function App() {
         showExpandGroup: false,
       })
     }
+    if(showMoreoption){
+      dispatch({
+        type: actionTypes.SET_SHOW_MORE_OPTION,
+        showMoreoption: false,
+      })
+    }
+    if(showgroupMoreRight){
+      dispatch({
+        type: actionTypes.SET_SHOW_GROUP_MORE_RIGHT,
+        showgroupMoreRight: false,
+      })
+    }
   }
 
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-          <Header/>
-        <Switch>
+         {window.location.pathname!=='/withoutlogin' && <Header/>}
+        <Switch> 
           <Route path='/searchPage'>
             <SearchPage />
           </Route>
@@ -105,7 +116,7 @@ function App() {
           <Route path='/viewprofile/:id'>
             <ViewProfile />
           </Route>
-          <Route path='/withoutloginhome'>
+          <Route path='/withoutlogin'>
             <WithoutLogin />
           </Route>
           <Route path='/shareexperience'>
@@ -187,7 +198,7 @@ function App() {
             <Login />
           </Route>
           <Route path='/'>
-            {user?.email ? <Home /> : <WithoutLogin />}
+            {user?.email && <Home />}
           </Route>
         </Switch>
       </Router>

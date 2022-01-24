@@ -29,10 +29,19 @@
     display: flex;
     justify-content: space-between;
     border-bottom: 1.8px solid lightgray;
-    width: 96%;
+    width: 92%;
+    padding-left: 8%;
     align-items: center;
-    padding-left: 12px;
-    height: 30px;
+    height: 6%;
+}
+.leftSidebarGroup__headerShow{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1.8px solid lightgray;
+    width: 92%;
+    padding-left: 8%;
+    align-items: center;
+    height: 10%;
 }
 .leftSidebarGroup__headeRIcon{
         display: none;

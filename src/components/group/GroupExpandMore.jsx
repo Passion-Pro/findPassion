@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Group.css'
 import styled from "styled-components";
 import './GroupExpandMore.css'
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
@@ -11,10 +12,12 @@ import firebase from 'firebase';
 import GroupNameField from './GroupNameField';
 import { useHistory } from 'react-router-dom';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import { v4 as uuid } from "uuid";
 
 function GroupExpandMore() {
   const history = useHistory();
-  const [{ showExpandGroup, user, groupDetails, mygroupDetail }, dispatch] = useStateValue();
+  const [{ showExpandGroup,editGroup, user,showTop, mygroupDetail }, dispatch] = useStateValue();
   const [showAddGroup, setShowAddGroup] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groups, setGroups] = useState([]);
@@ -33,13 +36,18 @@ function GroupExpandMore() {
 
   const AddGroup = () => {
     if (user) {
+      const id = uuid();
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details').set({
         GroupName: groupName ? groupName : 'Your Group',
         GroupStatus: "Our passion makes us happy which no one else can do.",
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         startedby: user.email,
-        totalmessage:0,
-        totalmessageAdmin:0,
+        totalmessage: 0,
+        totalmessageAdmin: 0,
+        ProfileImage: 'https://mcdn.wallpapersafari.com/medium/46/34/648IOD.jpg',
+        backgroundImage: '',
+        DefaultbackgroundImage: 'https://firebasestorage.googleapis.com/v0/b/find-passion.appspot.com/o/LearningImages%2F8b87d5d2-1ff3-4830-a62f-d30b5046a1d3?alt=media&token=d8a46f9c-6666-4466-bba8-beb20bf439e1',
+        id: id,
       }).then(() => {
         setGroupName('')
         setShowAddGroup(false)
@@ -50,6 +58,19 @@ function GroupExpandMore() {
       alert('Something went wrong');
     }
   }
+
+  useEffect(() => {
+    if (user?.uid) {
+      db.collection('users').doc(user.uid).collection('Groups')
+        .onSnapshot((snapshot) => (
+          setGroups(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            })))
+        ));
+    }
+  }, [user])
 
   useEffect(() => {
     if (user?.uid) {
@@ -92,14 +113,68 @@ function GroupExpandMore() {
           </div>
         </Container>
       )}
-      <div className="groupHead__More" onClick={() => {
-        dispatch({
-          type: actionTypes.SET_SHOW_EXPANDGROUP,
-          showExpandGroup: true,
-        })
-      }}>
-        <ExpandMoreRoundedIcon className="groupHead__More__Icon" />
+
+      <div className="groupHead__More">
+        <button onClick={() => {
+          dispatch({
+            type: actionTypes.SET_SHOW_EXPANDGROUP,
+            showExpandGroup: true,
+          })
+        }} className='Button__groupExpand'>
+          More
+        </button>
+
+        <button onClick={() => {
+          dispatch({
+            type: actionTypes.SET_EDIT_GROUP,
+            editGroup: !editGroup,
+          })
+          console.log("Edit Group is " , editGroup)
+        }} className='Button__groupExpand'>
+          Edit
+        </button>
+
+        {<button style={{ display: "flex",  padding: "4px", margin: "4px",  border: 'none', outline: "none", alignItems: 'center', justifyContent: 'center', borderRadius: '16px', fontWeight: 'bold'}} className='Button__groupExpandHide' variant="contained">
+          {showTop ?
+            <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }} onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_TOP,
+                showTop: false,
+              });
+            }} >
+              <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }}>
+                <p style={{
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                }}>
+                  Hide
+                </p>
+              </div>
+              <ExpandMoreRoundedIcon style={{
+                zIndex: 11, height: "100%"
+              }} />
+            </div>
+            :
+            <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }} onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_TOP,
+                showTop: true,
+              });
+            }}>
+              <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: "100%" }}>
+                <p style={{
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                }}>Show</p>
+              </div>
+              <ChevronRightRoundedIcon style={{
+                zIndex: 11, height: "100%"
+              }} />
+            </div>
+          }
+        </button>}
       </div>
+      
       {showExpandGroup &&
         <div className="showExpandGroup">
           {!mygroupDetail?.GroupName ?
@@ -179,13 +254,13 @@ const Container = styled.div`
     .group_photo {
       display: flex;
       justify-content: center;
-      align-item:center;
+      align-items:center;
       flex-direction: column;
       width:100%;
       .group_photo_Image{
           display:flex;
           flex-direction: column;
-          align-item:center !important;
+          align-items:center !important;
           justify-content:center;
           padding:4px 0 8px 0 ;
       }

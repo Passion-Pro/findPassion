@@ -11,14 +11,14 @@ import { actionTypes } from '../../reducer';
 function RightSidebarGroupTask() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails, groupMemberDetails, groupMemberDetailsId }, dispatch] = useStateValue();
+    const [{ showTop, user, groupDetails, groupMemberDetails}, dispatch] = useStateValue();
     const [dueDate, setDueDate] = useState(null);
     const { id } = useParams();
 
     const setDue = () => {
         if (dueDate && groupDetails && groupMemberDetails) {
             db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember')
-                .doc(groupMemberDetailsId).update({
+                .doc(groupDetails?.GroupId+user?.email).update({
                     Duedate: dueDate,
                     status: !groupMemberDetails.status ? 'pending' : groupMemberDetails.status
                 })
@@ -31,7 +31,7 @@ function RightSidebarGroupTask() {
     return (
         <>
             {groupDetails && <div className='RightSidebarGroup'>
-                <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
                     <div className="rightSidebarGroup__headMoreTask">
                         <ArrowBackRoundedIcon onClick={() => {
                             history.push(`/groupother/${id}`)
@@ -68,7 +68,7 @@ function RightSidebarGroupTask() {
                             <Button variant={groupMemberDetails?.status == 'Done' ? "contained" : "primary"} onClick={() => {
                                 if (groupDetails && groupMemberDetails) {
                                     db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember')
-                                        .doc(groupMemberDetailsId).update({
+                                        .doc(groupDetails?.GroupId+user?.email).update({
                                             status: 'Done',
                                         })
                                         history.push(`/groupother/${id}`)
@@ -79,7 +79,7 @@ function RightSidebarGroupTask() {
                             <Button variant={groupMemberDetails?.status == 'Doing' ? "contained" : "primary"} onClick={() => {
                                 if (groupDetails && groupMemberDetails) {
                                     db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember')
-                                        .doc(groupMemberDetailsId).update({
+                                        .doc(groupDetails?.GroupId+user?.email).update({
                                             status: "Doing"
                                         })
                                         history.push(`/groupother/${id}`)

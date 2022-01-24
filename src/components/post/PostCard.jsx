@@ -13,9 +13,11 @@ function PostCard({ data }) {
     const [{user,userInfo}]=useStateValue();
 
     const handleLike = () => {
+        
         const currentLikeStatus = !data.data.likedUser.includes(
             user?.email
         )
+
         db.collection(userInfo?.passion)
             .doc('Csb15iOnGedmpceiQOhX')
             .collection("Posts").doc(data.id).update({

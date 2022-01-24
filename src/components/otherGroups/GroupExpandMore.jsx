@@ -11,10 +11,11 @@ import { v4 as uuid } from "uuid";
 import GroupNameField from '../group/GroupNameField';
 import { useHistory, useParams } from 'react-router-dom';
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 
 function GroupExpandMore() {
   const history = useHistory();
-  const [{ showExpandGroup, user, groupDetails, mygroupDetail }, dispatch] = useStateValue();
+  const [{ showExpandGroup, user, showTop, groupDetails, mygroupDetail }, dispatch] = useStateValue();
   const [showAddGroup, setShowAddGroup] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groups, setGroups] = useState([]);
@@ -22,14 +23,14 @@ function GroupExpandMore() {
   const { id } = useParams();
 
   useEffect(() => {
-    if(user){
+    if (user) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details')
-      .onSnapshot((snapshot) => {
-        dispatch({
-          type: actionTypes.SET_MY_GROUP_DETAILS,
-          mygroupDetail: snapshot.data(),
+        .onSnapshot((snapshot) => {
+          dispatch({
+            type: actionTypes.SET_MY_GROUP_DETAILS,
+            mygroupDetail: snapshot.data(),
+          })
         })
-      })
     }
   }, [user])
 
@@ -93,14 +94,57 @@ function GroupExpandMore() {
           </div>
         </Container>
       )}
-      <div className="groupHead__More" onClick={() => {
-        dispatch({
-          type: actionTypes.SET_SHOW_EXPANDGROUP,
-          showExpandGroup: true,
-        })
-      }}>
-        <ExpandMoreRoundedIcon className="groupHead__More__Icon" />
+      <div className="groupHead__More">
+        <button onClick={() => {
+          dispatch({
+            type: actionTypes.SET_SHOW_EXPANDGROUP,
+            showExpandGroup: true,
+          })
+        }} className='Button__groupExpand' >
+          More
+        </button>
+
+        {<button style={{ display: "flex", padding: "4px", margin: "4px", border: 'none', outline: "none", alignItems: 'center', justifyContent: 'center', borderRadius: '16px', fontWeight: 'bold' }} className='Button__groupExpandHide' variant="contained">
+          {showTop ?
+            <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }} onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_TOP,
+                showTop: false,
+              });
+            }} >
+              <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px' }}>
+                <p style={{
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                }}>
+                  Hide
+                </p>
+              </div>
+              <ExpandMoreRoundedIcon style={{
+                zIndex: 11, height: "100%"
+              }} />
+            </div>
+            :
+            <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }} onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_TOP,
+                showTop: true,
+              });
+            }}>
+              <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: "100%",cursor: 'pointer', }}>
+                <p style={{
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                }}>Show</p>
+              </div>
+              <ChevronRightRoundedIcon style={{
+                zIndex: 11, height: "100%"
+              }} />
+            </div>
+          }
+        </button>}
       </div>
+
       {showExpandGroup &&
         <div className="showExpandGroup">
           {!mygroupDetail?.GroupName ?
@@ -126,7 +170,6 @@ function GroupExpandMore() {
                 <GroupNameField group={group} key={group?.id} />
               </>
             ))}
-
           </div>
         </div>
       }
@@ -181,13 +224,13 @@ const Container = styled.div`
     .group_photo {
       display: flex;
       justify-content: center;
-      align-item:center;
+      align-items:center;
       flex-direction: column;
       width:100%;
       .group_photo_Image{
           display:flex;
           flex-direction: column;
-          align-item:center !important;
+          align-items:center !important;
           justify-content:center;
           padding:4px 0 8px 0 ;
       }

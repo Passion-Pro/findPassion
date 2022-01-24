@@ -35,7 +35,7 @@ function ShowStoriesSeries() {
                 </>
             ))}
             
-            <div className="Arrow__showrecommend">
+            <div className="Arrow__showrecommendStory">
                 <ArrowForwardIosRoundedIcon className='Arrow__showrecommendIn' />
             </div>
         </div>

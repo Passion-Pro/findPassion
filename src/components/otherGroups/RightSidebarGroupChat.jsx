@@ -15,11 +15,11 @@ import { useParams } from 'react-router-dom';
 function RightSidebarGroupChat() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails,groupDetailsmain }, dispatch] = useStateValue();
+    const [{ userInfo, user,showTop, groupDetails, groupDetailsmain }, dispatch] = useStateValue();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
-    const {id} = useParams();
+    const { id } = useParams();
 
     var today = new Date();
     var date = today.toLocaleString();
@@ -34,38 +34,38 @@ function RightSidebarGroupChat() {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             }).then(() => {
                 db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'Details').update({
-                    totalmessage:groupDetailsmain?.totalmessage+1,
+                    totalmessage: groupDetailsmain?.totalmessage + 1,
                 })
-                db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').doc(groupDetails?.GroupId+user?.email).update({
-                    totalmessage:groupDetailsmain?.totalmessage+1,
+                db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').doc(groupDetails?.GroupId + user?.email).update({
+                    totalmessage: groupDetailsmain?.totalmessage + 1,
                 })
 
                 setInput('')
             })
-        }else{
+        } else {
             alert('Something went wrong')
         }
     }
-    console.log(user,groupDetails)
-    
+    console.log(user, groupDetails)
+
     useEffect(() => {
-        if(groupDetails){
+        if (groupDetails) {
             db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails.GroupId + 'groupchat').collection('GroupChat')
-            .orderBy("timestamp", "desc")
-            .onSnapshot((snapshot) => {
-                setMessages(
-                    snapshot.docs.map((doc) => ({
-                        data: doc.data(),
-                        id: doc.id,
-                    }))
-                );
-            });
+                .orderBy("timestamp", "desc")
+                .onSnapshot((snapshot) => {
+                    setMessages(
+                        snapshot.docs.map((doc) => ({
+                            data: doc.data(),
+                            id: doc.id,
+                        }))
+                    );
+                });
         }
     }, [groupDetails]);
 
     return (
         <div className='RightSidebarGroup'>
-            <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow' : "rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMoreTask">
                     <ArrowBackRoundedIcon onClick={() => {
                         history.push(`/groupother/${id}`)
@@ -79,7 +79,7 @@ function RightSidebarGroupChat() {
             <div className="rightSidebarGroup__bodyTask">
                 <div className="GroupChat__body">
                     {messages.map((data) => (
-                         <GroupChatMsg data={data}/>
+                        <GroupChatMsg data={data} />
                     ))}
                 </div>
                 <div className="GroupChat__Footer">

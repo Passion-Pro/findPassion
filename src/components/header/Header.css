@@ -40,12 +40,14 @@
     align-items: center;
     padding: 0px 12px 0 12px;
     justify-content: center;
+    cursor: pointer;
 }
 .Loginheader__Icon__search{
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0px 12px 0 12px;
+    cursor: pointer;
 }
 .Loginheader__Icon__addIcon{
     display: flex;

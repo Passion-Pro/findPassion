@@ -9,33 +9,32 @@ import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
 
 function GroupTask() {
-  const [{ userInfo, user ,showLeftSidebarGroup},dispatch] = useStateValue();
-  const [showLeftdiv,setShowLeftdiv]=useState(true);
-  const backgroundImage="https://cdn.w600.comps.canstockphoto.com/find-your-passion-in-splashs-background-stock-illustrations_csp78297071.jpg";
-  const image='https://mcdn.wallpapersafari.com/medium/46/34/648IOD.jpg';
+  const [{ userInfo, user, showTop, showLeftSidebarGroup }, dispatch] = useStateValue();
+  const [showLeftdiv, setShowLeftdiv] = useState(true);
 
   return (
     <div className='group'>
-      <Header />
-      <div className="group__body">
-         <GroupTopBody/>
+      {showTop &&
+        <GroupTopBody />
+      }
+      <div className={showTop ? "group__body" : 'group__bodyTwo'}>
         <div className="group__lower">
           {<div className="group__lower__leftSidebar">
-          <SidebarGroup/>
+            <SidebarGroup />
           </div>}
           {<div className="group__lower__rightSidebar">
-          <RightSidebarGroupTask/>
+            <RightSidebarGroupTask />
           </div>}
         </div>
         <div className="group__lowerForMobile">
-          {showLeftSidebarGroup?<div className="group__lower__leftSidebarForMobile">
-          <SidebarGroup/>
-          </div>:<div className="group__lower__rightSidebarForMobile">
-          <RightSidebarGroupTask/>
+          {showLeftSidebarGroup ? <div className="group__lower__leftSidebarForMobile">
+            <SidebarGroup />
+          </div> : <div className="group__lower__rightSidebarForMobile">
+            <RightSidebarGroupTask />
           </div>}
         </div>
       </div>
-      <GroupExpandMore/>
+      <GroupExpandMore />
     </div>
   )
 }
