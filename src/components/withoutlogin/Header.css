@@ -50,10 +50,10 @@
 .header__profile{
     display: flex;
     flex-direction: column;
-    flex:0.1;
     align-items: center;
     justify-content: center;
     color: rgb(240, 239, 239);
+    padding: 0 12px;
 }
 .header__profile>button{
     display: flex;
@@ -61,7 +61,6 @@
     justify-content: center;
     border: 1px solid whitesmoke;
     width: fit-content;
-    /* background-color: rgb(35, 241, 16); */
     height: 5vh;
     padding: 4px 12px 4px 12px;
     color: #0088CC;
@@ -130,7 +129,7 @@
         width: 100%;
     }
     .header__profile{
-        flex:.3;
+        /* flex:.3; */
     }
     .header__profile>button{
         font-size: small;

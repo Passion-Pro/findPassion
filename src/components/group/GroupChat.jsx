@@ -12,13 +12,14 @@ import GroupTopBody from './GroupTopBody';
 
 function GroupChat() {
 
-  const [{ userInfo, user, showLeftSidebarGroup }, dispatch] = useStateValue();
+  const [{ userInfo, user, showLeftSidebarGroup, groupDetails, showTop }, dispatch] = useStateValue();
 
   return (
     <div className='group'>
-      <Header />
-      <div className="group__body">
+      {groupDetails?.GroupName && showTop &&
         <GroupTopBody />
+      }
+      <div className={showTop ? "group__body" : 'group__bodyTwo'}>
         <div className="group__lower">
           {<div className="group__lower__leftSidebar">
             <SidebarGroup />

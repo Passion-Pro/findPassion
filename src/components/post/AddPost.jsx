@@ -6,7 +6,6 @@ import { v4 as uuid } from "uuid";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import Header from '../header/Header';
 import Button from '@mui/material/Button';
-// import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import firebase from "firebase";
@@ -126,6 +125,7 @@ export default function AddPost() {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
+                            userimage:userInfo.profilePhotoUrl,
                         })
                         .then(() => {
                             // adding post in user private collection

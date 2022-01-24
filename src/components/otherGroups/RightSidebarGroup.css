@@ -1,0 +1,11 @@
+.rightSidebarGroup__Moreoption{
+    display: flex;
+    position: absolute;
+    background-color: rgb(231, 231, 231);
+    box-shadow: 0 0 8px -2px gray;
+    width: 150px;
+    height: fit-content;
+    padding: 6px;
+    margin-left: -150px;
+    color: rgb(53, 44, 44);
+}

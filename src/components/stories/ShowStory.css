@@ -109,7 +109,7 @@
     color: #167ac6;
     cursor: pointer;
 }
-.Arrow__showrecommend{
+.Arrow__showrecommendStory{
     display: flex;
     position: absolute;
     height: 50px;
@@ -147,4 +147,7 @@
     .popupbodyImage_Img__Caption{ 
         padding: 12px;
     }  
+    .Arrow__showrecommendStory{
+        display: none;
+    }
 }

@@ -5,16 +5,13 @@ import ArrowRightRoundedIcon from '@mui/icons-material/ArrowRightRounded';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import Divider from '@mui/material/Divider';
-import CloseIcon from "@mui/icons-material/Close";
 import styled from "styled-components";
 import db from '../../firebase';
 import firebase from 'firebase';
 import { useParams } from 'react-router-dom';
 
 function SidebarGroup() {
-  const [{ userInfo, user, groupDetails, groupMember }, dispatch] = useStateValue();
+  const [{ showTop, user, groupDetails, groupMember }, dispatch] = useStateValue();
 
   const [showInventor, setShowInventor] = useState(false);
   const [showMember, setShowMember] = useState(false);
@@ -58,10 +55,10 @@ function SidebarGroup() {
               type: actionTypes.SET_GROUP_MEMBERDETAILS,
               groupMemberDetails: doc.data(),
             })
-            dispatch({
-              type: actionTypes.SET_GROUP_MEMBERDETAILS_ID,
-              groupMemberDetailsId: doc.id,
-            })
+            // dispatch({
+            //   type: actionTypes.SET_GROUP_MEMBERDETAILS_ID,
+            //   groupMemberDetailsId: doc.id,
+            // })
           })
         })
     }
@@ -82,10 +79,22 @@ function SidebarGroup() {
     }
   }, [groupDetails])
 
+  useEffect(() => {
+    if (groupDetails?.startedby) {
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'Details')
+        .onSnapshot((snapshot) => (
+          dispatch({
+            type: actionTypes.SET_MY_GROUP_OTHER_DETAILS,
+            groupsOtherDetails: snapshot.data(),
+          })
+        ))
+    }
+  }, [groupDetails])
+
   return (
     <>
       <div className='SidebarGroup'>
-        <div className="leftSidebarGroup__header">
+      <div className={showTop ? 'leftSidebarGroup__headerShow':"leftSidebarGroup__header"}>
           {groupDetails && groupDetails?.GroupName} Family
           <div className="leftSidebarGroup__headeRIcon">
             <ArrowForwardRoundedIcon
@@ -186,13 +195,13 @@ z-index:101;
   .group_photo {
     display: flex;
     justify-content: center;
-    align-item:center;
+    align-items:center;
     flex-direction: column;
     width:100%;
     .group_photo_Image{
         display:flex;
         flex-direction: column;
-        align-item:center !important;
+        align-items:center !important;
         justify-content:center;
         padding:4px 0 8px 0 ;
     }

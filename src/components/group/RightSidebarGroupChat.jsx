@@ -15,7 +15,7 @@ import GroupChatMsg from './GroupChatMsg';
 function RightSidebarGroupChat() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails }, dispatch] = useStateValue();
+    const [{ userInfo, user, groupDetails,showTop }, dispatch] = useStateValue();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
@@ -59,7 +59,7 @@ function RightSidebarGroupChat() {
 
     return (
         <div className='RightSidebarGroup'>
-            <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMoreTask">
                     <ArrowBackRoundedIcon onClick={() => {
                         history.push('/group')

@@ -6,23 +6,24 @@ import ProfileImage from '../profile/ProfileImage';
 
 function Box({data}) {
     const signupimage = null;
+    console.log("data",data)
     return (
         <div className='PeopleStartedSame'>
             <div className="PeopleStartedSameIn">
                 <div className="PeopleStartedSameIn__Accountname">
                     {signupimage ? <ProfileImage image={signupimage} size={30} /> : <AccountCircleRoundedIcon style={{ fontSize: 30 }} />}
                     <div className="PeopleStartedSameIn__Accountname__name">
-                       {data.accountname}
+                       {data?.data?.username}
                        <br />
-                       <span>{data.date}</span>
+                       <span>{data?.data.date}</span>
                     </div>
                 </div>
                 <Divider/>
                 <div className="PeopleStartedSameIn__head">
-                {data.infoHead}
+                {data?.data.postHead}
                 </div>
                 <div className="PeopleStartedSameIn__Text">
-                {data.info}
+                {data?.data.postText}
                 </div>
             </div>
         </div>

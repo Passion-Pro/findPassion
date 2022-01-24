@@ -1,20 +1,22 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
+import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EnvolveGraph from './EnvolveGraph';
+import Divider from '@mui/material/Divider';
 
 function RightSidebarGroupEnvolvement() {
-
-    const history = useHistory();
-    const [{ groupMember, groupDetails }, dispatch] = useStateValue();
-
     const { id } = useParams();
+    const history = useHistory();
+    const [{ userInfo, user, groupMember, groupDetails,showTop }, dispatch] = useStateValue();
 
     return (
         <div className='RightSidebarGroup'>
-            <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMoreTask">
                     <ArrowBackRoundedIcon onClick={() => {
                         history.push(`/groupother/${id}`)
@@ -26,15 +28,17 @@ function RightSidebarGroupEnvolvement() {
                 <div></div>
             </div>
             <div className="rightSidebarGroup__bodyEnvolve">
-                <div className="rightSidebarGroup__bodyEnvolvement2">
+                <div className={showTop?"rightSidebarGroup__bodyEnvolvement2Show":"rightSidebarGroup__bodyEnvolvement2"}>
 
                     <Button variant="outlined">{" Add "}</Button>
                     Improve your performance by discuss the skill you have common with others.
                 </div>
-                <div className="rightSidebarGroup__bodyEnvolvement1">
-                    <div className="rightSidebarGroup__bodyEnvolvement1Div">
-                        <EnvolveGraph />
-                    </div>
+                <div className={showTop?"rightSidebarGroup__bodyEnvolvement1Show":"rightSidebarGroup__bodyEnvolvement1"}>
+                    {groupMember && groupMember.map((data) => (
+                        <div className="rightSidebarGroup__bodyEnvolvement1Div">
+                            <EnvolveGraph data={data} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

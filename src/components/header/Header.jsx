@@ -14,24 +14,24 @@ import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
 
 function Header() {
-    const [{  user, courseDiv  }, dispatch] =useStateValue();
-    const history = useHistory();    
-    const [input,setInput]=useState('');
-    
-    useEffect(()=>{
-      if(input){
-          history.push('/searchPage')
-        dispatch({
-            type: actionTypes.SET_SEARCH_INPUT,
-            searchInput: input,
-          })
-      }else if(!input && window.location.pathname=='/searchPage'){
-          history.push('/')
-      }
-    },[input])
+    const [{ user, userInfo, courseDiv }, dispatch] = useStateValue();
+    const history = useHistory();
+    const [input, setInput] = useState('');
+
+    useEffect(() => {
+        if (input) {
+            history.push('/searchPage')
+            dispatch({
+                type: actionTypes.SET_SEARCH_INPUT,
+                searchInput: input,
+            })
+        } else if (!input && window.location.pathname == '/searchPage') {
+            history.push('/')
+        }
+    }, [input])
 
     const signupimage = 'https://image.cnbcfm.com/api/v1/image/105815446-1553624918736gettyimages-1078542150.jpeg?v=1612303414';
-    
+
     return (
         <>
             <div className='Loginheader' >
@@ -42,7 +42,7 @@ function Header() {
                     <div className='searchHeader__divOut__ForLoginHeader' >
                         <div className='searchHeader__div'>
                             <SearchRoundedIcon />
-                            <input placeholder='Search' className='searchHeader__input' onChange={e=>setInput(e.target.value)}/>
+                            <input placeholder='Search' className='searchHeader__input' onChange={e => setInput(e.target.value)} />
                         </div>
                     </div>
 
@@ -50,20 +50,19 @@ function Header() {
                         <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                             <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
-                        <div className="Loginheader__Icon__addIcon" onClick={() =>
-                    {   
+                        <div className="Loginheader__Icon__addIcon" onClick={() => {
                             dispatch({
-                              type: actionTypes.SET_COURSEDIV,
-                              courseDiv: true,
+                                type: actionTypes.SET_COURSEDIV,
+                                courseDiv: true,
                             });
-                }
-                    }>
-                            <AddIcon style={{ fontSize: 30, color: "white" }} />
+                        }
+                        }>
+                            <AddIcon style={{ fontSize: 30, color: "white", cursor: "pointer" }} />
                         </div>
-                        <div className="Loginheader__Icon__search" onClick={() => history.push('/')}>
+                        <div className="Loginheader__Icon__search" onClick={() => history.push('/group')}>
                             <GroupsRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
-                        <div className="Loginheader__Icon__search" onClick={() => history.push('/')}>
+                        <div className="Loginheader__Icon__search" onClick={() => history.push('/world')}>
                             <LanguageRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
                     </div>
@@ -71,8 +70,8 @@ function Header() {
                     <div className="Loginheader__profile">
                         {signupimage ? <ProfileImage image={signupimage} /> : <AccountCircleRoundedIcon style={{ fontSize: 50, color: "white" }} />}
                         <span className='Loginheader_profileName'>
-                            Nishant
-                            <ArrowDropDownRoundedIcon />
+                            {userInfo?.name && userInfo?.name?.length > 9 ? userInfo?.name.slice(0, 9) : userInfo?.name}
+                            {/* <ArrowDropDownRoundedIcon /> */}
                         </span>
                     </div>
                 </div>
@@ -81,29 +80,36 @@ function Header() {
                 <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                     <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => history.push('/search')}><SearchRoundedIcon style={{ fontSize: 30, color: "white" }} />
+                <div className="Loginheader__Icon__search" onClick={() => history.push('/searchpage')}><SearchRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() =>
-                    {   
-                            dispatch({
-                              type: actionTypes.SET_COURSEDIV,
-                              courseDiv: true,
-                            });
+                <div className="Loginheader__Icon__search" onClick={() => {
+                    dispatch({
+                        type: actionTypes.SET_COURSEDIV,
+                        courseDiv: true,
+                    });
                 }
-                    }>
+                }>
                     <AddIcon style={{ fontSize: 30, color: "white", border: '1.6px solid white', borderRadius: '4px', padding: 0 }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => history.push('/search')}>
+                <div className="Loginheader__Icon__search" onClick={() => history.push('/group')}>
                     <GroupsRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => history.push('/search')}>
+                <div className="Loginheader__Icon__search" onClick={() => history.push('/world')}>
                     <LanguageRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
             </div>
             {
-                courseDiv  &&
-                <div className="postPopup">
-                    <PostPopup />
+                courseDiv &&
+                <div style={{
+                    display: 'flex',
+                    position:'fixed',bottom:'0',left:'0',right:'0',
+                    height: '90vh', width: '100vw',
+                    backgroundColor: 'rgba(204,204,204,1)',
+                    zIndex:'21'
+                }}>
+                    <div className="postPopup">
+                        <PostPopup />
+                    </div>
                 </div>
             }
         </>

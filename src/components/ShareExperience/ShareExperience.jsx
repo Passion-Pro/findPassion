@@ -124,6 +124,7 @@ export default function ShareExperience() {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
+                            userimage:userInfo.profilePhotoUrl,
                         })
                         .then(() => {
                             // adding post in user private collection
@@ -151,19 +152,19 @@ export default function ShareExperience() {
                                     setPostText('');
                                     setLoading(false);
                                     setCroppedImage(null);
-                                    history.push('/');
+                                    history.push('/withoutlogin');
                                 });
                         });
                 } else {
                     alert('Try with another method.');
                     setLoading(false);
-                    history.push('/');
+                    history.push('/withoutlogin');
                 }
             });
         } else {
             alert('Select photo')
             setLoading(false);
-            history.push('/');
+            history.push('/withoutlogin');
         }
     }
 
@@ -217,9 +218,9 @@ export default function ShareExperience() {
             }
             {
                 <div className="addPost">
-                    <div className="shareExpHead">
+                    {/* <div className="shareExpHead">
                         <Header />
-                    </div>
+                    </div> */}
                     <div className="shareExpHeadForMobile">
                         <div className="ShareExp__backicon">
                             <ArrowBackRoundedIcon />
@@ -242,24 +243,26 @@ export default function ShareExperience() {
                                 {/* </div> */}
                             </div>
                             <div className="addPost__Image">
-                                {!croppedImage && <div className="Upload__ImageIcon" onClick={() => {
+                                {!croppedImage && 
+                                <label htmlFor="image">
+                                <div className="Upload__ImageIcon" onClick={() => {
                                     setPopUpImageCrop(true)
                                 }}>
-                                    <label htmlFor="image">
                                         <AddAPhotoIcon
                                             className="footer_icon"
                                             style={{ fontSize: 15 }}
                                         />
                                         Add Photo
-                                    </label>
                                     <input
                                         type="file"
                                         id={"image"}
                                         style={{ display: "none" }}
                                         onChange={onSelectFile}
                                         accept="image/git , image/jpeg , image/png"
-                                    />
-                                </div>}
+                                        />
+                                </div>
+                                        </label>
+                                }
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">
                                     <textarea className='textareaHead' placeholder='Write heading for your experience' onChange={e => setPostHead(e.target.value)} />

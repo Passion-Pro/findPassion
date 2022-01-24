@@ -17,22 +17,32 @@ export const initialState = {
   journey: [],
   courseDiv: false,
   showDiv: false,
-  showLeftSidebarGroup: true,
-  showExpandGroup: false,
-  groupDetails: null,
-  groupDetailsmain: null,
-  groupMember: null,
-  groupMemberDetails: null,
-  groupMemberDetailsId: null,
+  showLeftSidebarGroup:true,
+  showExpandGroup:false,
+  groupDetails:null,
+  groupDetailsmain:null,
+  groupMember:null,
+  groupMemberDetails:null,
+  mygroupDetail:null,
+  searchInput:'',
+  showMoreoption:false,
+  showTop:true,
+  editGroup:false,
+  // for backgroundimage and profile image
+  groupsOtherDetails:null,
+  showgroupMoreRight:true,
   openAddLearntPopup: false,
-  mygroupDetail: null,
   chatId: null,
 };
 
 export const actionTypes = {
+  SET_EDIT_GROUP:'SET_EDIT_GROUP',
+  SET_SHOW_TOP:"SET_SHOW_TOP",
+  SET_SEARCH_INPUT:'SET_SEARCH_INPUT',
+  SET_SHOW_MORE_OPTION:'SET_MORE_OPTION',
+  SET_SHOWSTORY:'SET_SHOWSTORY',
+  SET_SHOWSTORY_CAPTION:'SET_SHOWSTORY_CAPTION',
   SET_COURSEDIV: "SET_COURSEDIV",
-  SET_SHOWSTORY: "SET_SHOWSTORY",
-  SET_SHOWSTORY_CAPTION: "SET_SHOWSTORY_CAPTION",
   OPEN_QUALITIES_POPUP: "OPEN_QUALITIES_POPUP",
   ADD_QUALITY: "ADD_QUALITY",
   REMOVE_QUALITY: "REMOVE_QUALITY",
@@ -48,6 +58,9 @@ export const actionTypes = {
   START_JOURNEY: "START_JOURNEY",
   SET_JOURNEY_UPLOAD: "SET_JOURNEY_UPLOAD",
   OPEN_NEW_LEARNING_POPUP: "OPEN_NEW_LEARNING_POPUP",
+  SET_MY_GROUP_OTHER_DETAILS:"SET_MY_GROUP_OTHER_DETAILS",
+  // showgroupMoreRight
+  SET_SHOW_GROUP_MORE_RIGHT:"SET_SHOW_GROUP_MORE_RIGHT",
   SET_USER_INFO: "SET_USER_INFO",
   SET_JOURNEY: "SET_JOURNEY",
   SET_SHOW_DIV: "SET_SHOW_DIV",
@@ -56,7 +69,6 @@ export const actionTypes = {
   SET_GROUP_DETAILS: "SET_GROUP_DETAILS",
   SET_GROUP_MEMBER: "SET_GROUP_MEMBER",
   SET_GROUP_MEMBERDETAILS: "SET_GROUP_MEMBERDETAILS",
-  SET_GROUP_MEMBERDETAILS_ID: "SET_GROUP_MEMBERDETAILS_ID",
   OPEN_ADD_LEARNT_POPUP: "OPEN_ADD_LEARNT_POPUP",
   SET_MY_GROUP_DETAILS: "SET_MY_GROUP_DETAILS",
   SET_MY_GROUP_DETAILS_MAIN: "SET_MY_GROUP_DETAILS_MAIN",
@@ -65,6 +77,31 @@ export const actionTypes = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.SET_SHOW_GROUP_MORE_RIGHT:
+      return {
+        ...state,
+        showgroupMoreRight: action.showgroupMoreRight,
+      };
+    case actionTypes.SET_MY_GROUP_OTHER_DETAILS:
+      return {
+        ...state,
+        groupsOtherDetails: action.groupsOtherDetails,
+      };
+    case actionTypes.SET_EDIT_GROUP:
+      return {
+        ...state,
+        editGroup: action.editGroup,
+      };
+    case actionTypes.SET_SHOW_TOP:
+      return {
+        ...state,
+        showTop: action.showTop,
+      };
+    case actionTypes.SET_SHOW_MORE_OPTION:
+      return {
+        ...state,
+        showMoreoption: action.showMoreoption,
+      };
     case actionTypes.SET_SEARCH_INPUT:
       return {
         ...state,
@@ -84,11 +121,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         mygroupDetail: action.mygroupDetail,
-      };
-    case actionTypes.SET_GROUP_MEMBERDETAILS_ID:
-      return {
-        ...state,
-        groupMemberDetailsId: action.groupMemberDetailsId,
       };
     case actionTypes.SET_GROUP_MEMBER:
       return {
