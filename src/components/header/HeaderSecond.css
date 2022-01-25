@@ -1,6 +1,39 @@
 /* .HeaderSecond{
     display: none;
 } */
+.showHeadDiv{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 15vh;
+    right: 10vw;
+    bottom: 0; 
+    background-color: white; 
+    min-width: 15vw;
+    height: fit-content;
+    width: fit-content;
+    padding: 4px 12px 4px 12px;
+    margin: 12px;
+    margin-top: 2px;
+    margin-right: -10px;
+    z-index: 11;
+    max-width: 30vw;
+    max-height: 50vh;
+    overflow:scroll;
+    border-radius: 8px;
+    color: rgb(83, 92, 100);
+    border: 1px solid lightslategray;
+}
+.showHeadDiv__ROW{
+    display: flex;
+    flex-direction: column;
+    margin: 2px 0 2px;
+    margin: 2px 0 2px;
+    cursor: pointer;
+}
+.showHeadDiv::-webkit-scrollbar{
+    display: none;
+}
 .followingCardShow{
     visibility: hidden;
 }

@@ -48,7 +48,7 @@ import Header from "./components/header/Header";
 
 function App() {
 
-  const [{ user, courseDiv, showExpandGroup }, dispatch] = useStateValue();
+  const [{ user, courseDiv, showExpandGroup,showMoreoption,showgroupMoreRight }, dispatch] = useStateValue();
   const history=useHistory();
 
   useEffect(() => {
@@ -95,13 +95,25 @@ function App() {
         showExpandGroup: false,
       })
     }
+    if(showMoreoption){
+      dispatch({
+        type: actionTypes.SET_SHOW_MORE_OPTION,
+        showMoreoption: false,
+      })
+    }
+    if(showgroupMoreRight){
+      dispatch({
+        type: actionTypes.SET_SHOW_GROUP_MORE_RIGHT,
+        showgroupMoreRight: false,
+      })
+    }
   }
 
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-          <Header/>
-        <Switch>
+         {window.location.pathname!=='/withoutlogin' && <Header/>}
+        <Switch> 
           <Route path='/searchPage'>
             <SearchPage />
           </Route>
@@ -114,7 +126,7 @@ function App() {
           <Route path='/viewprofile/:id'>
             <ViewProfile />
           </Route>
-          <Route path='/withoutloginhome'>
+          <Route path='/withoutlogin'>
             <WithoutLogin />
           </Route>
           <Route path='/shareexperience'>
@@ -214,7 +226,7 @@ function App() {
             <UserProfile/>
           </Route>
           <Route path='/'>
-            {user?.email ? <Home /> : <WithoutLogin />}
+            {user?.email && <Home />}
           </Route>
         </Switch>
       </Router>

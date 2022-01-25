@@ -96,4 +96,7 @@
         margin-top: 12px;
         margin-bottom: 100px;
     }
+    .Arrow__showrecommendProfile{
+        display: none;
+    }
 }

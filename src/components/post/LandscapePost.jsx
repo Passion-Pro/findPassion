@@ -146,6 +146,7 @@ export default function LandscapePost() {
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                     imageName: id,
                                     imageOriginalName: upImgImage.name,
+                                    userimage:userInfo.profilePhotoUrl,
                                 })
                                 .then(() => {
                                     setLoading(false);

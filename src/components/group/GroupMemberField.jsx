@@ -5,70 +5,126 @@ import Divider from '@mui/material/Divider';
 import CloseIcon from "@mui/icons-material/Close";
 import db from '../../firebase';
 import { useStateValue } from '../../StateProvider';
+import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
+import AddTaskRoundedIcon from '@mui/icons-material/AddTaskRounded';
 
 function GroupMemberField({ member, serial }) {
-    const [{ user }] = useStateValue();
-    const [showAddTask,setshowAddTask]=useState(false)
+  const [{ user,groupDetails }] = useStateValue();
+  const [showAddTask, setshowAddTask] = useState(false);
+  const [showRemove, setshowRemove] = useState(false);
 
-    const [task,settask]=useState('');
+  const [task, settask] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
 
-    var today = new Date();
-    var date = today.toLocaleString();
-
-    const AddTask=()=>{
-      if(user){
-        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid+'groupmember').collection('GroupMember').doc(member.id).update({
-            task:task,
-            date:date,
-            givenBy:user?.email,
-            Duedate: null,
-            status: 'pending'
-        }).then(()=>{
-          setshowAddTask(false);
-        })
-      }
+  var today = new Date();
+  var date = today.toLocaleString();
+ console.log('groupDetails',groupDetails?.startedby)
+  const AddTask = () => {
+    if (user) {
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(member.id).update({
+        task: task,
+        date: date,
+        givenBy: user?.email,
+        Duedate: null,
+        status: 'pending'
+      }).then(() => {
+        setshowAddTask(false);
+      })
     }
-    return (
-        <>
-         {showAddTask && (
-                <Container>
-                    <div className="addLearning">
-                        <div className="add_learning_header">
-                            <CloseIcon className="close_icon"
-                                onClick={() => {
-                                    setshowAddTask(false)
-                                }}
-                            />
-                        </div>
-                        <div className="group_photo">
-                            <div className="learning_detail">
-                                <input
-                                    type="text"
-                                    placeholder="Type a task"
-                                    maxlength="70"
-                                    onChange={e=>settask(e.target.value)}
-                                />
-                            </div>
-                            <div className="start_button">
-                                <button onClick={AddTask} >Add</button>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
-            )}
-            <div className='GroupMemberField'>
-                <div className="groupmember__name">
-                    {member?.data?.name}
-                </div>
-                <div className="groupmember__icons" onClick={()=>{
-                    setshowAddTask(true)
-                }}>
-                    <img src="https://www.vhv.rs/dpng/d/78-784488_chat-icon-png-transparent-png.png" alt="" />
-                </div>
+  }
+
+  const removeMember = () => {
+    if (user && confirmEmail==member?.data?.email && groupDetails) {
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(member.id).delete().then(() => {
+        db.collection('users').where('email', '==', confirmEmail)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id +groupDetails?.startedby).delete().then(()=>{
+                alert('Wooooo');
+              })
+            })
+          })
+        setshowAddTask(false);
+        alert('User deleted successfully!')
+      })
+    }
+  }
+  return (
+    <>
+      {showAddTask && (
+        <Container>
+          <div className="addLearning">
+            <div className="add_learning_header">
+              <CloseIcon className="close_icon"
+                onClick={() => {
+                  setshowAddTask(false)
+                }}
+              />
             </div>
-            <Divider />
-        </>
-    )
+            <div className="group_photo">
+              <div className="learning_detail">
+                <input
+                  type="text"
+                  placeholder="Type a task"
+                  maxlength="70"
+                  onChange={e => settask(e.target.value)}
+                />
+              </div>
+              <div className="start_button">
+                <button onClick={AddTask} >Add</button>
+              </div>
+            </div>
+          </div>
+        </Container>
+      )}
+
+      {showRemove && (
+        <Container>
+          <div className="addLearning">
+            <div className="add_learning_header">
+              <CloseIcon className="close_icon"
+                onClick={() => {
+                  setshowRemove(false)
+                }}
+              />
+            </div>
+            <div className="group_photo">
+              <div className="learning_detail">
+                <input
+                  type="text"
+                  placeholder="Confirm Email"
+                  maxlength="70"
+                  onChange={e => confirmEmail(e.target.value)}
+                />
+              </div>
+              <div className="start_button">
+                <button onClick={removeMember} >Remove</button>
+              </div>
+            </div>
+          </div>
+        </Container>
+      )}
+      <div className='GroupMemberField'>
+        <div className="groupmember__name">
+          {member?.data?.name}
+        </div>
+        <div className='groupField__Icon'>
+          <div className="groupmember__icons" onClick={() => {
+            setshowAddTask(true)
+          }}>
+            <AddTaskRoundedIcon />
+          </div>
+          <div className="groupmember__icons" onClick={() => {
+            setshowRemove(true)
+          }}>
+            <PersonRemoveAlt1RoundedIcon />
+          </div>
+        </div>
+      </div>
+      <Divider />
+    </>
+  )
 }
 
 export default GroupMemberField;
@@ -119,13 +175,13 @@ const Container = styled.div`
     .group_photo {
       display: flex;
       justify-content: center;
-      align-item:center;
+      align-items:center;
       flex-direction: column;
       width:100%;
       .group_photo_Image{
           display:flex;
           flex-direction: column;
-          align-item:center !important;
+          align-items:center !important;
           justify-content:center;
           padding:4px 0 8px 0 ;
       }

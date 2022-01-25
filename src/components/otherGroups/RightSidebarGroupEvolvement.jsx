@@ -10,12 +10,12 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 function RightSidebarGroupTask() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails }, dispatch] = useStateValue();
+    const [{ showTop, user, groupDetails }, dispatch] = useStateValue();
 
     const {id}=useParams();
     return (
         <div className='RightSidebarGroup'>
-            <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMoreTask">
                     <ArrowBackRoundedIcon onClick={() => {
                         history.push(`/groupother/${id}`)

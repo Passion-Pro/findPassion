@@ -13,11 +13,11 @@ import Divider from '@mui/material/Divider';
 function RightSidebarGroupEnvolvement() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupMember, groupDetails }, dispatch] = useStateValue();
+    const [{ userInfo, user, groupMember, groupDetails,showTop }, dispatch] = useStateValue();
 
     return (
         <div className='RightSidebarGroup'>
-            <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMoreTask">
                     <ArrowBackRoundedIcon onClick={() => {
                         history.push('/group')
@@ -29,12 +29,12 @@ function RightSidebarGroupEnvolvement() {
                 <div></div>
             </div>
             <div className="rightSidebarGroup__bodyEnvolve">
-                <div className="rightSidebarGroup__bodyEnvolvement2">
+                <div className={showTop?"rightSidebarGroup__bodyEnvolvement2Show":"rightSidebarGroup__bodyEnvolvement2"}>
 
                     <Button variant="outlined">{" Add "}</Button>
                     Improve your performance by discuss the skill you have common with others.
                 </div>
-                <div className="rightSidebarGroup__bodyEnvolvement1">
+                <div className={showTop?"rightSidebarGroup__bodyEnvolvement1Show":"rightSidebarGroup__bodyEnvolvement1"}>
                     {groupMember && groupMember.map((data) => (
                         <div className="rightSidebarGroup__bodyEnvolvement1Div">
                             <EnvolveGraph data={data} />

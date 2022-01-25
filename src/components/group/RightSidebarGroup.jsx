@@ -1,17 +1,16 @@
 import React from 'react';
 import './RightSidebarGroup.css';
 import { useHistory } from 'react-router-dom';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 function RightSidebarGroup() {
     const history = useHistory();
-    const [{ groupDetails }, dispatch] = useStateValue();
+    const [{ groupDetails,showTop }, dispatch] = useStateValue();
     return (
         <div className='RightSidebarGroup'>
-            <div className="rightSidebarGroup__header">
+            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMore">
                     <ArrowBackRoundedIcon onClick={() => {
                         dispatch({
