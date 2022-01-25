@@ -45,6 +45,7 @@ function Story({ journey }) {
 
   return (
     <Container>
+      <div onClick={open_story_popup} className = "for_laptop">
       <div
         className="current_status"
         style={{
@@ -66,14 +67,48 @@ function Story({ journey }) {
           <span className="fire_symbol">🔥</span>
           <span className="number_of_fires">110 views</span>
         </div>
-        <div className="view_button">
+        {/* <div className="view_button">
           <button onClick={open_story_popup} className="for_laptop">
             View
           </button>
-          <button onClick={open_story_popup} className="for_mobile">
+          <button onClick={(e) => history.push(`/journey/${journey?.id}`)} className="for_mobile">
             View
           </button>
+        </div> */}
+      </div>
+      </div>
+
+      <div onClick={(e) => history.push(`/journey/${journey?.id}`)} className = "div_for_mobile">
+      <div
+        className="current_status"
+        style={{
+          backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+        }}
+      ></div>
+      <div className="user_info">
+        <Avatar className="user_info_avatar" src={profilePhotoUrl} />
+        <p>{journey?.data?.uploaderInfo?.name}</p>
+      </div>
+      <div className="journey_period">
+        <p>
+          <span>{journey?.data?.journeyPeriod} </span>
+          of journey in {userInfo?.passion}
+        </p>
+      </div>
+      <div className="fires">
+        <div>
+          <span className="fire_symbol">🔥</span>
+          <span className="number_of_fires">110 views</span>
         </div>
+        {/* <div className="view_button">
+          <button onClick={open_story_popup} className="for_laptop">
+            View
+          </button>
+          <button onClick={(e) => history.push(`/journey/${journey?.id}`)} className="for_mobile">
+            View
+          </button>
+        </div> */}
+      </div>
       </div>
     </Container>
   );
@@ -90,6 +125,27 @@ const Container = styled.div`
   margin-right: 30px;
   margin-bottom: 30px;
   background-color: #fff;
+
+  &:hover {
+    cursor: pointer;
+  }
+  
+
+  .for_laptop {
+      display : flex;
+      flex-direction : column;
+      @media (max-width: 500px) {
+        display: none;
+      }
+    }
+
+    .div_for_mobile{
+      display: none;
+      @media (max-width: 500px) {
+        display: flex;
+        flex-direction: column;
+      }
+    }
 
   @media (max-width: 500px) {
     width: 95vw;
@@ -177,19 +233,6 @@ const Container = styled.div`
       &:hover {
         cursor: pointer;
         background-color: #2e66ff;
-      }
-    }
-
-    .for_laptop {
-      @media (max-width: 500px) {
-        display: none;
-      }
-    }
-
-    .for_mobile {
-      display: none;
-      @media (max-width: 500px) {
-        display: inline;
       }
     }
   }

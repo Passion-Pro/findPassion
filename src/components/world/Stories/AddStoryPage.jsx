@@ -8,9 +8,15 @@ import { useHistory } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import db, { storage } from "../../../firebase";
 import Loading from "../../../Loading";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import PartnerCard from "./PartnerCard";
+import PartnerName from "./PartnerName";
+import Avatar from "@mui/material/Avatar";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 function AddStoryPage() {
-  const [{ journeyUpload, userInfo, user }, dispatch] = useStateValue();
+  const [{ journeyUpload, userInfo, user, addPartnerInfo }, dispatch] =
+    useStateValue();
   const [video, setVideo] = useState();
   const [image, setImage] = useState();
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
@@ -18,8 +24,11 @@ function AddStoryPage() {
   const history = useHistory();
   const [x, setX] = useState(0);
   const [z, setZ] = useState(0);
+  const [name, setName] = useState();
   const [input, setInput] = useState();
+  const [imageIndex, setImageIndex] = useState(0);
   const [p, setP] = useState(0);
+  const [a, setA] = useState(false);
   const [images, setImages] = useState([]);
   const [journeyPeriod, setJourneyPeriod] = useState();
   const [imageCaption, setImageCaption] = useState("");
@@ -27,8 +36,14 @@ function AddStoryPage() {
   const [imagesInfo, setImagesInfo] = useState([]);
   const [image1, setImage1] = useState();
   const [loading, setLoading] = useState(false);
-  const[Url  , setUrl] = useState(null);
-  const[lastImageUrl , setLastImageUrl] = useState("");
+  const [Url, setUrl] = useState(null);
+  const [lastImageUrl, setLastImageUrl] = useState("");
+  const [users, setUsers] = useState([]);
+  const [lastCaption, setLastCaption] = useState();
+  const [lastAddPartnerInfo, setLastAddPartnerInfo] = useState([]);
+  const [showPartners, setShowPartners] = useState([]);
+  const[b , setB] = useState(false);
+  const[showThrough , setShwThrough] = useState(false);
   const [parts, setParts] = useState([
     {
       imageUrl:
@@ -59,8 +74,21 @@ function AddStoryPage() {
     //   text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
     // },
   ]);
+  const [imageId, setImageId] = useState("");
+  const [addPartner, setAddPartner] = useState(false);
 
   useEffect(() => {}, [z, storyParts?.length]);
+
+  useEffect(() => {
+    db.collection("users").onSnapshot((snapshot) =>
+      setUsers(
+        snapshot.docs.map((doc) => ({
+          data: doc.data(),
+          id: doc.id,
+        }))
+      )
+    );
+  }, []);
 
   useEffect(() => {
     if (p === 1) {
@@ -76,11 +104,13 @@ function AddStoryPage() {
       setSelectedImageUrl(URL.createObjectURL(image));
 
       const id = uuid();
+      console.log("iiid", id);
+      const upload = storage.ref(`Journey/${id}`).put(image);
+      setLoading(true);
 
-      const upload = storage
-      .ref(`JourneyImages/${id}`)
-      .put(image);
+      setImageId(id);
 
+      setA(false);
 
       upload.on(
         "state_changed",
@@ -92,28 +122,29 @@ function AddStoryPage() {
           if (snapshot.state === "RUNNING") {
             console.log(`Progress : ${progress}%`);
           }
-        } ,
+        },
         (error) => console.log(error.code),
         async () => {
-           await upload.snapshot.ref.getDownloadURL().then((url) => {
-              console.log("URL is ", url);
+          await upload.snapshot.ref.getDownloadURL().then((url) => {
+            console.log("URL is ", url);
             if (url) {
-              setLastImageUrl(url)
+              setLastImageUrl(url);
               imagesInfo.push({
                 imageUrl: url,
                 imageCaption: imageCaption,
+                imageId: id,
+                partners: [],
               });
 
-                setImageCaption("You")
-                setImageCaption("");
+              setLoading(false);
+              setImageCaption("You");
+              setImageCaption("");
             }
-           })
+          });
           console.log("ImagesInfo is", imagesInfo);
         }
       );
 
-
-       
       console.log("images are", images);
     }
   }, [image]);
@@ -128,6 +159,38 @@ function AddStoryPage() {
   useEffect(() => {
     setX(0);
   }, [journeyUpload, selectedImageUrl, uploadedPhotos?.length, x]);
+
+  useEffect(() => {
+    if (addPartnerInfo?.length > 0) {
+      console.log("DONE");
+      imagesInfo.pop();
+      imagesInfo.push({
+        imageUrl: lastImageUrl,
+        imageCaption: lastCaption,
+        imageId: imageId,
+        partners: addPartnerInfo,
+      });
+      console.log("Images Info is ", imagesInfo);
+
+      setImageCaption("You");
+      setImageCaption("");
+    }
+
+    if (addPartnerInfo?.length === 0 && imagesInfo.length > 0 && !a) {
+      console.log("A is ", a);
+      imagesInfo.pop();
+      imagesInfo.push({
+        imageUrl: lastImageUrl,
+        imageCaption: lastCaption,
+        imageId: imageId,
+        partners: addPartnerInfo,
+      });
+      console.log("Images Info is ", imagesInfo);
+
+      setImageCaption("You");
+      setImageCaption("");
+    }
+  }, [addPartnerInfo?.length]);
 
   const upload_journey_through_video = () => {
     dispatch({
@@ -160,6 +223,15 @@ function AddStoryPage() {
   const selectImage = (e) => {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
+
+      setLastAddPartnerInfo(addPartnerInfo);
+
+      setA(true);
+
+      dispatch({
+        type: actionTypes.SET_ADD_PARTNER_INFO,
+        addPartnerInfo: [],
+      });
     }
   };
 
@@ -170,9 +242,17 @@ function AddStoryPage() {
   };
 
   const add_text = () => {
-    storyParts.push(input);
+    storyParts.push({
+      text : input,
+      partners : addPartnerInfo
+    });
     setInput("");
-    // setP(1);
+    
+    
+    dispatch({
+      type : actionTypes.SET_ADD_PARTNER_INFO,
+      addPartnerInfo : []
+    })
 
     console.log(storyParts);
   };
@@ -186,7 +266,7 @@ function AddStoryPage() {
       imagesInfo?.length > 0 &&
       image1 &&
       userInfo?.passion &&
-    userInfo?.passion !== "Don't know"
+      userInfo?.passion !== "Don't know"
     ) {
       // const l = imagesInfo?.length
       // setImagesInfo([]);
@@ -259,12 +339,15 @@ function AddStoryPage() {
     //   image: image,
     //   imageCaption: imageCaption,
     // });
+    setLastCaption(imageCaption);
 
     imagesInfo.pop();
     console.log("Image Caption is ", imageCaption);
     imagesInfo.push({
       imageUrl: lastImageUrl,
       imageCaption: imageCaption,
+      imageId: imageId,
+      partners: addPartnerInfo,
     });
 
     setImageCaption("");
@@ -279,7 +362,7 @@ function AddStoryPage() {
       video &&
       image1 &&
       userInfo?.passion &&
-      userInfo?.passion !== "Don't know" 
+      userInfo?.passion !== "Don't know"
       // userInfo?.experience > 1
     ) {
       const id = uuid();
@@ -314,6 +397,7 @@ function AddStoryPage() {
                 firesLength: 0,
                 uploaderInfo: userInfo,
                 views: [],
+                partners : addPartnerInfo
               })
               .then(() => {
                 const id1 = uuid();
@@ -369,7 +453,7 @@ function AddStoryPage() {
       storyParts?.length > 0 &&
       image1 &&
       userInfo?.passion &&
-      userInfo?.passion !== "Don't know" 
+      userInfo?.passion !== "Don't know"
       // userInfo?.experience > 1
     ) {
       db.collection("journeys").doc(user?.uid).set({
@@ -489,250 +573,502 @@ function AddStoryPage() {
                 Show your journey through text
               </button>
             </div>
-            <div className="upload_journey">
-              {journeyUpload === "video" && (
-                <div className="upload_through_video">
+            {addPartner ? (
+              <div className="add_partner_div">
+                <div className="search_bar">
+                  <SearchOutlinedIcon className="searchIcon" />
                   <input
-                    type="file"
-                    id={"video"}
-                    style={{ display: "none" }}
-                    onChange={selectVideo}
-                    accept="video/mp4"
+                    type="text"
+                    placeholder="Search by name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
-
-                  <button className="upload_video">
-                    <label htmlFor="video">Upload Video</label>
-                  </button>
-                  {video && (
-                    <div className="video_player">
-                      <VideoPlayer videoUrl={URL.createObjectURL(video)} />
-                    </div>
-                  )}
-                  <div className="post_button">
-                    <button onClick={post_video}>Post</button>
-                  </div>
                 </div>
-              )}
-              {journeyUpload === "photos" && (
-                <div className="upload_through_photos">
-                  <input
-                    type="file"
-                    id={"image"}
-                    style={{ display: "none" }}
-                    onChange={selectImage}
-                    accept="image/git , image/jpeg , image/png"
-                  />
+                <div className="names">
+                  {name &&
+                    users &&
+                    users
+                      .filter((item) => {
+                        return item?.data?.name
+                          .toLowerCase()
+                          .includes(name.toLowerCase());
+                      })
+                      .map((data) => (
+                        <PartnerName
+                          data={data}
+                          setAddPartner={setAddPartner}
+                        />
+                      ))}
+                  {name && (
+                    <PartnerName name={name} setAddPartner={setAddPartner} />
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="upload_journey">
+                {journeyUpload === "video" && (
+                  <div className="upload_through_video">
+                    <input
+                      type="file"
+                      id={"video"}
+                      style={{ display: "none" }}
+                      onChange={selectVideo}
+                      accept="video/mp4"
+                    />
 
-                  <button className="upload_image">
-                    <label htmlFor="image">
-                      {uploadedPhotos?.length === 0
-                        ? `Upload Image`
-                        : `Upload Next Image`}
-                    </label>
-                  </button>
+                    <button className="upload_video">
+                      <label htmlFor="video">Upload Video</label>
+                    </button>
 
-                  <div className="journey_cards">
-                    <div className="tinderCards_cardContainer">
-                      {imagesInfo.map((imageInfo, index) => (
+                    {video && (
+                      <button
+                        className = "add_partner_video"
+                        style = {{
+                         marginLeft : "10px"
+
+                        }}
+                        onClick={() => setAddPartner(true)}
+                      >
+                        Add partner
+                      </button>
+                    )}
+                    <div className="added_partner_info_box">
+                    {addPartnerInfo?.length > 0 &&
+                      !addPartner &&
+                      addPartnerInfo.map((partnerInfo) => (
                         <>
-                          <TinderCard
-                            className="swipe"
-                            // key={part.caption}
-                            preventSwipe={["up", "down"]}
-                            //  onCardLeftScreen = {() => outOfFrame(person.name)}
-                            onSwipe={() => {
-                              if (index === 0) {
-                                console.log("Index is ", index);
-                                const newImages = imagesInfo;
-                                setImagesInfo([]);
-                                setImagesInfo(newImages);
-                              }
-                            }}
-                          >
-                            {imageInfo?.imageCaption === "" ? (
-                              <div className="card_without_caption">
-                                {imageInfo?.imageUrl && (
-                                  <div
-                                  className="card_image"
+                          {partnerInfo?.data && (
+                            <div className="added_partner_info">
+                              {partnerInfo?.data?.profilePhotoUrl && (
+                                <Avatar
+                                  src={partnerInfo?.data?.profilePhotoUrl}
                                   style={{
-                                    backgroundImage:  `url(${imageInfo?.imageUrl})`             
+                                    width: "21px",
+                                    height: "21px",
                                   }}
-                                ></div>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="card">
-                                {imageInfo?.imageUrl && (
-                                  <div
-                                  className="card_image"
-                                  style={{
-                                    backgroundImage: 
-                                    `url(${imageInfo?.imageUrl})`
-                                   
-                                  }}
-                                ></div>
-                                )}
-                                {console.log(
-                                  "ImageCaption in code is ",
-                                  imageInfo.imageCaption
-                                )}
-                                <div className="image_caption">
-                                  <p>{imageInfo?.imageCaption}</p>
-                                </div>
-                              </div>
-                            )}
-                          </TinderCard>
+                                />
+                              )}
+                              <p>{partnerInfo?.data?.name}</p>
+                              <CancelIcon
+                                className="cancel_icon"
+                                onClick={() => {
+                                  dispatch({
+                                    type: actionTypes.REMOVE_PARTNER_INFO,
+                                    data: partnerInfo?.data,
+                                  });
+                                }}
+                              />
+                            </div>
+                          )}
                         </>
                       ))}
+
+                    </div>
+                    {video && (
+                      <div className="video_player">
+                        <VideoPlayer videoUrl={URL.createObjectURL(video)} />
+                      </div>
+                    )}
+                    <div className="post_button">
+                      <button onClick={post_video}>Post</button>
                     </div>
                   </div>
+                )}
+                {journeyUpload === "photos" && (
+                  <div className="upload_through_photos">
+                    <div
+                      style={{
+                        display: "flex",
+                      }}
+                    >
+                      <input
+                        type="file"
+                        id={"image"}
+                        style={{ display: "none" }}
+                        onChange={selectImage}
+                        accept="image/git , image/jpeg , image/png"
+                      />
 
-                  {image && (
-                    <div className="add_caption">
-                      <textarea
-                        name=""
-                        id=""
-                        cols="30"
-                        rows="10"
-                        placeholder="Add Caption with the selected image"
-                        value={imageCaption}
-                        onChange={(e) => setImageCaption(e.target.value)}
-                      ></textarea>
-                      <div className="add_button">
-                        <button onClick={add_imageCaption}>Add</button>
-                      </div>
+                      <button className="upload_image">
+                        <label htmlFor="image">
+                          {uploadedPhotos?.length === 0
+                            ? `Upload Image`
+                            : `Upload Next Image`}
+                        </label>
+                      </button>
+
+                      {image && (
+                        <button
+                          className="add_partner"
+                          onClick={() => setAddPartner(true)}
+                        >
+                          Add partner
+                        </button>
+                      )}
                     </div>
-                  )}
 
-                  <div className="uploaded_photos">
-                    {imagesInfo && (
-                      <>
-                        {/* <img src={URL.createObjectURL(image)} alt="" /> */}
-                        {imagesInfo.map((imageInfo) => (
-                          <div className="uploaded_photo">
-                            <img
-                              src={imageInfo?.imageUrl}
-                              alt=""
-                            />
-                            <div className="caption">
-                              <p>
-                                {imageInfo?.imageCaption?.length <= 20 ? (
-                                  <>{imageInfo?.imageCaption}</>
-                                ) : (
-                                  <>{imageInfo?.imageCaption?.slice(0, 70)}...</>
-                                )}
-                              </p>
-                            </div>
-                            <button
-                              onClick={() => {
-                                setX(1);
-                                let y;
-                                for (let i = 0; i < imagesInfo.length; i++) {
-                                  if (imagesInfo[i].imageUrl === imageInfo.imageUrl) {
-                                    y = i;
-
-                                    console.log("Y is", y);
-
-                                    imagesInfo.splice(y, 1);
-
-                                    console.log(imagesInfo);
-                                  }
+                    <div className="journey_cards">
+                      <div className="added_partner_info_box">
+                        {console.log("Add Partner Info is ", addPartnerInfo)}
+                        {addPartnerInfo?.length > 0 &&
+                          !addPartner &&
+                          addPartnerInfo.map((partnerInfo) => (
+                            <>
+                              {partnerInfo?.data && (
+                                <div className="added_partner_info">
+                                  {partnerInfo?.data?.profilePhotoUrl && (
+                                    <Avatar
+                                      src={partnerInfo?.data?.profilePhotoUrl}
+                                      style={{
+                                        width: "21px",
+                                        height: "21px",
+                                      }}
+                                    />
+                                  )}
+                                  <p>{partnerInfo?.data?.name}</p>
+                                  <CancelIcon
+                                    className="cancel_icon"
+                                    onClick={() => {
+                                      dispatch({
+                                        type: actionTypes.REMOVE_PARTNER_INFO,
+                                        data: partnerInfo?.data,
+                                      });
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          ))}
+                      </div>
+                      <div className="tinderCards_cardContainer">
+                        {imagesInfo.map((imageInfo, index) => (
+                          <>
+                            <TinderCard
+                              className={
+                                addPartnerInfo?.length > 0
+                                  ? `swipe_partner`
+                                  : `swipe`
+                              }
+                              // key={part.caption}
+                              preventSwipe={["up", "down"]}
+                              //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                              onSwipe={() => {
+                                if (index === 0) {
+                                  console.log("Index is ", index);
+                                  const newImages = imagesInfo;
+                                  setImagesInfo([]);
+                                  setImagesInfo(newImages);
+                                  setImageIndex(index);
                                 }
                               }}
                             >
-                              Remove
-                            </button>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                  <div className="post_button_photos">
-                    <button onClick={post_photo_cards}>Post</button>
-                  </div>
-                </div>
-              )}
-              {journeyUpload === "text" && (
-                <>
-                  <div className="journey_cards">
-                    <div className="tinderCards_cardContainer">
-                      {storyParts?.length > 0 && (
-                        <>
-                          {storyParts.map((part, index) => (
-                            <>
-                              <TinderCard
-                                className="swipe"
-                                // key={part.caption}
-                                preventSwipe={["up", "down"]}
-                                //  onCardLeftScreen = {() => outOfFrame(person.name)}
-                                onSwipe={() => {
-                                  setP(0);
-                                  console.log("Index is ", index);
-                                  if (index === 0) {
-                                    const newStoryParts = storyParts;
-                                    setStoryParts([]);
-                                    setStoryParts(newStoryParts);
-                                  }
+                              <div
+                                className="card"
+                                style={{
+                                  backgroundImage: `url(${imageInfo?.imageUrl})`,
                                 }}
                               >
-                                <div className="card text_card">
-                                  <p>{part}</p>
+                                {imageInfo?.imageCaption && (
+                                  <div className="image_caption">
+                                    <p>{imageInfo?.imageCaption}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </TinderCard>
+                          </>
+                        ))}
+                      </div>
+                    </div>
+
+                    {image && (
+                      <div
+                        className="add_caption"
+                        style={{
+                          marginTop:
+                            addPartnerInfo?.length > 0 ? `350px` : "270px",
+                        }}
+                      >
+                        <textarea
+                          name=""
+                          id=""
+                          cols="30"
+                          rows="10"
+                          placeholder="Add Caption with the selected image"
+                          value={imageCaption}
+                          onChange={(e) => setImageCaption(e.target.value)}
+                        ></textarea>
+                        <div className="add_button">
+                          <button onClick={add_imageCaption}>Add</button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="uploaded_photos">
+                      {imagesInfo && (
+                        <>
+                          {imagesInfo.map((imageInfo) => (
+                            <div className="uploaded_photo">
+                              {showPartners?.length === 0 && (
+                                <div
+                                  className="partners_button"
+                                  style={{
+                                    marginTop: "10px",
+                                  }}
+                                >
+                                  <button
+                                    style={{
+                                      marginLeft: "80px",
+                                      width: "70px",
+                                    }}
+                                    onClick={() => {
+                                      setShowPartners(imageInfo?.partners);
+                                      console.log(showPartners);
+                                    }}
+                                  >
+                                    Partners
+                                  </button>
                                 </div>
-                              </TinderCard>
-                            </>
+                              )}
+                              {showPartners === imageInfo?.partners ? (
+                                <>
+                                  <div
+                                    style={{
+                                      marginTop: "10px",
+                                      display: "flex",
+                                      justifyContent: "flex-end",
+                                    }}
+                                  >
+                                    <button
+                                      style={{
+                                        // marginLeft: "auto",
+                                        marginRight: "10px",
+                                        width: "70px",
+                                      }}
+                                      onClick={() => {
+                                        setShowPartners([]);
+                                      }}
+                                    >
+                                      Photo
+                                    </button>
+                                  </div>
+                                  <div
+                                    className="image_partners"
+                                    style={{
+                                      display: "flex",
+                                      flexWrap: "wrap",
+                                      paddingLeft: "10px",
+                                      paddingRight: "10px",
+                                      paddingTop: "5px",
+                                      // height: "150px",
+                                      width: "169px",
+                                      // backgroundColor:"black",
+                                    }}
+                                  >
+                                    {imageInfo?.partners?.map((partnerInfo) => (
+                                      <div className="added_partner_info">
+                                        {
+                                          <Avatar
+                                            src={
+                                              partnerInfo?.data?.profilePhotoUrl
+                                            }
+                                            style={{
+                                              width: "21px",
+                                              height: "21px",
+                                            }}
+                                          />
+                                        }
+                                        <p>{partnerInfo?.data?.name}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <img src={imageInfo?.imageUrl} alt="" />
+                                  {imageInfo?.imageCaption && (
+                                    <div className="caption">
+                                      <p>
+                                        {imageInfo?.imageCaption?.length <=
+                                        20 ? (
+                                          <>{imageInfo?.imageCaption}</>
+                                        ) : (
+                                          <>
+                                            {imageInfo?.imageCaption?.slice(
+                                              0,
+                                              70
+                                            )}
+                                            ...
+                                          </>
+                                        )}
+                                      </p>
+                                    </div>
+                                  )}
+                                  <button
+                                    onClick={() => {
+                                      setX(1);
+                                      let y;
+                                      for (
+                                        let i = 0;
+                                        i < imagesInfo.length;
+                                        i++
+                                      ) {
+                                        if (
+                                          imagesInfo[i].imageUrl ===
+                                          imageInfo.imageUrl
+                                        ) {
+                                          y = i;
+
+                                          console.log("Y is", y);
+
+                                          imagesInfo.splice(y, 1);
+
+                                          console.log(imagesInfo);
+
+                                          console.log(imageInfo?.imageId);
+
+                                          if (imageInfo?.imageId) {
+                                            storage
+                                              .ref(
+                                                `Journey/${imageInfo?.imageId}`
+                                              )
+                                              .delete();
+                                          }
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    Remove
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           ))}
                         </>
                       )}
                     </div>
+                    <div className="post_button_photos">
+                      <button onClick={post_photo_cards}>Post</button>
+                    </div>
                   </div>
-                  {storyParts?.length > 0 ? (
-                    <div className="write_text add_caption">
-                      <textarea
-                        name=""
-                        id=""
-                        cols="30"
-                        rows="10"
-                        placeholder="Add Caption with the selected image"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                      ></textarea>
-                      <div className="add_button_text">
-                        <button onClick={cancel} className="delete">
-                          Cancel
-                        </button>
-                        <button onClick={add_text}>Add</button>
+                )}
+                {journeyUpload === "text" && (
+                  <>
+                    <div className="journey_cards">
+                    <button className = "add_partner_video" onClick = {() => {
+                      setAddPartner(true);
+                    }}>Add Partner</button>
+                    <div className="added_partner_info_box">
+                        {console.log("Add Partner Info is ", addPartnerInfo)}
+                        {addPartnerInfo?.length > 0 &&
+                          !addPartner &&
+                          addPartnerInfo.map((partnerInfo) => (
+                            <>
+                              {partnerInfo?.data && (
+                                <div className="added_partner_info">
+                                  {partnerInfo?.data?.profilePhotoUrl && (
+                                    <Avatar
+                                      src={partnerInfo?.data?.profilePhotoUrl}
+                                      style={{
+                                        width: "21px",
+                                        height: "21px",
+                                      }}
+                                    />
+                                  )}
+                                  <p>{partnerInfo?.data?.name}</p>
+                                  <CancelIcon
+                                    className="cancel_icon"
+                                    onClick={() => {
+                                      dispatch({
+                                        type: actionTypes.REMOVE_PARTNER_INFO,
+                                        data: partnerInfo?.data,
+                                      });
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          ))}
                       </div>
-                      <div className="post_button_text">
-                        <button onClick={post_text}>Post</button>
+                      <div className="tinderCards_cardContainer">
+                        {console.log("StoryParts is " , storyParts)}
+                        {storyParts?.length > 0 && (
+                          <>
+                            {storyParts.map((part, index) => (
+                              <>
+                                <TinderCard
+                                  className="swipe"
+                                  // key={part.caption}
+                                  preventSwipe={["up", "down"]}
+                                  //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                                  onSwipe={() => {
+                                    setP(0);
+                                    console.log("Index is ", index);
+                                    if (index === 0) {
+                                      const newStoryParts = storyParts;
+                                      setStoryParts([]);
+                                      setStoryParts(newStoryParts);
+                                    }
+                                  }}
+                                >
+                                  <div className="card text_card">
+                                    <p>{part?.text}</p>
+                                  </div>
+                                </TinderCard>
+                              </>
+                            ))}
+                          </>
+                        )}
                       </div>
                     </div>
-                  ) : (
-                    <div
-                      className="write_text add_caption"
-                      style={{
-                        marginTop: "20px",
-                      }}
-                    >
-                      <textarea
-                        name=""
-                        id=""
-                        cols="30"
-                        rows="10"
-                        placeholder="Add Caption with the selected image"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                      ></textarea>
-                      <div className="add_button_text">
-                        <button onClick={cancel} className="delete">
-                          Cancel
-                        </button>
-                        <button onClick={add_text}>Add</button>
+                    {storyParts?.length > 0 ? (
+                      <div className="write_text add_caption">
+                        <textarea
+                          name=""
+                          id=""
+                          cols="30"
+                          rows="10"
+                          placeholder="Add Caption with the selected image"
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                        ></textarea>
+                        <div className="add_button_text">
+                          <button onClick={cancel} className="delete">
+                            Cancel
+                          </button>
+                          <button onClick={add_text}>Add</button>
+                        </div>
+                        <div className="post_button_text">
+                          <button onClick={post_text}>Post</button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+                    ) : (
+                      <div
+                        className="write_text add_caption"
+                        style={{
+                          marginTop: "20px",
+                        }}
+                      >
+                        <textarea
+                          name=""
+                          id=""
+                          cols="30"
+                          rows="10"
+                          placeholder="Add Caption with the selected image"
+                          value={input}
+                          onChange={(e) => setInput(e.target.value)}
+                        ></textarea>
+                        <div className="add_button_text">
+                          <button onClick={cancel} className="delete">
+                            Cancel
+                          </button>
+                          <button onClick={add_text}>Add</button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </Container>
       ) : (
@@ -830,7 +1166,7 @@ const Container = styled.div`
   }
 
   .upload_video,
-  .upload_image {
+  .upload_image , .add_partner_video {
     width: 120px;
     padding: 7px;
     border: 0;
@@ -882,22 +1218,21 @@ const Container = styled.div`
     background-color: white;
 
     .image_caption {
+      color: white;
+      overflow: hidden;
+      height: 100%;
       display: flex;
-      justify-content: center;
-      padding: 10px;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-      p {
-        font-size: 12px;
-        margin-top: 0;
-        margin-bottom: 0;
-        text-align: center;
-        overflow-y: scroll;
-        height : 50px;
+      flex-direction: column;
+      justify-content: flex-end;
+      margin-left: 5px;
+      margin-right: 5px;
 
-        ::-webkit-scrollbar {
-          display: none;
-        }
+      p {
+        color: white;
+        font-size: 12px;
+        background-color: #0000006e;
+        padding: 5px;
+        border-radius: 10px;
       }
     }
 
@@ -1000,12 +1335,21 @@ const Container = styled.div`
       }
 
       .caption {
+        color: white;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
         p {
-          margin-top: 0;
-          margin-bottom: 0;
-          font-size: 14px;
-          text-align: center;
+          color: white;
+          font-size: 12px;
+          background-color: #0000006e;
           padding: 5px;
+          border-radius: 10px;
+          margin-left: 5px;
+          margin-right: 5px;
         }
       }
     }
@@ -1172,6 +1516,102 @@ const Container = styled.div`
       border-radius: 10px;
       margin-bottom: 10px;
     }
+  }
+
+  .add_partner {
+    width: 120px;
+    padding: 7px;
+    border: 0;
+    border-radius: 20px;
+    background-color: #dfdddd;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    height: 50px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: #b4b2b2;
+    }
+  }
+
+  .search_bar {
+    background-color: #fff;
+    width: 70%;
+    margin-left: 30px;
+    border-radius: 20px;
+    padding: 5px;
+    display: flex;
+    border: 1px solid lightgray;
+    margin-top: 20px;
+    margin-bottom: 15px;
+
+    input {
+      border: 0px;
+      outline-width: 0px;
+      width: 94%;
+    }
+
+    .searchIcon {
+      color: gray !important;
+    }
+  }
+
+  .add_partner_div {
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    overflow-y: scroll;
+  }
+
+  .add_partner_div::-webkit-scrollbar {
+    display: none;
+  }
+
+  .added_partner_info_box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 40vw;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 80px;
+    background-color: white;
+  }
+
+  .added_partner_info {
+    display: flex;
+    background-color: white;
+    border: 1px solid lightgray;
+    padding: 5px;
+    border-radius: 20px;
+    padding-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    width: fit-content;
+    height: fit-content;
+
+    p {
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-left: 5px;
+      font-size: 13px;
+      margin-right: 5px;
+      padding-right: 5px;
+    }
+  }
+
+  .cancel_icon {
+    font-size: 19px !important;
+    margin-top: auto;
+    margin-bottom: auto;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .swipe_partner {
+    margin-top: 50px !important;
+    position: absolute;
   }
 `;
 

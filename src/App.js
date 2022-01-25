@@ -168,13 +168,16 @@ function App() {
           <Route path="/chat/:chatId">
             <Chat />
           </Route>
+          <Route path="/chat">
+            <Chat />
+          </Route>
           <Route path="/messages">
             <ChatPage />
           </Route>
           <Route path="/world">
             <WorldPage />
           </Route>
-          <Route path="/story">
+          <Route path="/journey/:journeyId">
             <StoryPage />
           </Route>
           <Route path="/stories">

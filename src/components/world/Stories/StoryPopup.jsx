@@ -12,7 +12,8 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import db from "../../../firebase";
-
+import Typical from "react-typical";
+import PartnerCard from "./PartnerCard";
 
 function StoryPopup() {
   const [{ openStoryPopup, startJourney, journey, userInfo, user }, dispatch] =
@@ -28,18 +29,20 @@ function StoryPopup() {
   const [p, setP] = useState(0);
   const [storyParts, setStoryParts] = useState([]);
   const [newStoryParts, setNewStoryParts] = useState([]);
-  const[profilePhotoUrl , setProfilePhotoUrl] = useState();
-  const[showGif , setShowGif] = useState(false);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState();
+  const [showGif, setShowGif] = useState(false);
+  const [nextCaption, setNextCaption] = useState();
+  const[nextPart , setNextPart] = useState();
+  const[showPartners, setShowPartners] = useState(false);
 
   useEffect(() => {
-      setShowGif(false);
-      
-      dispatch({
-        type: actionTypes.START_JOURNEY,
-        startJourney: false,
-      });
+    setShowGif(false);
 
-  } , [openStoryPopup])
+    dispatch({
+      type: actionTypes.START_JOURNEY,
+      startJourney: false,
+    });
+  }, [openStoryPopup]);
 
   useEffect(() => {
     setNewImages(journey?.data?.imagesInfo);
@@ -58,26 +61,30 @@ function StoryPopup() {
         });
     }
 
-    if(journey?.data?.uploaderInfo?.email){
-      console.log("Journey is " , journey?.data?.uploaderInfo?.email);
+    if (journey?.data?.uploaderInfo?.email) {
+      console.log("Journey is ", journey?.data?.uploaderInfo?.email);
       db.collection("users")
-      .where("email", "==", journey?.data?.uploaderInfo?.email)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
+        .where("email", "==", journey?.data?.uploaderInfo?.email)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
 
-          setProfilePhotoUrl(doc.data().profilePhotoUrl)
-
+            setProfilePhotoUrl(doc.data().profilePhotoUrl);
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
         });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
     }
-  }, [journey?.id , openStoryPopup]);
-  
+  }, [journey?.id, openStoryPopup]);
+
+  useEffect(() => {
+    if (images.length > 0 && startJourney) {
+      setNextCaption(images[images?.length - 1]?.imageCaption);
+    }
+  }, [images?.length, startJourney]);
 
   useEffect(() => {
     console.log("Views are", views);
@@ -154,6 +161,12 @@ function StoryPopup() {
     }
   }, [likes?.length, fires?.length, userInfo?.name, user]);
 
+  useEffect(() => {
+    if (storyParts.length > 0 && startJourney) {
+      setNextPart(storyParts[storyParts?.length - 1]);
+    }
+  }, [storyParts?.length, startJourney]);
+
   const close_popup = () => {
     dispatch({
       type: actionTypes.OPEN_STORY_POPUP,
@@ -168,7 +181,7 @@ function StoryPopup() {
         type: actionTypes.START_JOURNEY,
         startJourney: true,
       });
-    } , 6000)
+    }, 2000);
   };
 
   const stop_journey = () => {
@@ -241,9 +254,9 @@ function StoryPopup() {
     setLiked(false);
     console.log(liked);
 
-    for(let i = 0 ; i< likes?.length ; i++){
-      if(likes[i]?.email === userInfo?.email){
-          likes.splice(i);
+    for (let i = 0; i < likes?.length; i++) {
+      if (likes[i]?.email === userInfo?.email) {
+        likes.splice(i);
       }
     }
 
@@ -263,9 +276,9 @@ function StoryPopup() {
     e.preventDefault();
     setFired(false);
 
-    for(let i = 0 ; i< fires?.length ; i++){
-      if(fires[i]?.email === userInfo?.email){
-          fires.splice(i);
+    for (let i = 0; i < fires?.length; i++) {
+      if (fires[i]?.email === userInfo?.email) {
+        fires.splice(i);
       }
     }
 
@@ -288,45 +301,88 @@ function StoryPopup() {
           <div className="storyPopup">
             <div className="storyPopup_header">
               <div className="user_info">
-                <Avatar
-                  className="user_info_avatar"
-                  src={profilePhotoUrl}
-                />
-                <p>{userInfo?.name}</p>
-                {likes?.length > 0 && (
+                <Avatar className="user_info_avatar" src={profilePhotoUrl} />
+                <p>{journey?.data?.uploaderInfo?.name}</p>
+                {/* {likes?.length > 0 && (
                   <div className="total_likes">
                     <span>{likes?.length}</span>
                     <ThumbUpAltIcon className="total_likes_like_icon" />
                   </div>
-                )}
+                )} */}
                 {fires?.length > 0 && (
                   <div className="total_fires">{fires?.length}🔥</div>
                 )}
               </div>
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
-            {startJourney === false ? (
+            {startJourney === false  && showPartners === false ? (
               <>
-               {showGif === false ? (
-                 <div
-                 className="journey"
-                 style={{
-                   backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
-                 }}
-               ></div>
-               ):(
-                 <img src="https://media0.giphy.com/media/RiEW6mSQqjRiDy51MI/giphy.gif?cid=ecf05e47gn1c8k7y7yeelxrs0h4juvuwqpxuhp03ti8p6jkk&rid=giphy.gif" alt="" style = {{
-                   height : '200px',
-                   objectFit : "contain",
-                   marginBottom : '10px',
-                   marginTop : '15px'
-                 }}/>
-               )}
+                {showGif === false ? (
+                  <div
+                    className="journey"
+                    style={{
+                      backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+                    }}
+                  ></div>
+                ) : (
+                  <div className="journey"
+                   style = {{
+                     display : 'flex',
+                     justifyContent : 'center',
+                     alignItems : 'center',
+                   }}
+                  >
+                    <p
+                      style={{
+                        color: "white",
+                        fontSize : "20px",
+                        fontFamily : "Helvetica Neue",
+                      }}
+                    >
+                      <Typical
+                        steps={[
+                          `${journey?.data?.uploaderInfo?.name}'s journey begins`,
+                          1,
+                        ]}
+                        wrapper="b"
+                      />
+                    </p>
+                  </div>
+                )}
               </>
             ) : (
               <>
-                {journey?.data?.journeyThrough === "photos" && (
+                {journey?.data?.journeyThrough === "photos" && !showPartners  && (
                   <div className="journey_cards">
+                    <div className="journey_partners">
+                       <div className="first_two">
+                       <div className="partner">
+                         <Avatar src={userInfo?.profilePhotoUrl} 
+                          style = {{
+                            width : '21px',
+                            height : '21px'
+                          }}
+                         />
+                          <p>Ronak</p>
+                       </div>
+                       <div className="partner">
+                         <Avatar src={userInfo?.profilePhotoUrl} 
+                          style = {{
+                            width : '21px',
+                            height : '21px'
+                          }}
+                         />
+                          <p>Ronak</p>
+                       </div>
+                       </div>
+                       <div className="others" onClick = {() => {
+                         setShowPartners(true);
+                         console.log(showPartners);
+                       }}>
+                         <p>+8 others</p>
+                       </div>
+                      
+                    </div>
                     <div className="tinderCards_cardContainer">
                       {images?.length > 0 && (
                         <>
@@ -335,44 +391,42 @@ function StoryPopup() {
                               <TinderCard
                                 className="swipe"
                                 // key={part.caption}
-                                preventSwipe={["up", "down"]}
-                                //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                                // preventSwipe={["up", "down"]}
+                                onCardLeftScreen={() => {
+                                  setNextCaption();
+                                  setNextCaption(
+                                    images[index - 1]?.imageCaption
+                                  );
+                                }}
                                 onSwipe={() => {
                                   if (index === 0) {
-                                    console.log("Index is ", index);
-                                    const newImages = images;
-                                    setImages([]);
-                                    setImages(newImages);
+                                    dispatch({
+                                      type: actionTypes.START_JOURNEY,
+                                      startJourney: false,
+                                    });
+                                    setShowGif(false)
                                   }
                                 }}
                               >
                                 {console.log("images ", images)}
-                                {!image?.imageCaption ? (
-                                  <div className="card_without_caption">
-                                    <div
-                                      className="card_image"
-                                      style={{
-                                        backgroundImage: `url(${image.imageUrl})`,
-                                      }}
-                                    ></div>
-                                  </div>
-                                ) : (
-                                  <div className="card">
-                                    <div
-                                      className="card_image"
-                                      style={{
-                                        backgroundImage: `url(${image.imageUrl})`,
-                                      }}
-                                    ></div>
-                                    {console.log(
-                                      "ImageCaption in code is ",
-                                      image.imageCaption
-                                    )}
+
+                                <div
+                                  className="card"
+                                  style={{
+                                    backgroundImage: `url(${image.imageUrl})`,
+                                  }}
+                                >
+                                  {nextCaption && (
                                     <div className="image_caption">
-                                      <p>{image?.imageCaption}</p>
+                                      <p>
+                                        <Typical
+                                          steps={[`${nextCaption}`, 1]}
+                                          wrapper="b"
+                                        />
+                                      </p>
                                     </div>
-                                  </div>
-                                )}
+                                  )}
+                                </div>
                               </TinderCard>
                             </>
                           ))}
@@ -401,21 +455,34 @@ function StoryPopup() {
                                 <TinderCard
                                   className="swipe"
                                   // key={part.caption}
-                                  preventSwipe={["up", "down"]}
-                                  //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                                  onCardLeftScreen={() => {
+                                    setNextPart();
+                                    setNextPart(
+                                      storyParts[index - 1]
+                                    );
+                                  }}
                                   onSwipe={() => {
                                     setP(0);
                                     console.log("Index is ", index);
                                     if (index === 0) {
-                                      const newStoryParts = storyParts;
-                                      setStoryParts([]);
-                                      setStoryParts(newStoryParts);
+                                      dispatch({
+                                        type: actionTypes.START_JOURNEY,
+                                        startJourney: false,
+                                      });
+                                      setShowGif(false)
                                     }
                                   }}
                                 >
-                                  <div className="card text_card">
-                                    <p>{part}</p>
-                                  </div>
+                                  
+                                    {nextPart && (<div className="card text_card">
+                                    <p>
+                                    <Typical
+                                          steps={[`${nextPart}`, 1]}
+                                          wrapper="b"
+                                        />
+                                    </p>
+                                  </div>)}
+                                  
                                 </TinderCard>
                               </>
                             ))}
@@ -425,16 +492,37 @@ function StoryPopup() {
                     </div>
                   </>
                 )}
+
+                {showPartners && (
+                  <div className="partners_component">
+                    <div className="partners_header">
+                      <p>8 friends</p>
+                      <button onClick ={() => {
+                        setShowPartners(false);
+                      }}>Journey</button>
+                    </div>
+                    <div className="partner_partners">
+                       <PartnerCard/>
+                       <PartnerCard/>
+                       <PartnerCard/>
+                       <PartnerCard/>
+                       <PartnerCard/>
+                       <PartnerCard/>
+                       <PartnerCard/>
+                       <PartnerCard/>
+                    </div>
+                  </div>
+                )}
               </>
             )}
             <div className="start_button">
               {startJourney === false ? (
                 <>
-                  <button onClick={start_journey} className="start">
+                  {showPartners === false && (<button onClick={start_journey} className="start">
                     Start Journey
-                  </button>
+                  </button>)}
                   <div className="icons">
-                    {liked === false ? (
+                    {/* {liked === false ? (
                       <ThumbUpAltOutlinedIcon
                         className="react_like_icon"
                         onClick={likeJourney}
@@ -444,7 +532,7 @@ function StoryPopup() {
                         className="react_like_icon"
                         onClick={removeFromLikes}
                       />
-                    )}
+                    )} */}
                     {fired === false ? (
                       <LocalFireDepartmentIcon
                         className="fire_icon"
@@ -460,7 +548,7 @@ function StoryPopup() {
                 </>
               ) : (
                 <>
-                  <button
+                  {showPartners === false && (<button
                     className={
                       journey?.data?.journeyThrough === "video"
                         ? `start`
@@ -469,18 +557,18 @@ function StoryPopup() {
                     onClick={stop_journey}
                   >
                     Stop
-                  </button>
+                  </button>)}
                   <div
                     className="icons"
                     style={{
                       marginTop: `${
-                        journey?.data?.journeyThrough === "video"
+                        journey?.data?.journeyThrough === "video" || showPartners
                           ? "0"
-                          : "270px"
+                          : "440px"
                       }`,
                     }}
                   >
-                    {liked === false ? (
+                    {/* {liked === false ? (
                       <ThumbUpAltOutlinedIcon
                         className="react_like_icon"
                         onClick={likeJourney}
@@ -490,7 +578,7 @@ function StoryPopup() {
                         className="react_like_icon"
                         onClick={removeFromLikes}
                       />
-                    )}
+                    )} */}
                     {fired === false ? (
                       <LocalFireDepartmentIcon
                         className="fire_icon"
@@ -527,8 +615,8 @@ const Container = styled.div`
   animation: fadeIn 0.7s;
 
   .storyPopup {
-    background-color: #fff;
-    width: 400px;
+    background-color: #000000;
+    width: 500px;
     height: fit-content;
     margin: auto;
     border-radius: 7px;
@@ -537,8 +625,8 @@ const Container = styled.div`
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
 
-    @media(max-width: 500px){
-      width : 90vw;
+    @media (max-width: 500px) {
+      width: 90vw;
     }
   }
 
@@ -547,10 +635,12 @@ const Container = styled.div`
     justify-content: space-between;
 
     .close_icon {
+      color: white;
       margin-right: 5px;
       font-size: 27px;
+
       &:hover {
-        color: #6d6969;
+        color: #c2c1c1;
         cursor: pointer;
       }
     }
@@ -571,13 +661,14 @@ const Container = styled.div`
       margin-bottom: auto;
       margin-left: 5px;
       font-size: 17px;
+      color: white;
     }
   }
 
   .journey {
     padding: 0px;
     margin-top: 15px;
-    height: 200px;
+    height: 250px;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -631,7 +722,7 @@ const Container = styled.div`
       border-radius: 20px;
       background-color: #0099ff;
       color: white;
-      margin-top: 270px;
+      margin-top: 440px;
 
       &:hover {
         cursor: pointer;
@@ -674,34 +765,14 @@ const Container = styled.div`
 
   .card {
     position: relative;
-    width: 200px;
-    max-width: 85vw;
-    height: 250px;
+    height: 400px;
     border-radius: 20px;
     background-size: cover;
     background-position: center;
-    border: 1px solid lightgray;
     background-color: white;
-  }
-
-  .image_caption {
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    p {
-      font-size: 12px;
-      margin-top: 0;
-      margin-bottom: 0;
-      text-align: center;
-      overflow-y: scroll;
-      height : 50px;
-
-      ::-webkit-scrollbar {
-        display: none;
-      }
-    }
+    width: 300px;
+    padding: 20px;
+    padding-bottom: 0px;
   }
 
   .card_without_caption {
@@ -766,15 +837,10 @@ const Container = styled.div`
     margin-bottom: auto;
     font-size: 24.5px;
     /* color : #ff6600; */
+    color: white;
     &:hover {
       cursor: pointer;
-      background-color: lightgray;
-      border-radius: 7px;
-      width: 40px;
-      text-align: center;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      font-size: 25px;
+      color: lightgray;
     }
   }
 
@@ -791,13 +857,7 @@ const Container = styled.div`
     color: #ff6600;
     &:hover {
       cursor: pointer;
-      background-color: lightgray;
-      border-radius: 7px;
-      width: 40px;
-      text-align: center;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      font-size: 25px;
+      color: #fd8433;
     }
   }
 
@@ -844,13 +904,17 @@ const Container = styled.div`
   }
 
   .text_card {
-    overflow-y: scroll;
     padding: 10px;
-    height: 230px;
+    background-color: #fffefe;
+    border : 1px solid lightgray;
 
     p {
       margin-top: 0;
       margin-bottom: 0;
+      background-color: #00000034;
+      color : #333b3d;
+      padding : 5px;
+      border-radius : 10px;
     }
   }
 
@@ -861,6 +925,153 @@ const Container = styled.div`
   .video_player {
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+
+  .image_caption {
+    color: white;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    p {
+      color: white;
+      font-size: 14px;
+      background-color: #00000076;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  }
+
+  .journey_partners {
+    display: flex;
+    width: 330px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top : 10px;
+    justify-content : space-between;
+
+    .partner{
+      display : flex;
+      background-color : #2b2a2a;
+      border : 1px solid gray;
+      padding : 5px;
+      border-radius : 20px;
+      padding-left : 10px;
+      margin-right : 10px;
+
+      &:hover {
+        background-color : #474747;
+        cursor : pointer;
+      }
+
+      p{
+        color : white;
+        margin-top : 0;
+        margin-bottom : 0;
+        margin-left : 5px;
+        font-size : 13px;
+        margin-right : 5px;
+        padding-right : 5px;
+      }
+
+    }
+
+    .first_two{
+      display : flex;
+    }
+
+    .others{
+      display : flex;
+      background-color : #2b2a2a;
+      border : 1px solid gray;
+      padding : 5px;
+      border-radius : 20px;
+      padding-left : 15px;
+      margin-right : 15px;
+
+      &:hover {
+        background-color : #6d6b6b;
+        cursor : pointer;
+      }
+
+      p{
+        color : white;
+        margin-top : 0;
+        margin-bottom : 0;
+        margin-left : 5px;
+        font-size : 13px;
+        margin-right : 5px;
+        padding-right : 5px;
+      }
+    }
+  }
+
+
+  .image_caption {
+    color: white;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    p {
+      color: white;
+      font-size: 14px;
+      background-color: #00000076;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  }
+
+  .partners_component{
+    display : flex;
+    flex-direction : column;
+    padding-left : 10px;
+    padding-right : 10px;
+
+    .partners_header{
+      display : flex;
+      justify-content : space-between;
+      margin-top : 20px;
+      margin-bottom : 10px;
+
+
+      p{
+        color : white;
+        margin-top : 0;
+        margin-bottom : 0;
+      }
+
+      button{
+       width: 100px;
+      padding: 10px;
+      border: 0;
+      border-radius: 20px;
+      background-color: #0099ff;
+      color: white;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #60bffd;
+      }
+      }
+    }
+  }
+
+  .partner_partners{
+    display : flex;
+    flex-direction : row;
+    flex-wrap : wrap;
+    justify-content : center;
+    overflow-y : scroll;
+    max-height : 344px;
+  }
+
+  .partner_partners::-webkit-scrollbar {
+    display : none;
   }
 `;
 

@@ -29,6 +29,7 @@ function WorldPage() {
   const [learnings13, setLearnings13] = useState([]);
   const [newLearnings, setNewLearnings] = useState([]);
   const [x, setX] = useState(0);
+  const[jlLength , setJlLength] = useState();
   // let newLearnings = allLearnings
 
   useEffect(() => {
@@ -62,28 +63,19 @@ function WorldPage() {
           });
         });
 
-      // db.collection("users")
-      //   .doc(user?.uid)
-      //   .collection("myLearnings")
-      //   .onSnapshot((snapshot) =>
-      //     setMyLearnings(
-      //       snapshot.docs.map((doc) => ({
-      //         data: doc.data(),
-      //         id: doc.id,
-      //       }))
-      //     )
-      //   );
-
       db.collection("users")
         .doc(user?.uid)
         .collection("myJoinedLearnings")
-        .onSnapshot((snapshot) =>
+        .onSnapshot((snapshot) =>{
+          console.log("Joined Learnings are" , snapshot.docs?.length);
+          setJlLength(snapshot.docs?.length)
           setJoinedLearnings(
             snapshot.docs.map((doc) => ({
               data: doc.data(),
               id: doc.id,
             }))
           )
+        }
         );
     }
 
@@ -108,11 +100,18 @@ function WorldPage() {
     newLearnings?.length,
     user,
     joinedLearnings?.length,
-    allLearnings?.length,
+    allLearnings?.length
   ]);
 
   useEffect(() => {
+   if(jlLength === 0 && user?.uid && allLearnings?.length) {
+      setLearnings(allLearnings)
+   }
+  } , [jlLength, user?.uid  , allLearnings?.length])
+
+  useEffect(() => {
     if (
+      jlLength > 0 &&
       newLearnings?.length > 0 &&
       allLearnings?.length > 0 &&
       joinedLearnings?.length > 0
@@ -124,17 +123,22 @@ function WorldPage() {
         setLearnings(newLearnings);
       }
     }
-  }, [newLearnings?.length, joinedLearnings?.length, allLearnings?.length]);
+  }, [newLearnings?.length, joinedLearnings?.length, allLearnings?.length , jlLength]);
 
   useEffect(() => {
     // console.log("All Learnings Length is ", allLearnings?.length);
     // console.log("Joined Learnings Length is ", joinedLearnings?.length);
     // console.log("Learnings Length is", learnings?.length);
     if (
-      learnings?.length > 0 &&
+      (learnings?.length > 0 &&
       userInfo?.passion &&
       userInfo?.experience &&
-      newLearnings?.length > 0
+      newLearnings?.length > 0 &&
+      jlLength > 0
+      ) ||( 
+        learnings?.length > 0 &&
+        userInfo?.passion &&
+        userInfo?.experience && jlLength === 0)
     ) {
       console.log("OK");
       for (let i = 0; i < learnings?.length; i++) {
@@ -196,6 +200,7 @@ function WorldPage() {
     userInfo?.experience,
     user,
     joinedLearnings?.length,
+    jlLength
   ]);
 
   const add_learning = () => {
@@ -242,7 +247,7 @@ function WorldPage() {
               </>
             ))}
             {joinedLearnings.map((learning) => (
-              <Learning learning={learning?.data?.learning} type="joined" />
+              <Learning learning={learning?.data?.learning} type="joined" learnings = {allLearnings} />
             ))}
           </div>
         </div>
