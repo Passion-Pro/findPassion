@@ -331,13 +331,13 @@ const Container = styled.div`
     .group_photo {
       display: flex;
       justify-content: center;
-      align-item:center;
+      align-items:center;
       flex-direction: column;
       width:100%;
       .group_photo_Image{
           display:flex;
           flex-direction: column;
-          align-item:center !important;
+          align-items:center !important;
           justify-content:center;
           padding:4px 0 8px 0 ;
       }

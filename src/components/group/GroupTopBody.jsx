@@ -15,7 +15,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ReactCrop from 'react-image-crop';
 
 function GroupTopBody() {
-  
+
   const [{ userInfo, user, showLeftSidebarGroup, groupDetails, editGroup }, dispatch] = useStateValue();
   const [showImage, setShowImage] = useState(false);
   const [showImageProfile, setShowImageProfile] = useState(false);
@@ -263,8 +263,6 @@ function GroupTopBody() {
                   <input
                     type="file"
                     placeholder="Select Image"
-                    maxlength="70"
-                    // onChange={e => setUpImgImage(e.target.files[0])}
                     onChange={onSelectFile}
                   />}
               </div>
@@ -291,7 +289,6 @@ function GroupTopBody() {
                 <input
                   type="file"
                   placeholder="Select Image"
-                  maxlength="70"
                   onChange={e => setUpImgImageProfile(e.target.files[0])}
                 />
               </div>
@@ -366,8 +363,7 @@ function GroupTopBody() {
                     }}>Cancel</Button>
                   </Stack>
                 </div>
-                : groupDetails?.GroupName}
-              {currentUpdate !== 'status' && groupDetails?.GroupStatus}
+                : groupDetails?.GroupStatus}
             </div>
             {editGroup && currentUpdate !== 'status' && <EditRoundedIcon onClick={() => {
               setCurrentUpdate('status');

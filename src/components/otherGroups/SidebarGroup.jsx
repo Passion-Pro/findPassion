@@ -11,39 +11,41 @@ import firebase from 'firebase';
 import { useParams } from 'react-router-dom';
 
 function SidebarGroup() {
-  const [{ showTop, user, groupDetails, groupMember }, dispatch] = useStateValue();
+  const [{ showTop, user, groupDetails, userInfo, groupMember }, dispatch] = useStateValue();
 
   const [showInventor, setShowInventor] = useState(false);
   const [showMember, setShowMember] = useState(false);
   const [newmember, setNewmember] = useState('');
   // const [members,setMembers]=useState([]);
 
-  const {id} = useParams();
+  const { id } = useParams();
 
   var today = new Date();
   var date = today.toLocaleString();
 
-  useEffect(()=>{
-    if(user?.uid && id){ 
+  useEffect(() => {
+    if (user?.uid && id) {
       db.collection('users').doc(user.uid).collection('Groups').doc(id)
-      .onSnapshot((snapshot) => {
+        .onSnapshot((snapshot) => {
           dispatch({
-              type: actionTypes.SET_GROUP_DETAILS,
-              groupDetails:snapshot.data(),
-            })
-      })}
-  },[user,id])
+            type: actionTypes.SET_GROUP_DETAILS,
+            groupDetails: snapshot.data(),
+          })
+        })
+    }
+  }, [user, id])
 
-  useEffect(()=>{
-    if(user?.uid && id && groupDetails){
+  useEffect(() => {
+    if (user?.uid && id && groupDetails) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'Details')
-      .onSnapshot((snapshot) =>{
+        .onSnapshot((snapshot) => {
           dispatch({
-              type: actionTypes.SET_MY_GROUP_DETAILS_MAIN,
-              groupDetailsmain:snapshot.data(),
-            })
-      })}
-  },[user,groupDetails])
+            type: actionTypes.SET_MY_GROUP_DETAILS_MAIN,
+            groupDetailsmain: snapshot.data(),
+          })
+        })
+    }
+  }, [user, groupDetails])
 
   useEffect(() => {
     if (groupDetails?.email) {
@@ -55,10 +57,6 @@ function SidebarGroup() {
               type: actionTypes.SET_GROUP_MEMBERDETAILS,
               groupMemberDetails: doc.data(),
             })
-            // dispatch({
-            //   type: actionTypes.SET_GROUP_MEMBERDETAILS_ID,
-            //   groupMemberDetailsId: doc.id,
-            // })
           })
         })
     }
@@ -94,7 +92,7 @@ function SidebarGroup() {
   return (
     <>
       <div className='SidebarGroup'>
-      <div className={showTop ? 'leftSidebarGroup__headerShow':"leftSidebarGroup__header"}>
+        <div className={showTop ? 'leftSidebarGroup__headerShow' : "leftSidebarGroup__header"}>
           {groupDetails && groupDetails?.GroupName} Family
           <div className="leftSidebarGroup__headeRIcon">
             <ArrowForwardRoundedIcon
@@ -121,29 +119,31 @@ function SidebarGroup() {
             }
           </div>
           <div>
-          </div>
         </div>
-        {showInventor && <div className="leftSidebarGroup__body" >
-          {/* <GroupMemberField inventor={"name"}/>  */}
-        </div>}
-        <div className="leftSidebarGroup__Admin"
-          onClick={() => {
-            setShowMember(!showMember)
-            setShowInventor(false)
-          }}>
-          <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
-            Member
-            {
-              !showMember ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
-            }
-          </div>
-        </div>
-        {showMember && <div className="leftSidebarGroup__body">
-          {groupMember && groupMember.map((member, serial) => (
-            <GroupMemberField member={member} serial={serial} />
-          ))}
-        </div>}
       </div>
+            {showInventor && <div className="leftSidebarGroup__body">
+              <GroupMemberField sho='0' serial={0} />
+          </div>}
+      {showInventor && <div className="leftSidebarGroup__body" >
+      </div>}
+      <div className="leftSidebarGroup__Admin"
+        onClick={() => {
+          setShowMember(!showMember)
+          setShowInventor(false)
+        }}>
+        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+          Member
+          {
+            !showMember ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
+          }
+        </div>
+      </div>
+      {showMember && <div className="leftSidebarGroup__body">
+        {groupMember && groupMember.map((member, serial) => (
+          <GroupMemberField member={member} serial={serial} />
+        ))}
+      </div>}
+    </div>
     </>
   )
 }

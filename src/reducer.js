@@ -26,16 +26,19 @@ export const initialState = {
   mygroupDetail:null,
   searchInput:'',
   showMoreoption:false,
-  showTop:true,
+  showTop:false,
   editGroup:false,
   // for backgroundimage and profile image
   groupsOtherDetails:null,
   showgroupMoreRight:true,
   openAddLearntPopup: false,
   chatId: null,
+  // for loading
+  loading:false,
 };
 
 export const actionTypes = {
+  SET_LOADING:'SET_LOADING',
   SET_EDIT_GROUP:'SET_EDIT_GROUP',
   SET_SHOW_TOP:"SET_SHOW_TOP",
   SET_SEARCH_INPUT:'SET_SEARCH_INPUT',
@@ -77,6 +80,11 @@ export const actionTypes = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.SET_LOADING:
+      return {
+        ...state,
+        loading: action.loading,
+      };
     case actionTypes.SET_SHOW_GROUP_MORE_RIGHT:
       return {
         ...state,

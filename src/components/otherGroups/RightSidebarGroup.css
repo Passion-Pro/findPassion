@@ -9,3 +9,30 @@
     margin-left: -150px;
     color: rgb(53, 44, 44);
 }
+.EditDueBottonDiv{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-left: 12px;
+    margin: 0 12px;
+}
+.EditDueBottonDiv>Button{
+    margin: 0 12px;
+}
+.editDueBotton{
+    display: flex;
+    padding: 3px;
+    width: 50px;
+    margin: 0 4px;
+}
+@media(max-width:769px){
+    .editDue{
+      display: flex;   
+      flex-direction: column;
+    }
+    .EditDueBottonDiv{
+        display: flex;
+        justify-content: space-around;
+        padding: 12px 0 0px 0;
+    }
+}

@@ -1,18 +1,13 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
-import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import EnvolveGraph from './EnvolveGraph';
-import Divider from '@mui/material/Divider';
 
 function RightSidebarGroupEnvolvement() {
     const { id } = useParams();
     const history = useHistory();
-    const [{ userInfo, user, groupMember, groupDetails,showTop }, dispatch] = useStateValue();
+    const [{groupMember, groupsOtherDetails, groupDetails,showTop }]=useStateValue();
 
     return (
         <div className='RightSidebarGroup'>
@@ -27,11 +22,9 @@ function RightSidebarGroupEnvolvement() {
                 </div>
                 <div></div>
             </div>
-            <div className="rightSidebarGroup__bodyEnvolve">
+            <div className={showTop ? 'rightSidebarGroup__bodyTaskShow':"rightSidebarGroup__bodyTask"}>
                 <div className={showTop?"rightSidebarGroup__bodyEnvolvement2Show":"rightSidebarGroup__bodyEnvolvement2"}>
-
-                    <Button variant="outlined">{" Add "}</Button>
-                    Improve your performance by discuss the skill you have common with others.
+                    {groupsOtherDetails?.groupSlogan}
                 </div>
                 <div className={showTop?"rightSidebarGroup__bodyEnvolvement1Show":"rightSidebarGroup__bodyEnvolvement1"}>
                     {groupMember && groupMember.map((data) => (

@@ -24,7 +24,7 @@ function RightSidebarGroup() {
                 </div>
             </div>
             <div className="rightSidebarGroup__body">
-                <div className="group__Chat" onClick={() => history.push('/grouptask')}>
+                <div className="group__Chat" onClick={() => history.push('/grouptasklist')}>
                     Given Task
                 </div>
                 <div className="group__Chat" onClick={() => history.push('/groupchat')}>

@@ -12,6 +12,7 @@ import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import PostPopup from '../post/PostPopup';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
+import searchSvg from '../img/search.svg';
 
 function Header() {
     const [{ user, userInfo, courseDiv }, dispatch] = useStateValue();
@@ -28,9 +29,7 @@ function Header() {
         } else if (!input && window.location.pathname == '/searchPage') {
             history.push('/')
         }
-    }, [input])
-
-    const signupimage = 'https://image.cnbcfm.com/api/v1/image/105815446-1553624918736gettyimages-1078542150.jpeg?v=1612303414';
+    }, [input]);
 
     return (
         <>
@@ -68,10 +67,9 @@ function Header() {
                     </div>
 
                     <div className="Loginheader__profile">
-                        {signupimage ? <ProfileImage image={signupimage} /> : <AccountCircleRoundedIcon style={{ fontSize: 50, color: "white" }} />}
+                        {userInfo?.profilePhotoUrl ? <ProfileImage image={userInfo?.profilePhotoUrl} /> : <AccountCircleRoundedIcon style={{ fontSize: 50, color: "white" }} />}
                         <span className='Loginheader_profileName'>
                             {userInfo?.name && userInfo?.name?.length > 9 ? userInfo?.name.slice(0, 9) : userInfo?.name}
-                            {/* <ArrowDropDownRoundedIcon /> */}
                         </span>
                     </div>
                 </div>

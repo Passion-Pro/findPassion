@@ -15,7 +15,7 @@ import { useParams } from 'react-router-dom';
 function RightSidebarGroupChat() {
 
     const history = useHistory();
-    const [{ userInfo, user,showTop, groupDetails, groupDetailsmain }, dispatch] = useStateValue();
+    const [{ userInfo, user,showTop, groupDetails, groupDetailsmain,groupMemberDetails }] = useStateValue();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
@@ -37,7 +37,7 @@ function RightSidebarGroupChat() {
                     totalmessage: groupDetailsmain?.totalmessage + 1,
                 })
                 db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').doc(groupDetails?.GroupId + user?.email).update({
-                    totalmessage: groupDetailsmain?.totalmessage + 1,
+                    totalmessage: groupMemberDetails?.totalmessage + 1,
                 })
 
                 setInput('')
@@ -76,13 +76,13 @@ function RightSidebarGroupChat() {
                 </div>
                 <div></div>
             </div>
-            <div className="rightSidebarGroup__bodyTask">
-                <div className="GroupChat__body">
+            <div className={showTop ? 'rightSidebarGroup__bodyTaskShow':"rightSidebarGroup__bodyTask"}>
+                <div className={showTop ? 'GroupChat__bodyShow':"GroupChat__body"}>
                     {messages.map((data) => (
                         <GroupChatMsg data={data} />
                     ))}
                 </div>
-                <div className="GroupChat__Footer">
+                <div className={showTop ?'GroupChat__FooterShow':"GroupChat__Footer"}>
                     <textarea type="text" placeholder='Type a message...' value={input} onChange={e => setInput(e.target.value)} />
                     <SendRoundedIcon style={{ color: '#208bc0', border: '1px solid rgb(20, 218, 226)', padding: '0.6%', borderRadius: "50%", backgroundColor: "rgb(209, 218, 226)" }} onClick={sendMessage} />
                 </div>

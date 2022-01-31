@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import db from '../../firebase';
+import React from 'react';
 import './EnvolveGraph.css';
-import firebase from 'firebase';
 
 function EnvolveGraph({ data }) {
 
@@ -15,7 +13,7 @@ function EnvolveGraph({ data }) {
     if(heightInNumber>20){
         height=100;
     }else{
-        height=(heightInNumber*100)/20;
+        height=((heightInNumber*100)/20).toFixed(1);
     }
     
     return (

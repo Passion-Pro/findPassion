@@ -40,33 +40,53 @@ import ShareExperience from "./components/ShareExperience/ShareExperience";
 import CreateStoryPage from "./components/stories/CreateStoryPage";
 import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
+import GroupTasklist from "./components/group/GroupTasklist";
+import ShowTask from "./components/group/ShowTask";
+import { CircularProgress } from '@mui/material';
 
 function App() {
 
-  const [{ user, courseDiv, showExpandGroup,showMoreoption,showgroupMoreRight }, dispatch] = useStateValue();
-  const history=useHistory();
+  const [{ user,loading, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight }, dispatch] = useStateValue();
+  const history = useHistory();
 
   useEffect(() => {
+
     // will only run once when the app component loads...
+    dispatch({
+      type: actionTypes.SET_LOADING,
+      loading: true,
+    })
     auth.onAuthStateChanged((auth) => {
       if (auth) {
         dispatch({
           type: actionTypes.SET_USER,
           user: auth,
         });
+        dispatch({
+          type: actionTypes.SET_LOADING,
+          loading: false,
+        })
       } else {
         history.push('/withoutloginhome')
+        dispatch({
+          type: actionTypes.SET_LOADING,
+          loading: false,
+        })
       }
     });
   }, []);
 
   useEffect(() => {
     if (user?.uid) {
+      dispatch({
+        type: actionTypes.SET_LOADING,
+        loading: true,
+      })
       db.collection("users")
         .doc(user?.uid)
         .onSnapshot((snapshot) => {
@@ -74,10 +94,17 @@ function App() {
             type: actionTypes.SET_USER_INFO,
             userInfo: snapshot.data(),
           })
+          dispatch({
+            type: actionTypes.SET_LOADING,
+            loading: false,
+          })
         }
         );
-    }else{
-
+    } else {
+      dispatch({
+        type: actionTypes.SET_LOADING,
+        loading: false,
+      })
     }
   }, [user?.uid]);
 
@@ -95,13 +122,13 @@ function App() {
         showExpandGroup: false,
       })
     }
-    if(showMoreoption){
+    if (showMoreoption) {
       dispatch({
         type: actionTypes.SET_SHOW_MORE_OPTION,
         showMoreoption: false,
       })
     }
-    if(showgroupMoreRight){
+    if (showgroupMoreRight) {
       dispatch({
         type: actionTypes.SET_SHOW_GROUP_MORE_RIGHT,
         showgroupMoreRight: false,
@@ -110,124 +137,135 @@ function App() {
   }
 
   return (
-    <div className="App" onClick={handleCourseDiv}>
-      <Router>
-         {window.location.pathname!=='/withoutlogin' && <Header/>}
-        <Switch> 
-          <Route path='/searchPage'>
-            <SearchPage />
-          </Route>
-          <Route path='/createStory'>
-            <CreateStoryPage />
-          </Route>
-          <Route path='/viewstory/:id'>
-            <ShowStories />
-          </Route>
-          <Route path='/viewprofile/:id'>
-            <ViewProfile />
-          </Route>
-          <Route path='/withoutlogin'>
-            <WithoutLogin />
-          </Route>
-          <Route path='/shareexperience'>
-            <ShareExperience/>
-          </Route>
-          <Route path='/grouptaskother/:id'>
-            <GroupTaskOther />
-          </Route>
-          <Route path='/groupchatother/:id'>
-            <GroupChatOther />
-          </Route>
-          <Route path='/groupevolvementother/:id'>
-            <GroupEnvolvementOther />
-          </Route>
-          <Route path='/grouptask'>
-            <GroupTask />
-          </Route>
-          <Route path='/groupchat'>
-            <GroupChat />
-          </Route>
-          <Route path='/groupevolvement'>
-            <GroupEnvolvement />
-          </Route>
-          <Route path='/group'>
-            <Group />
-          </Route>
-          <Route path='/groupother/:id'>
-            <GroupOther />
-          </Route>
-          <Route path='/createpost'>
-            <Createpost />
-          </Route>
-          <Route path='/all_profile'>
-            <HomeWithAllProfile />
-          </Route>
-          <Route path='/landspacepost'>
-            <LandspacePost />
-          </Route>
-          <Route path='/addpost'>
-            <AddPost />
-          </Route>
-          <Route path='/portraitpost'>
-            <PortraitPhotos />
-          </Route>
-          <Route path="/newAccount">
-            <CreateAccount />
-          </Route>
-          <Route path="/signIn">
-            <Login />
-          </Route>
-          <Route path="/chat/:chatId">
-            <Chat />
-          </Route>
-          <Route path="/messages">
-            <ChatPage />
-          </Route>
-          <Route path="/world">
-            <WorldPage />
-          </Route>
-          <Route path="/story">
-            <StoryPage />
-          </Route>
-          <Route path="/stories">
-            <StoriesPage />
-          </Route>
-          <Route path="/learning/:learningId">
-            <LearningGroup />
-          </Route>
-          <Route path="/learners">
-            <LearnersPage />
-          </Route>
-          <Route path="/profile">
-            <ProfilePage />
-          </Route>
-          <Route path="/addStory">
-            <AddStoryPage />
-          </Route>
-          <Route path="/requests">
-            <RequestsPage />
-          </Route>
-          <Route path="/learningsUploadPdf/:learningId">
-            <UploadPdf />
-          </Route>
-          <Route path="/messagesUploadPdf/:chatId/:chatEmail">
-            <UploadChatPdf />
-          </Route>
-          <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
-            <ViewPdf/>
-          </Route>
-          <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
-            <ViewPdf/>
-          </Route>
-          <Route path="/userProfile">
-            <UserProfile/>
-          </Route>
-          <Route path='/'>
-            {user?.email && <Home />}
-          </Route>
-        </Switch>
-      </Router>
-    </div>
+    <>
+      {loading ? 
+      <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress />
+      </div> : <div className="App" onClick={handleCourseDiv}>
+        <Router>
+          {window.location.pathname !== '/withoutlogin' && <Header />}
+          <Switch>
+            <Route path='/grouptasklist'>
+              <GroupTasklist />
+            </Route>
+            <Route path='/showalltask/:id'>
+              <ShowTask />
+            </Route>
+            <Route path='/searchPage'>
+              <SearchPage />
+            </Route>
+            <Route path='/createStory'>
+              <CreateStoryPage />
+            </Route>
+            <Route path='/viewstory/:id'>
+              <ShowStories />
+            </Route>
+            <Route path='/viewprofile/:id'>
+              <ViewProfile />
+            </Route>
+            <Route path='/withoutlogin'>
+              <WithoutLogin />
+            </Route>
+            <Route path='/shareexperience'>
+              <ShareExperience />
+            </Route>
+            <Route path='/grouptaskother/:id'>
+              <GroupTaskOther />
+            </Route>
+            <Route path='/groupchatother/:id'>
+              <GroupChatOther />
+            </Route>
+            <Route path='/groupevolvementother/:id'>
+              <GroupEnvolvementOther />
+            </Route>
+            <Route path='/grouptask'>
+              <GroupTask />
+            </Route>
+            <Route path='/groupchat'>
+              <GroupChat />
+            </Route>
+            <Route path='/groupevolvement'>
+              <GroupEnvolvement />
+            </Route>
+            <Route path='/group'>
+              <Group />
+            </Route>
+            <Route path='/groupother/:id'>
+              <GroupOther />
+            </Route>
+            <Route path='/createpost'>
+              <Createpost />
+            </Route>
+            <Route path='/all_profile'>
+              <HomeWithAllProfile />
+            </Route>
+            <Route path='/landspacepost'>
+              <LandspacePost />
+            </Route>
+            <Route path='/addpost'>
+              <AddPost />
+            </Route>
+            <Route path='/portraitpost'>
+              <PortraitPhotos />
+            </Route>
+            <Route path="/newAccount">
+              <CreateAccount />
+            </Route>
+            <Route path="/signIn">
+              <Login />
+            </Route>
+            <Route path="/chat/:chatId">
+              <Chat />
+            </Route>
+            <Route path="/messages">
+              <ChatPage />
+            </Route>
+            <Route path="/world">
+              <WorldPage />
+            </Route>
+            <Route path="/story">
+              <StoryPage />
+            </Route>
+            <Route path="/stories">
+              <StoriesPage />
+            </Route>
+            <Route path="/learning/:learningId">
+              <LearningGroup />
+            </Route>
+            <Route path="/learners">
+              <LearnersPage />
+            </Route>
+            <Route path="/profile">
+              <ProfilePage />
+            </Route>
+            <Route path="/addStory">
+              <AddStoryPage />
+            </Route>
+            <Route path="/requests">
+              <RequestsPage />
+            </Route>
+            <Route path="/learningsUploadPdf/:learningId">
+              <UploadPdf />
+            </Route>
+            <Route path="/messagesUploadPdf/:chatId/:chatEmail">
+              <UploadChatPdf />
+            </Route>
+            <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
+              <ViewPdf />
+            </Route>
+            <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
+              <ViewPdf />
+            </Route>
+            <Route path="/userProfile">
+              <UserProfile />
+            </Route>
+            <Route path='/'>
+              {user?.email && <Home />}
+            </Route>
+          </Switch>
+        </Router>
+      </div>}
+    </>
   );
 }
 
