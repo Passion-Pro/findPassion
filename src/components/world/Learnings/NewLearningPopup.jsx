@@ -85,9 +85,10 @@ function NewLearningPopup() {
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 })
                 .then(() => {
+                  console.log("THen Step is arrived");
                   db.collection("learnings")
                     .where("learning", "==", input)
-                    .where("started_by", "==", userInfo)
+                    .where("learningImageUrl", "==" , url)
                     .get()
                     .then((querySnapshot) => {
                       querySnapshot.forEach((doc) => {

@@ -13,6 +13,8 @@ function Name({ chat, id }) {
   const [{ user }, dispatch] = useStateValue();
   const [viewerId, setViewerId] = useState();
   const [lastMessage, setLastMessage] = useState([]);
+  const [x, setX] = useState(0);
+  const [id2, setId2] = useState();
 
   useEffect(() => {
     if (chat?.email) {
@@ -43,6 +45,27 @@ function Name({ chat, id }) {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
 
+            setId2(doc.id);
+
+            db.collection("users")
+              .doc(user?.uid)
+              .collection("chats")
+              .doc(doc?.id)
+              .collection("messages")
+              .where("status", "==", "unseen")
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+
+                  setX(x + 1);
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+
             db.collection("users")
               .doc(user?.uid)
               .collection("chats")
@@ -50,16 +73,13 @@ function Name({ chat, id }) {
               .collection("messages")
               .orderBy("timestamp", "desc")
               .limit(1)
-              .onSnapshot((snapshot) => 
-              
-
-              setLastMessage(
-                snapshot.docs.map((doc) => ({
-                  data: doc.data(),
-                  id: doc.id,
-                }))
-              )
-                
+              .onSnapshot((snapshot) =>
+                setLastMessage(
+                  snapshot.docs.map((doc) => ({
+                    data: doc.data(),
+                    id: doc.id,
+                  }))
+                )
               );
           });
         })
@@ -80,22 +100,86 @@ function Name({ chat, id }) {
                 chatId: viewerId,
               });
               history.push(`/chat/${viewerId}`);
+              setX(0);
+
+              db.collection("users")
+                .doc(user?.uid)
+                .collection("chats")
+                .doc(id2)
+                .collection("messages")
+                .where("status", "==", "unseen")
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+
+                    db.collection("users")
+                      .doc(user?.uid)
+                      .collection("chats")
+                      .doc(id2)
+                      .collection("messages")
+                      .doc(doc?.id)
+                      .update({
+                        status: "seen",
+                      });
+                  });
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
+                });
             }}
           >
             <Avatar className="avatar" src={chatInfo?.profilePhotoUrl} />
             <div className="chatName_info">
               <p>{chatInfo?.name}</p>
               <p>
-                {lastMessage[0]?.data?.message?.length <= 20 ? <>{lastMessage[0]?.data?.message}</> : <>{lastMessage[0]?.data?.message?.slice(0, 20)}...</>}
-               </p>
+                {lastMessage[0]?.data?.message?.length <= 20 ? (
+                  <>{lastMessage[0]?.data?.message}</>
+                ) : (
+                  <>{lastMessage[0]?.data?.message?.slice(0, 20)}...</>
+                )}
+              </p>
             </div>
-            {/* <div className="unread_messages">
-              <div className="circle">7</div>
-            </div> */}
+            {x > 0 && (
+              <div className="unread_messages">
+                <div className="circle">{x}</div>
+              </div>
+            )}
           </Container>
           <Container
             className="name_for_mobile"
-            onClick={(e) => history.push("/messages")}
+            onClick={(e) => {
+              history.push("/messages");
+              setX(0);
+
+              db.collection("users")
+                .doc(user?.uid)
+                .collection("chats")
+                .doc(id2)
+                .collection("messages")
+                .where("status", "==", "unseen")
+                .get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, " => ", doc.data());
+
+                    db.collection("users")
+                      .doc(user?.uid)
+                      .collection("chats")
+                      .doc(id2)
+                      .collection("messages")
+                      .doc(doc?.id)
+                      .update({
+                        status: "seen",
+                      });
+                  });
+                })
+                .catch((error) => {
+                  console.log("Error getting documents: ", error);
+                });
+            }}
           >
             <Avatar
               className="avatar"
@@ -104,12 +188,18 @@ function Name({ chat, id }) {
             <div className="chatName_info">
               <p>{chatInfo?.name}</p>
               <p>
-              {lastMessage[0]?.data?.message?.length <= 20 ? <>{lastMessage[0]?.data?.message}</> : <>{lastMessage[0]?.data?.message?.slice(0, 20)}...</>}
+                {lastMessage[0]?.data?.message?.length <= 20 ? (
+                  <>{lastMessage[0]?.data?.message}</>
+                ) : (
+                  <>{lastMessage[0]?.data?.message?.slice(0, 20)}...</>
+                )}
               </p>
             </div>
-            {/* <div className="unread_messages">
-              <div className="circle">7</div>
-            </div> */}
+            {x > 0 && (
+              <div className="unread_messages">
+                <div className="circle">{x}</div>
+              </div>
+            )}
           </Container>
         </>
       )}

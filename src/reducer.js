@@ -9,7 +9,7 @@ export const initialState = {
   learnings: [],
   openStoryPopup: false,
   startJourney: false,
-  journeyUpload: "video",
+  journeyUpload: "",
   showStoryCaption: false,
   showStory: false,
   openNewLearningPopup: false,
@@ -33,6 +33,7 @@ export const initialState = {
   showgroupMoreRight:true,
   openAddLearntPopup: false,
   chatId: null,
+  addPartnerInfo : []
   // for loading
   loading:false,
   showgroupAdd:false,
@@ -78,9 +79,13 @@ export const actionTypes = {
   SET_MY_GROUP_DETAILS: "SET_MY_GROUP_DETAILS",
   SET_MY_GROUP_DETAILS_MAIN: "SET_MY_GROUP_DETAILS_MAIN",
   SET_CHAT_ID: "SEt_CHAT_ID",
+  ADD_PARTNER_INFO : "ADD_PARTNER_INFO",
+  REMOVE_PARTNER_INFO : "REMOVE_PARTNER_INFO",
+  SET_ADD_PARTNER_INFO : "SET_ADD_PARTNER_INFO"
 };
 
 const reducer = (state, action) => {
+  console.log(action ,state);
   switch (action.type) {
     case actionTypes.SET_SHOW_GROUP_ADD:
       return {
@@ -301,6 +306,35 @@ const reducer = (state, action) => {
         ...state,
         chatId: action.chatId,
       };
+    case actionTypes.ADD_PARTNER_INFO:
+      return {
+        ...state,
+        addPartnerInfo: [...state.addPartnerInfo, action.partnerInfo]
+      }
+    case actionTypes.REMOVE_PARTNER_INFO:
+      const index3 = state.addPartnerInfo.findIndex(
+        (partnerInfo) => partnerInfo?.data === action.data
+      );
+      let newaddPartnerInfo = [...state.addPartnerInfo];
+    
+      if (index3 >= 0) {
+        newaddPartnerInfo.splice(index3, 1);
+      } else {
+        console.warn(
+          `Can't remove partner (id: ${action.id} as its not in the list)`
+        );
+      }
+
+      return {
+        ...state,
+        addPartnerInfo: newaddPartnerInfo,
+      };
+
+      case actionTypes.SET_ADD_PARTNER_INFO:
+        return {
+          type : actionTypes.SET_ADD_PARTNER_INFO,
+          addPartnerInfo: action.addPartnerInfo
+        }
     default:
       return state;
   }

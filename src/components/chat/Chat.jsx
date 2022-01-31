@@ -168,6 +168,7 @@ function Chat() {
                       timestamp:
                         firebase.firestore.FieldValue.serverTimestamp(),
                       type: "text",
+                      status : "unseen"
                     });
                 });
               })
@@ -223,6 +224,7 @@ function Chat() {
                   message: input,
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                   type: "text",
+                  status : "unseen"
                 });
             });
           })
@@ -246,7 +248,7 @@ function Chat() {
               ))}
             </div>
           </div>
-          <div className="chat_section">
+         {chatId? <div className="chat_section">
             <div className="chat_section_name">
               <Avatar className="avatar" src={chatInfo?.profilePhotoUrl} />
               <div className="chat_section_name_info">
@@ -254,7 +256,7 @@ function Chat() {
               </div>
             </div>
             <div className="chat_section_messages">
-              {messages.map((message) => (
+              {messages.map((message) =>(
                 <Message message={message} chatEmail={chatInfo?.email} />
               ))}
             </div>
@@ -273,7 +275,13 @@ function Chat() {
               <SendIcon className="send_icon" onClick={send_message} />
             </div>
             {openEmojis === true && <Picker onEmojiClick={onEmojiClick} />}
-          </div>
+          </div>:(
+            <div className="noChatScreen">
+                <div className="click_box">
+                  <p>Click on chats to view messages</p>
+                </div>
+            </div>
+          )}
         </div>
       </Container>
       <AttachPopup
@@ -288,7 +296,7 @@ function Chat() {
 
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
 
@@ -434,6 +442,25 @@ const Container = styled.div`
 
   .emoji-picker-react {
     width: 100% !important;
+  }
+
+  .noChatScreen{
+   height : 90vh;
+   background-color: #d8d8d8d3;
+   flex : 0.7;
+   display : flex;
+   justify-content : center; 
+   align-items : center;
+   
+   .click_box{
+      background-color: white;
+      width : 30vw;
+      margin-left : auto;
+      margin-right : auto;
+      padding : 10px;
+      border-radius : 10px;
+      text-align : center;
+   }
   }
 `;
 
