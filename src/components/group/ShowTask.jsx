@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
-import './Group.css';
-import './GroupChat.css';
-import Header from '../header/Header';
-import SidebarGroup from './SidebarGroup';
-import RightSidebarGroup from './RightSidebarGroup';
-import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useStateValue } from '../../StateProvider';
-import RightSidebarGroupChat from './RightSidebarGroupChat';
 import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
+import ShowAllTask from './ShowAllTask';
+import SidebarGroup from './SidebarGroup';
 
-function GroupChat() {
-
-  const [{ userInfo, groupMember, showLeftSidebarGroup, groupDetails, showTop }, dispatch] = useStateValue();
-  console.log("member",groupMember);
-  return (
-    <div className='group'>
+function ShowTask() {
+    const [{ user, showTop,showLeftSidebarGroup }, dispatch] = useStateValue();
+    const history=useHistory();
+    return (
+        <>
+         <div className='group'>
       {showTop &&
         <GroupTopBody />
       }
@@ -25,21 +21,21 @@ function GroupChat() {
             <SidebarGroup />
           </div>}
           {<div className="group__lower__rightSidebar">
-            <RightSidebarGroupChat />
+            <ShowAllTask />
           </div>}
         </div>
         <div className="group__lowerForMobile">
           {showLeftSidebarGroup ? <div className="group__lower__leftSidebarForMobile">
             <SidebarGroup />
           </div> : <div className="group__lower__rightSidebarForMobile">
-            <RightSidebarGroupChat />
+            <ShowAllTask />
           </div>}
         </div>
       </div>
       <GroupExpandMore />
     </div>
-  )
+        </>
+    )
 }
 
-export default GroupChat;
-
+export default ShowTask;

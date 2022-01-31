@@ -17,7 +17,7 @@ import { v4 as uuid } from "uuid";
 
 function GroupExpandMore() {
   const history = useHistory();
-  const [{ showExpandGroup,editGroup, user,showTop, mygroupDetail }, dispatch] = useStateValue();
+  const [{ showExpandGroup,editGroup, user,userInfo,showTop, mygroupDetail }, dispatch] = useStateValue();
   const [showAddGroup, setShowAddGroup] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groups, setGroups] = useState([]);
@@ -30,6 +30,31 @@ function GroupExpandMore() {
             type: actionTypes.SET_MY_GROUP_DETAILS,
             mygroupDetail: snapshot.data(),
           })
+        })
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      dispatch({
+        type: actionTypes.SET_LOADING,
+        loading: true,
+      })
+
+      db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details')
+        .onSnapshot((snapshot) => {
+          dispatch({
+            type: actionTypes.SET_GROUP_DETAILS,
+            groupDetails: snapshot.data(),
+          })
+          dispatch({
+            type: actionTypes.SET_LOADING,
+            loading: false,
+          })
+        })
+        dispatch({
+          type: actionTypes.SET_LOADING,
+          loading: false,
         })
     }
   }, [user])
@@ -48,6 +73,8 @@ function GroupExpandMore() {
         backgroundImage: '',
         DefaultbackgroundImage: 'https://firebasestorage.googleapis.com/v0/b/find-passion.appspot.com/o/LearningImages%2F8b87d5d2-1ff3-4830-a62f-d30b5046a1d3?alt=media&token=d8a46f9c-6666-4466-bba8-beb20bf439e1',
         id: id,
+        name:userInfo?.name,
+        groupSlogan:'Improve your performance by discuss the skill you have common with others.',
       }).then(() => {
         setGroupName('')
         setShowAddGroup(false)
@@ -72,18 +99,18 @@ function GroupExpandMore() {
     }
   }, [user])
 
-  useEffect(() => {
-    if (user?.uid) {
-      db.collection('users').doc(user.uid).collection('Groups')
-        .onSnapshot((snapshot) => (
-          setGroups(
-            snapshot.docs.map((doc) => ({
-              data: doc.data(),
-              id: doc.id,
-            })))
-        ));
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if (user?.uid) {
+  //     db.collection('users').doc(user.uid).collection('Groups')
+  //       .onSnapshot((snapshot) => (
+  //         setGroups(
+  //           snapshot.docs.map((doc) => ({
+  //             data: doc.data(),
+  //             id: doc.id,
+  //           })))
+  //       ));
+  //   }
+  // }, [user])
 
   return (
     <>

@@ -7,14 +7,18 @@ import { useStateValue } from '../../StateProvider';
 import db from '../../firebase';
 
 function GroupChatMsg({ data }) {
-    const [{ user }] = useStateValue();
+    const [{ user ,groupDetails}] = useStateValue();
 
     const [popupshowImageFUll, setPopupshowImageFUll] = useState(false);
     const [popupshowPdfFUll, setPopupshowPdfFUll] = useState(false);
     // const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     const deleteMessage = () => {
-
+        if(user){
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user?.uid + 'groupchat').collection('GroupChat').doc(data?.id).delete().then(()=>{
+                console.log("huhuhuhh!");
+            })
+        }
     }
 
     return (
@@ -22,8 +26,8 @@ function GroupChatMsg({ data }) {
             <div className="chatTeacher__message__my">
                 <div style={{ display: "flex", fontSize: 'xx-small', fontWeight: 'bold', alignItems: "center", height: "20px" }}>
                     {data.data?.name && data.data?.name}
-                    {data?.data?.sendby === user?.email && <div className="deleteIcon" onClick={deleteMessage}>
-                        < DeleteIcon style={{ fontSize: 15 }} /></div>}
+                    {<div className="deleteIcon">
+                        < DeleteIcon style={{ fontSize: 15 }}  onClick={deleteMessage}/></div>}
                 </div>
                 <div className={data?.data?.sendby == user?.email ? "chatTeacher__message_divmy" : "chatTeacher__message_div"}>
                     <div className='GroupChatMsg__Message'>
