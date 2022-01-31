@@ -162,6 +162,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                                 firebase.firestore.FieldValue.serverTimestamp(),
                               type: "image",
                               imageUrl: url,
+                              status : "unseen"
                             });
                         });
                       })
@@ -222,6 +223,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "image",
                           imageUrl: url,
+                          status : "unseen"
                         });
                     });
                   })
@@ -341,6 +343,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                                 firebase.firestore.FieldValue.serverTimestamp(),
                               type: "video",
                               videoUrl: url,
+                              status : "unseen"
                             });
                         });
                       })
@@ -401,6 +404,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "video",
                           videoUrl: url,
+                          status : "unseen"
                         });
                     });
                   })

@@ -202,6 +202,7 @@ function UploadChatPdf() {
                               type: "pdf",
                               pdfUrl: downloadURL,
                               pdfName: fileName,
+                              status : "unseen"
                             });
                         });
                       })
@@ -263,6 +264,7 @@ function UploadChatPdf() {
                           type: "pdf",
                           pdfUrl: downloadURL,
                           pdfName: fileName,
+                          status : "unseen"
                         });
                     });
                   })

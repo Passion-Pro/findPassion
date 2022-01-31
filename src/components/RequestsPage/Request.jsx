@@ -4,10 +4,10 @@ import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
 import db from "../../firebase";
 import Avatar from "@mui/material/Avatar";
-import firebase from "firebase"
+import firebase from "firebase";
 
 function Request({ request }) {
-  const [{ user , userInfo }, dispatch] = useStateValue();
+  const [{ user, userInfo }, dispatch] = useStateValue();
 
   const accept_request = (e) => {
     e.preventDefault();
@@ -15,49 +15,66 @@ function Request({ request }) {
     db.collection("users")
       .doc(user?.uid)
       .collection("learnRequests")
-      .where("learning", "==", request?.data?.learning)
-      .where("requestFrom", "==", request.data.requestFrom)
+      .where("requestFrom", "==", request?.data?.requestFrom)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
 
-          db.collection("users")
-            .doc(user?.uid)
-            .collection("learnRequests")
-            .doc(doc.id)
-            .update({
-              status: "accepted",
-            });
+          if (
+            doc.data().learning?.learning === request?.data?.learning?.learning
+          ) {
+            db.collection("users")
+              .doc(user?.uid)
+              .collection("learnRequests")
+              .doc(doc.id)
+              .update({
+                status: "accepted",
+              });
 
+            db.collection("learnings")
+              .where("started_by", "==", request?.data?.learning?.started_by)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
 
+                  console.log(doc.id, " => ", doc.data());
+
+                  if (
+                    doc.data()?.learning?.learning ===
+                    request?.data?.learning?.learning
+                  ) {
+                    db.collection("learnings")
+                      .doc(doc.id)
+                      .collection("learners")
+                      .add({
+                        learner: request?.data?.requestFrom,
+                      });
+                  }
+
+                  db.collection("users")
+                    .doc(doc.id)
+                    .onSnapshot((snapshot) =>
+                      dispatch({
+                        type: actionTypes.SET_USER_INFO,
+                        userInfo: snapshot.data(),
+                      })
+                    );
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          }
         });
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
 
-      
-      db.collection("learnings")
-      .where("learning", "==", request?.data?.learning?.data?.learning)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-
-          db.collection("learnings").doc(doc.id).collection("learners").add({
-              learner : request?.data?.requestFrom
-          })
-
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-
-      db.collection("users")
+    db.collection("users")
       .where("email", "==", request?.data?.requestFrom?.email)
       .get()
       .then((querySnapshot) => {
@@ -65,48 +82,46 @@ function Request({ request }) {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
 
-           db.collection("users").doc(doc.id).collection("myJoinedLearnings").add({
-               learning : request?.data?.learning,
-               joined_on : firebase.firestore.FieldValue.serverTimestamp(),
-           })
-
-
+          db.collection("users")
+            .doc(doc.id)
+            .collection("myJoinedLearnings")
+            .add({
+              learning: request?.data?.learning,
+              joined_on: firebase.firestore.FieldValue.serverTimestamp(),
+            });
         });
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-
-
   };
 
-  
-
   const delete_request = () => {
-
     db.collection("users")
       .doc(user?.uid)
       .collection("learnRequests")
-      .where("learning", "==", request?.data?.learning)
-      .where("requestFrom", "==", request.data.requestFrom)
+      .where("requestFrom", "==", request?.data?.requestFrom)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
 
-          db.collection("users")
-          .doc(user?.uid)
-          .collection("learnRequests").doc(doc.id).delete()
-           
-
+          if (
+            doc.data().learning?.learning === request?.data?.learning?.learning
+          ) {
+            db.collection("users")
+              .doc(user?.uid)
+              .collection("learnRequests")
+              .doc(doc.id)
+              .delete();
+          }
         });
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
       });
-  }
-
+  };
 
   return (
     <Container>
@@ -129,7 +144,9 @@ function Request({ request }) {
         <button className="accept" onClick={accept_request}>
           Accept
         </button>
-        <button className="delete" onClick = {delete_request}>Delete</button>
+        <button className="delete" onClick={delete_request}>
+          Delete
+        </button>
       </div>
     </Container>
   );

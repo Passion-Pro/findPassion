@@ -8,14 +8,14 @@ import db from "../../../firebase";
 import firebase from "firebase";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
-function Learning({ learning, type }) {
+function Learning({ learning, type, learnings }) {
   const history = useHistory();
   const [{ user, userInfo }, dispatch] = useStateValue();
   const [requestSent, setRequestSent] = useState(false);
   const [fires, setFires] = useState([]);
   const [fired, setFired] = useState(false);
-  const[joinedId , setJoinedId] = useState();
-  const[profilePhotoUrl , setProfilePhotoUrl] = useState();
+  const [joinedId, setJoinedId] = useState();
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState();
 
   useEffect(() => {
     if (user?.uid && learning?.data?.started_by?.email && userInfo) {
@@ -27,7 +27,7 @@ function Learning({ learning, type }) {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
 
-            setProfilePhotoUrl(doc.data().profilePhotoUrl)
+            setProfilePhotoUrl(doc.data().profilePhotoUrl);
 
             db.collection("users")
               .doc(doc.id)
@@ -64,40 +64,35 @@ function Learning({ learning, type }) {
         .doc(learning?.id)
         .onSnapshot((snapshot) => {
           setFires(snapshot.data().fires);
-        });      
+        });
     }
   }, [learning?.id]);
 
   useEffect(() => {
-    if(type === "joined"){
-      db.collection("learnings")
-      .where("learning", "==", learning?.data?.learning)
-      .where("started_by" , "==" , learning?.data?.started_by)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-  
-          setJoinedId(doc.id);
-
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    if (type === "joined" && learnings) {
+      console.log(learnings);
+      for (let i = 0; i < learnings.length; i++) {
+        if (
+          learnings[i].data.learning === learning?.data?.learning &&
+          learnings[i].data.started_by?.email ===
+            learning?.data?.started_by?.email
+        ) {
+            console.log("YES");
+            setJoinedId(learning?.id);
+        }
+      }
     }
-  } , [type]);
+  }, []);
 
   useEffect(() => {
-     if(type === "joined" && joinedId){
+    if (type === "joined" && joinedId) {
       db.collection("learnings")
-      .doc(joinedId)
-      .onSnapshot((snapshot) => {
-        setFires(snapshot.data().fires);
-      });   
-     }  
-  } , [joinedId])
+        .doc(joinedId)
+        .onSnapshot((snapshot) => {
+          setFires(snapshot.data().fires);
+        });
+    }
+  }, [joinedId]);
 
   useEffect(() => {
     if (fires?.length > 0) {
@@ -143,11 +138,11 @@ function Learning({ learning, type }) {
     fires.push({
       email: userInfo?.email,
     });
-    if(type === "joined"){
+    if (type === "joined") {
       db.collection("learnings").doc(joinedId).update({
         fires: fires,
       });
-    }else{
+    } else {
       db.collection("learnings").doc(learning?.id).update({
         fires: fires,
       });
@@ -156,98 +151,101 @@ function Learning({ learning, type }) {
   };
 
   const removeFromFires = (e) => {
-     e.preventDefault();
+    e.preventDefault();
 
-     for(let i = 0 ; i< fires?.length ; i++){
-      if(fires[i]?.email === userInfo?.email){
-          fires.splice(i);
+    for (let i = 0; i < fires?.length; i++) {
+      if (fires[i]?.email === userInfo?.email) {
+        fires.splice(i);
       }
     }
 
-    if(type === "joined"){
+    if (type === "joined") {
       db.collection("learnings").doc(joinedId).update({
         fires: fires,
       });
-    }else{
+    } else {
       db.collection("learnings").doc(learning?.id).update({
         fires: fires,
       });
     }
 
     setFired(false);
-  }
-
+  };
 
   return (
     <>
-    <Container>
-      <div className="learning_header">
-        <div
-          style={{
-            display: "flex",
-          }}
-        >
-          <Avatar
-            src={profilePhotoUrl}
-            className="avatar"
-          />
-          <p className="learning_name">
-            {type === `my` ? userInfo?.name : learning?.data?.started_by?.name}
-          </p>
+      <Container>
+        <div className="learning_header">
+          <div
+            style={{
+              display: "flex",
+            }}
+          >
+            <Avatar src={profilePhotoUrl} className="avatar" />
+            <p className="learning_name">
+              {type === `my`
+                ? userInfo?.name
+                : learning?.data?.started_by?.name}
+            </p>
+          </div>
+          <div className="fire_icon">
+            {fired === false ? (
+              <LocalFireDepartmentIcon
+                className="fire_icon"
+                onClick={fireUp_learning}
+              />
+            ) : (
+              <LocalFireDepartmentIcon
+                className="firedUp_icon"
+                onClick={removeFromFires}
+              />
+            )}
+          </div>
         </div>
-        <div className="fire_icon">
-          {fired === false ? (
-            <LocalFireDepartmentIcon
-              className="fire_icon"
-              onClick={fireUp_learning}
-            />
+        <div className="learning">
+          <p>{learning?.data?.learning}</p>
+        </div>
+        <div className="started_date">
+          <p>Started on 8th November 2021</p>
+        </div>
+        {learning?.data?.learnersLength > 1 && (
+          <div className="number_of_students">
+            <p>🔥{learning?.data?.learnersLength} students</p>
+          </div>
+        )}
+        <div className="join_button" style={{}}>
+          {type === "my" || type === "joined" ? (
+            <>
+              {type === "my" && (
+                <button
+                  onClick={(e) => history.push(`/learning/${learning?.id}`)}
+                >
+                  View
+                </button>
+              )}
+              {type === "joined" && (
+                <button onClick={(e) => history.push(`/learning/${joinedId}`)}>
+                  View
+                </button>
+              )}
+            </>
           ) : (
-            <LocalFireDepartmentIcon
-              className="firedUp_icon"
-              onClick={removeFromFires}
-            />
+            <>
+              {requestSent === false ? (
+                <button onClick={send_join_request}>Join</button>
+              ) : (
+                <button
+                  onClick={() => {
+                    alert("Join Request Sent!");
+                  }}
+                >
+                  Join
+                </button>
+              )}
+            </>
           )}
         </div>
-      </div>
-      <div className="learning">
-        <p>{learning?.data?.learning}</p>
-      </div>
-      <div className="started_date">
-        <p>Started on 8th November 2021</p>
-      </div>
-      {learning?.data?.learnersLength > 1 && (
-        <div className="number_of_students">
-          <p>🔥{learning?.data?.learnersLength} students</p>
-        </div>
-      )}
-      <div className="join_button" style={{}}>
-        {(type === "my" || type === "joined") ? (
-          <>
-           {type === "my" && (<button onClick={(e) => history.push(`/learning/${learning?.id}`)}>
-            View
-          </button>)}
-          {type === "joined" && (<button onClick={(e) => history.push(`/learning/${joinedId}`)}>
-            View
-          </button>)}
-
-          </>
-        ) : (
-          <>
-            {requestSent === false ? (
-              <button onClick={send_join_request}>Join</button>
-            ) : (
-              <button
-                onClick={() => {
-                  alert("Join Request Sent!");
-                }}
-              >
-                Join
-              </button>
-            )}
-          </>
-        )}
-      </div>
-    </Container>
+      </Container>
     </>
   );
 }
@@ -261,9 +259,14 @@ const Container = styled.div`
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
-  margin-right: 10px;
-  margin-bottom: 10px;
-  background-color : white;
+  margin-right: 30px;
+  margin-bottom: 20px;
+  background-color: white;
+
+  @media (max-width: 700px) {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
 
   @media (max-width: 500px) {
     width: 40vw;
@@ -350,7 +353,7 @@ const Container = styled.div`
     }
   }
 
-  .firedUp_icon{
+  .firedUp_icon {
     font-size: 24.5px;
     color: #ff6600;
     &:hover {
@@ -359,8 +362,8 @@ const Container = styled.div`
     }
   }
 
-  .learning_name{
-    margin-top : 2px !important;
+  .learning_name {
+    margin-top: 2px !important;
   }
 `;
 

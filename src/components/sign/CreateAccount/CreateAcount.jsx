@@ -245,12 +245,12 @@ function CreateAccount() {
               </div>
             )}
           </div>
-         {year > 1 && ( <div className="passion">
+         <div className="passion">
             <p onClick={open_passion_popup} className="select_passion">
               Select your passion , interest:{" "}
             </p>
             <p>{passion}</p>
-          </div>)}
+          </div>
           {passion && passion !== "Don't know" && (
             <>
               <div className="subfield">

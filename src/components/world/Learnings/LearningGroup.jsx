@@ -101,7 +101,7 @@ function LearningGroup() {
             <p className="learning_info">{learningData?.learning}</p>
             <div className="members">
               <div className="learners">
-                <p>{learners?.length} Learners</p>
+                <p>{learners?.length === 1 ? `1 learner` : `${learners?.length} learners`}</p>
               </div>
               {learners.map((learner) => (
                 <Member learner={learner} />
@@ -164,7 +164,7 @@ function LearningGroup() {
 
 const Container = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
 
@@ -372,6 +372,10 @@ const Container = styled.div`
       cursor: pointer;
       color: gray;
     }
+  }
+
+  .emoji-picker-react {
+    width: 100% !important;
   }
 `;
 
