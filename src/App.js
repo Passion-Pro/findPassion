@@ -21,15 +21,15 @@ import RequestsPage from "./components/RequestsPage/RequestsPage";
 import UploadPdf from "./components/world/Learnings/UploadPdf";
 import ViewPdf from "./components/world/Learnings/ViewPdf";
 import UserProfile from "./components/UserProfile/UserProfile";
-import WithoutLogin from './components/withoutlogin/WithoutLoginHome';
-import Group from './components/group/Group';
-import GroupOther from './components/otherGroups/Group';
-import Createpost from './components/post/Createpost';
-import Home from './components/home/Home';
-import HomeWithAllProfile from './components/home/HomeWithAllProfile';
-import LandspacePost from './components/post/LandscapePost';
+import WithoutLogin from "./components/withoutlogin/WithoutLoginHome";
+import Group from "./components/group/Group";
+import GroupOther from "./components/otherGroups/Group";
+import Createpost from "./components/post/Createpost";
+import Home from "./components/home/Home";
+import HomeWithAllProfile from "./components/home/HomeWithAllProfile";
+import LandspacePost from "./components/post/LandscapePost";
 import AddPost from "./components/post/AddPost";
-import PortraitPhotos from './components/post/PortraitPhotos';
+import PortraitPhotos from "./components/post/PortraitPhotos";
 import GroupTask from "./components/group/GroupTask";
 import GroupChat from "./components/group/GroupChat";
 import GroupEnvolvement from "./components/group/GroupEnvolvement";
@@ -40,16 +40,18 @@ import ShareExperience from "./components/ShareExperience/ShareExperience";
 import CreateStoryPage from "./components/stories/CreateStoryPage";
 import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
 
 function App() {
-
-  const [{ user, courseDiv, showExpandGroup,showMoreoption,showgroupMoreRight }, dispatch] = useStateValue();
-  const history=useHistory();
+  const [
+    { user, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight },
+    dispatch,
+  ] = useStateValue();
+  const history = useHistory();
 
   useEffect(() => {
     // will only run once when the app component loads...
@@ -60,7 +62,7 @@ function App() {
           user: auth,
         });
       } else {
-        history.push('/withoutloginhome')
+        history.push("/withoutloginhome");
       }
     });
   }, []);
@@ -73,102 +75,102 @@ function App() {
           dispatch({
             type: actionTypes.SET_USER_INFO,
             userInfo: snapshot.data(),
-          })
-        }
-        );
-    }else{
-
+          });
+        });
+    } else {
     }
   }, [user?.uid]);
-
 
   const handleCourseDiv = () => {
     if (courseDiv) {
       dispatch({
         type: actionTypes.SET_COURSEDIV,
         courseDiv: false,
-      })
+      });
     }
     if (showExpandGroup) {
       dispatch({
         type: actionTypes.SET_SHOW_EXPANDGROUP,
         showExpandGroup: false,
-      })
+      });
     }
-    if(showMoreoption){
+    if (showMoreoption) {
       dispatch({
         type: actionTypes.SET_SHOW_MORE_OPTION,
         showMoreoption: false,
-      })
+      });
     }
-    if(showgroupMoreRight){
+    if (showgroupMoreRight) {
       dispatch({
         type: actionTypes.SET_SHOW_GROUP_MORE_RIGHT,
         showgroupMoreRight: false,
-      })
+      });
     }
-  }
+  };
 
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-         {window.location.pathname!=='/withoutlogin' && <Header/>}
-        <Switch> 
-          <Route path='/searchPage'>
+        {window.location.pathname !== "/withoutlogin" &&
+          window.location.pathname !== "/addJourney/photos" &&
+          window.location.pathname !== "/addJourney/words" &&
+          window.location.pathname !== "/addJourney/video" && <Header />}
+        <Switch>
+          <Route path="/searchPage">
             <SearchPage />
           </Route>
-          <Route path='/createStory'>
+          <Route path="/createStory">
             <CreateStoryPage />
           </Route>
-          <Route path='/viewstory/:id'>
+          <Route path="/viewstory/:id">
             <ShowStories />
           </Route>
-          <Route path='/viewprofile/:id'>
+          <Route path="/viewprofile/:id">
             <ViewProfile />
           </Route>
-          <Route path='/withoutlogin'>
+          <Route path="/withoutlogin">
             <WithoutLogin />
           </Route>
-          <Route path='/shareexperience'>
-            <ShareExperience/>
+          <Route path="/shareexperience">
+            <ShareExperience />
           </Route>
-          <Route path='/grouptaskother/:id'>
+          <Route path="/grouptaskother/:id">
             <GroupTaskOther />
           </Route>
-          <Route path='/groupchatother/:id'>
+          <Route path="/groupchatother/:id">
             <GroupChatOther />
           </Route>
-          <Route path='/groupevolvementother/:id'>
+          <Route path="/groupevolvementother/:id">
             <GroupEnvolvementOther />
           </Route>
-          <Route path='/grouptask'>
+          <Route path="/grouptask">
             <GroupTask />
           </Route>
-          <Route path='/groupchat'>
+          <Route path="/groupchat">
             <GroupChat />
           </Route>
-          <Route path='/groupevolvement'>
+          <Route path="/groupevolvement">
             <GroupEnvolvement />
           </Route>
-          <Route path='/group'>
+          <Route path="/group">
             <Group />
           </Route>
-          <Route path='/groupother/:id'>
+          <Route path="/groupother/:id">
             <GroupOther />
           </Route>
-          <Route path='/createpost'>
+          <Route path="/createpost">
             <Createpost />
           </Route>
-          <Route path='/all_profile'>
+          <Route path="/all_profile">
             <HomeWithAllProfile />
           </Route>
-          <Route path='/landspacepost'>
+          <Route path="/landspacepost">
             <LandspacePost />
           </Route>
-          <Route path='/addpost'>
+          <Route path="/addpost">
             <AddPost />
           </Route>
-          <Route path='/portraitpost'>
+          <Route path="/portraitpost">
             <PortraitPhotos />
           </Route>
           <Route path="/newAccount">
@@ -204,7 +206,7 @@ function App() {
           <Route path="/profile">
             <ProfilePage />
           </Route>
-          <Route path="/addStory">
+          <Route path="/addJourney/:journeyMode">
             <AddStoryPage />
           </Route>
           <Route path="/requests">
@@ -217,17 +219,15 @@ function App() {
             <UploadChatPdf />
           </Route>
           <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
-            <ViewPdf/>
+            <ViewPdf />
           </Route>
           <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
-            <ViewPdf/>
+            <ViewPdf />
           </Route>
           <Route path="/userProfile">
-            <UserProfile/>
+            <UserProfile />
           </Route>
-          <Route path='/'>
-            {user?.email && <Home />}
-          </Route>
+          <Route path="/">{user?.email && <Home />}</Route>
         </Switch>
       </Router>
     </div>

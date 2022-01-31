@@ -9,7 +9,7 @@ export const initialState = {
   learnings: [],
   openStoryPopup: false,
   startJourney: false,
-  journeyUpload: "video",
+  journeyUpload: "",
   showStoryCaption: false,
   showStory: false,
   openNewLearningPopup: false,

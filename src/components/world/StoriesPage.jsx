@@ -5,12 +5,14 @@ import { actionTypes } from "../../reducer";
 import { useHistory } from "react-router-dom";
 import Story from "./Stories/Story";
 import StoryPopup from "./Stories/StoryPopup";
-import db from "../../firebase";
+import db from "../../firebase"
+import JourneyThroughPopup from "../world/Stories/JourneyThroughPopup"
 
 function StoriesPage() {
   const history = useHistory();
   const [{ user, userInfo }, dispatch] = useStateValue();
   const [journeys, setJourneys] = useState([]);
+  const[openJourneyPopup  , setOpenJourneyPopup] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -52,7 +54,9 @@ function StoriesPage() {
           </div>
           <div className="add_story_button">
           {userInfo?.experience > 0 && (
-              <button onClick={(e) => history.push("/addStory")}>
+              <button onClick={(e) => {
+                setOpenJourneyPopup(true)
+              }}>
                 Add your journey 🔥
               </button>
             )}
@@ -85,6 +89,7 @@ function StoriesPage() {
         )}
       </Container>
       <StoryPopup />
+      {openJourneyPopup && (<JourneyThroughPopup setOpenJourneyPopup = {setOpenJourneyPopup}/>)}
     </div>
   );
 }

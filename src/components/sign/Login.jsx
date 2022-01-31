@@ -45,7 +45,7 @@ function Login() {
               console.log("Error getting documents: ", error);
             });
 
-           history.push("/world")
+           history.push("/")
 
         })
         .catch((error) => {
@@ -96,7 +96,7 @@ function Login() {
 };
 
 const Container  = styled.div`
-height: 100vh;
+height: 90vh;
 width : 100vw;
 display : flex;
 flex-direction : column;
@@ -104,6 +104,10 @@ justify-content : center;
 align-items : center;
 background-color : #f0f0f0;
 flex : 1;
+
+@media (max-width: 500px) {
+  height : 85vh;
+}
 
   .forgot_password{
       font-size: 14px;
