@@ -35,9 +35,11 @@ export const initialState = {
   chatId: null,
   // for loading
   loading:false,
+  showgroupAdd:false,
 };
 
 export const actionTypes = {
+  SET_SHOW_GROUP_ADD:"SET_SHOW_GROUP_ADD",
   SET_LOADING:'SET_LOADING',
   SET_EDIT_GROUP:'SET_EDIT_GROUP',
   SET_SHOW_TOP:"SET_SHOW_TOP",
@@ -80,6 +82,11 @@ export const actionTypes = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case actionTypes.SET_SHOW_GROUP_ADD:
+      return {
+        ...state,
+        showgroupAdd: action.showgroupAdd,
+      };
     case actionTypes.SET_LOADING:
       return {
         ...state,
