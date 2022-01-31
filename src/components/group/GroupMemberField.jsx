@@ -7,46 +7,58 @@ import db from '../../firebase';
 import { useStateValue } from '../../StateProvider';
 import PersonRemoveAlt1RoundedIcon from '@mui/icons-material/PersonRemoveAlt1Rounded';
 import AddTaskRoundedIcon from '@mui/icons-material/AddTaskRounded';
+import firebase from 'firebase';
 
-function GroupMemberField({ member, serial }) {
-  const [{ user,groupDetails }] = useStateValue();
+function GroupMemberField({ member, userInfo }) {
+  const [{ user, groupDetails }] = useStateValue();
   const [showAddTask, setshowAddTask] = useState(false);
   const [showRemove, setshowRemove] = useState(false);
-
+  const [dueDate, setDueDate] = useState(null)
   const [task, settask] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
 
   var today = new Date();
   var date = today.toLocaleString();
- console.log('groupDetails',groupDetails?.startedby)
+
   const AddTask = () => {
     if (user) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(member.id).update({
         task: task,
         date: date,
         givenBy: user?.email,
-        Duedate: null,
-        status: 'pending'
+        Duedate: dueDate,
+        status: 'pending',
+        statusDateDoing: null,
+        statusDateDone: null,
+        totalTask: member?.data?.totalTask + 1,
       }).then(() => {
+        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(member.id).collection('Tasks').add({
+          task: task,
+          date: date,
+          givenBy: user?.email,
+          Duedate: dueDate,
+          status: 'pending',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          totalTask: member?.data?.totalTask + 1,
+        })
         setshowAddTask(false);
       })
     }
   }
 
   const removeMember = () => {
-    if (user && confirmEmail==member?.data?.email && groupDetails) {
+    if (user && confirmEmail == member?.data?.email && groupDetails) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(member.id).delete().then(() => {
         db.collection('users').where('email', '==', confirmEmail)
           .get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-              db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id +groupDetails?.startedby).delete().then(()=>{
-                alert('Wooooo');
+              db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id + groupDetails?.startedby).delete().then(() => {
+                alert('User deleted successfully!')
+                setshowAddTask(false);
               })
             })
           })
-        setshowAddTask(false);
-        alert('User deleted successfully!')
       })
     }
   }
@@ -67,9 +79,24 @@ function GroupMemberField({ member, serial }) {
                 <input
                   type="text"
                   placeholder="Type a task"
-                  maxlength="70"
                   onChange={e => settask(e.target.value)}
                 />
+              </div>
+              <div className="learning_detail">
+                <div style={{ display: 'flex', flexDirection: "column", width: '150px' }}>
+                  {/* <div> */}
+                  Set due date
+                  {/* </div> */}
+                  <div style={{ display: "flex", fontSize: 'xx-small', color: '#e01515', fontWeight: "600" }}>
+                    If you not set due date {member?.data?.name} can set the due date.
+                  </div>
+                </div>
+                <div style={{ display: 'flex' }}>
+                  <input
+                    type="date"
+                    onChange={e => setDueDate(e.target.value)}
+                  />
+                </div>
               </div>
               <div className="start_button">
                 <button onClick={AddTask} >Add</button>
@@ -94,8 +121,7 @@ function GroupMemberField({ member, serial }) {
                 <input
                   type="text"
                   placeholder="Confirm Email"
-                  maxlength="70"
-                  onChange={e => confirmEmail(e.target.value)}
+                  onChange={e => setConfirmEmail(e.target.value)}
                 />
               </div>
               <div className="start_button">
@@ -106,10 +132,19 @@ function GroupMemberField({ member, serial }) {
         </Container>
       )}
       <div className='GroupMemberField'>
-        <div className="groupmember__name">
-          {member?.data?.name}
+        <div className="groupmember__name" style={{ flexDirection: 'column' }}>
+          {member?.data?.name && <div>
+            {member?.data?.name}
+          </div>}
+          {userInfo?.email && <div>
+            {userInfo?.name}
+          </div>}
+          {!member?.data?.name && groupDetails && <div className="groupDetailStartedDate">
+            {"Made group on " + new Date(groupDetails?.timestamp.toDate()).toUTCString()}
+          </div>
+          }
         </div>
-        <div className='groupField__Icon'>
+        {!userInfo?.email && <div className='groupField__Icon'>
           <div className="groupmember__icons" onClick={() => {
             setshowAddTask(true)
           }}>
@@ -120,7 +155,7 @@ function GroupMemberField({ member, serial }) {
           }}>
             <PersonRemoveAlt1RoundedIcon />
           </div>
-        </div>
+        </div>}
       </div>
       <Divider />
     </>
@@ -191,22 +226,14 @@ const Container = styled.div`
         margin-left: auto;
         margin-right: auto;
       }
-
-      label {
-        p {
-          color: #006eff;
-          text-align: center;
-          &:hover {
-            cursor: pointer;
-          }
-        }
-      }
     }
 
     .learning_detail {
       width: 100%;
       display: flex;
-      justify-content: center;
+      justify-content: space-around;
+      margin-bottom:8px;
+      align-items: center;
 
       input {
         margin-left: auto;

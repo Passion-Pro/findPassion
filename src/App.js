@@ -40,44 +40,71 @@ import ShareExperience from "./components/ShareExperience/ShareExperience";
 import CreateStoryPage from "./components/stories/CreateStoryPage";
 import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
-import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
+import GroupTasklist from "./components/group/GroupTasklist";
+import ShowTask from "./components/group/ShowTask";
+import { CircularProgress } from '@mui/material';
 
 function App() {
-  const [
-    { user, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight },
-    dispatch,
-  ] = useStateValue();
+
+  const [{ user,loading, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight }, dispatch] = useStateValue();
   const history = useHistory();
 
   useEffect(() => {
+
     // will only run once when the app component loads...
+    dispatch({
+      type: actionTypes.SET_LOADING,
+      loading: true,
+    })
     auth.onAuthStateChanged((auth) => {
       if (auth) {
         dispatch({
           type: actionTypes.SET_USER,
           user: auth,
         });
+        dispatch({
+          type: actionTypes.SET_LOADING,
+          loading: false,
+        })
       } else {
-        history.push("/withoutloginhome");
+        history.push('/withoutloginhome')
+        dispatch({
+          type: actionTypes.SET_LOADING,
+          loading: false,
+        })
       }
     });
   }, []);
 
   useEffect(() => {
     if (user?.uid) {
+      dispatch({
+        type: actionTypes.SET_LOADING,
+        loading: true,
+      })
       db.collection("users")
         .doc(user?.uid)
         .onSnapshot((snapshot) => {
           dispatch({
             type: actionTypes.SET_USER_INFO,
             userInfo: snapshot.data(),
-          });
-        });
+          })
+          dispatch({
+            type: actionTypes.SET_LOADING,
+            loading: false,
+          })
+        }
+        );
     } else {
+      dispatch({
+        type: actionTypes.SET_LOADING,
+        loading: false,
+      })
     }
   }, [user?.uid]);
 

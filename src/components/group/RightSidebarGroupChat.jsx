@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './RightSidebarGroup.css';
 import { useHistory } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -11,6 +8,8 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import db from '../../firebase';
 import firebase from 'firebase';
 import GroupChatMsg from './GroupChatMsg';
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 function RightSidebarGroupChat() {
 
@@ -70,13 +69,13 @@ function RightSidebarGroupChat() {
                 </div>
                 <div></div>
             </div>
-            <div className="rightSidebarGroup__bodyTask">
-                <div className="GroupChat__body">
+            <div className={showTop ? 'rightSidebarGroup__bodyTaskShow':"rightSidebarGroup__bodyTask"}>
+                <div className={showTop ? 'GroupChat__bodyShow':"GroupChat__body"}>
                     {messages.map((data) => (
                         <GroupChatMsg data={data} />
                     ))}
                 </div>
-                <div className="GroupChat__Footer">
+                <div className={showTop ?'GroupChat__FooterShow':"GroupChat__Footer"}>
                     <textarea type="text" placeholder='Type a message...' value={input} onChange={e => setInput(e.target.value)} />
                     <SendRoundedIcon style={{ color: '#208bc0', border: '1px solid rgb(20, 218, 226)', padding: '0.6%', borderRadius: "50%", backgroundColor: "rgb(209, 218, 226)" }} onClick={sendMessage} />
                 </div>

@@ -17,3 +17,12 @@
     display: flex;
     width: 20px;
 }
+.groupDetailStartedDate{
+    display: flex;
+    flex-direction: column;
+    font-size: x-small;
+    font-weight: 500;
+    color: rgb(75, 60, 60);
+    font-family: sans-serif;
+    padding: 5px 0;
+}

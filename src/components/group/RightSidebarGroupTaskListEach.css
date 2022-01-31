@@ -1,0 +1,22 @@
+.RightSidebarGroupTaskListEach{
+    display: flex;
+    flex-direction: column;
+    width: 96%;
+    padding: 1%;
+    margin: 1%;
+    border: 1px solid lightgray;
+    box-shadow: 0 0 10px -2px gray;
+}
+.RightSidebarGroupTaskListEach__Name{
+   display: flex;
+   font-size: large;
+   font-weight: 600;
+   font-style: italic;
+}
+@media(max-width:769px){
+    .RightSidebarGroupTaskListEach{
+        width: 88%;
+        padding: 3%;
+        margin: 3%;
+    }
+}

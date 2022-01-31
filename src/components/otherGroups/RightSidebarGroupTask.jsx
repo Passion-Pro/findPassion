@@ -1,95 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import { useStateValue } from '../../StateProvider';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import db from '../../firebase';
 import { useParams } from 'react-router-dom';
-import { actionTypes } from '../../reducer';
+import RightSidebarGroupTaskEach from './RightSidebarGroupTaskEach';
 
 function RightSidebarGroupTask() {
 
     const history = useHistory();
-    const [{ showTop, user, groupDetails, groupMemberDetails}, dispatch] = useStateValue();
-    const [dueDate, setDueDate] = useState(null);
+    const [{ showTop, user, groupDetails, groupMemberDetails}] = useStateValue();
     const { id } = useParams();
+    const [tasks, setTasks] = useState([])
+    
+    var today = new Date();
+    var date = today.toLocaleString();
 
-    const setDue = () => {
-        if (dueDate && groupDetails && groupMemberDetails) {
-            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember')
-                .doc(groupDetails?.GroupId+user?.email).update({
-                    Duedate: dueDate,
-                    status: !groupMemberDetails.status ? 'pending' : groupMemberDetails.status
-                })
-                history.push(`/groupother/${id}`)
-        } else {
-            alert('Something went wrong')
+    useEffect(() => {
+        if (groupDetails?.GroupId && user) {
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember').doc(groupDetails?.GroupId + user?.email).collection('Tasks')
+                .orderBy("timestamp", "desc")
+                .onSnapshot((snapshot) => {
+                    setTasks(
+                        snapshot.docs.map((doc) => ({
+                            data: doc.data(),
+                            id: doc.id,
+                        }))
+                    );
+                });
         }
-    }
+    }, [user,groupDetails?.GroupId]);
 
     return (
         <>
             {groupDetails && <div className='RightSidebarGroup'>
-            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
+                <div className={showTop ? 'rightSidebarGroup__headerShow' : "rightSidebarGroup__header"}>
                     <div className="rightSidebarGroup__headMoreTask">
                         <ArrowBackRoundedIcon onClick={() => {
                             history.push(`/groupother/${id}`)
                         }} />
                     </div>
                     <div className="rightSidebarGroup__headName">
-                        {groupDetails && groupDetails?.GroupName} Chat
+                        Your task
                     </div>
                     <div></div>
                 </div>
-                <div className="rightSidebarGroup__bodyTask">
-                    <div className="taskUpper">
-                        Task Given By :-
-                        <span>{groupMemberDetails && groupMemberDetails?.givenBy}</span>
+                {groupMemberDetails?.task ?
+            <div className={showTop ? 'rightSidebarGroup__bodyTasklistShow' : "rightSidebarGroup__bodylistTask"}>
+            {tasks.map((task,serial) => (
+                <RightSidebarGroupTaskEach tasks={tasks.length} task={task} serial={serial}/>
+            ))}
+        </div>
+             :
+                    <div style={{ display: 'flex', width: '100%', height: "100%", alignItems: 'center', justifyContent: "center" }}>
+                        No task given
                     </div>
-                    {groupMemberDetails && groupMemberDetails?.Duedate ? <div className="taskUpper">
-                        Due Date :-
-                        {groupMemberDetails?.Duedate}
-                    </div> :
-                        <div className="taskUpper">
-                            Set Due Date :-
-                            <input type="date" onChange={e => setDueDate(e.target.value)} />
-                            <Button variant="contained" onClick={setDue}>Set</Button>
-                        </div>}
-                    <div className="taskUpper">
-                        <div className="taskUpperHead">
-                            Task
-                        </div>
-                        <p>
-                            {groupMemberDetails && groupMemberDetails?.task}
-                        </p>
-                        <Stack spacing={2} direction="row">
-                            Status :
-                            <Button variant={groupMemberDetails?.status == 'Done' ? "contained" : "primary"} onClick={() => {
-                                if (groupDetails && groupMemberDetails) {
-                                    db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember')
-                                        .doc(groupDetails?.GroupId+user?.email).update({
-                                            status: 'Done',
-                                        })
-                                        history.push(`/groupother/${id}`)
-                                } else {
-                                    alert('Something went wrong')
-                                }
-                            }}>Done</Button>
-                            <Button variant={groupMemberDetails?.status == 'Doing' ? "contained" : "primary"} onClick={() => {
-                                if (groupDetails && groupMemberDetails) {
-                                    db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(groupDetails?.startedby).doc(groupDetails?.GroupId + 'groupmember').collection('GroupMember')
-                                        .doc(groupDetails?.GroupId+user?.email).update({
-                                            status: "Doing"
-                                        })
-                                        history.push(`/groupother/${id}`)
-                                } else {
-                                    alert('Something went wrong')
-                                }
-                            }}>Doing</Button>
-                        </Stack>
-                    </div>
-                </div>
+                }
             </div>}
         </>
     )

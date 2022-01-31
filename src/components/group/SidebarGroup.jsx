@@ -7,69 +7,71 @@ import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import Divider from '@mui/material/Divider';
 import CloseIcon from "@mui/icons-material/Close";
 import styled from "styled-components";
 import db from '../../firebase';
 import firebase from 'firebase';
 
 function SidebarGroup() {
-    const [{ showTop, user, groupDetails, groupMember }, dispatch] = useStateValue();
+    const [{ showTop, userInfo, user, groupDetails, groupMember }, dispatch] = useStateValue();
     const [showAddMember, setShowAddMember] = useState(false);
     const [showInventor, setShowInventor] = useState(false);
     const [showMember, setShowMember] = useState(false);
     const [newmember, setNewmember] = useState('');
-    const [alreadymember, setAlreadymember] = useState(false);
 
     var today = new Date();
     var date = today.toLocaleString();
-    const Amember = null;
-    console.log(groupMember);
-    if (newmember) {
 
-        function checkMember(groupMember) {
-            return groupMember?.data?.email == newmember;
-        }
-        const Amember = groupMember.filter(checkMember);
-        console.log(Amember && Amember[0]?.data?.name)
-    }
-    const AddMember = () => {
-
-        if (newmember && Amember && Amember[0]?.data?.name != newmember) {
-            db.collection('users').where('email', '==', newmember)
+const AddMember = () => {
+        if (newmember) {
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user?.uid + 'groupmember').collection('GroupMember').where('email', '==', newmember)
                 .get()
                 .then((querySnapshot) => {
                     if (querySnapshot.empty === true) {
-                        alert('This email address is not exist in platform');
-                    } else {
-                        querySnapshot.forEach((doc) => {
-                            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user.uid + newmember).set({
-                                date: date,
-                                name: doc.data()?.name,
-                                email: newmember,
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                totalmessage: 0,
-                            }).then(() => {
-                                db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id + user?.email).set({
-                                    date: date,
-                                    name: doc.data()?.name,
-                                    email: newmember,
-                                    startedby: user?.email,
-                                    GroupId: user?.uid,
-                                    GroupName: groupDetails?.GroupName,
-                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                    backgroundImage: groupDetails?.backgroundImage,
-                                    ProfileImage: groupDetails?.ProfileImage,
-                                    DefaultbackgroundImage: groupDetails?.DefaultbackgroundImage,
-                                })
-                                setNewmember('');
-                                setShowAddMember(false);
+                        db.collection('users').where('email', '==', newmember)
+                            .get()
+                            .then((querySnapshot) => {
+                                if (querySnapshot.empty === true) {
+                                    alert('This email address is not exist in platform');
+                                    setNewmember('');
+                                    setShowAddMember(false);
+                                } else {
+                                    querySnapshot.forEach((doc) => {
+                                        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user.uid + newmember).set({
+                                            date: date,
+                                            name: doc.data()?.name,
+                                            profilePhotoUrl: doc.data()?.profilePhotoUrl,
+                                            passion: doc.data()?.passion,
+                                            email: newmember,
+                                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                            totalmessage: 0,
+                                            totalTask: 0,
+                                        }).then(() => {
+                                            db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id + user?.email).set({
+                                                date: date,
+                                                name: doc.data()?.name,
+                                                email: newmember,
+                                                startedby: user?.email,
+                                                GroupId: user?.uid,
+                                                GroupName: groupDetails?.GroupName,
+                                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                                backgroundImage: groupDetails?.backgroundImage,
+                                                ProfileImage: groupDetails?.ProfileImage,
+                                                DefaultbackgroundImage: groupDetails?.DefaultbackgroundImage,
+
+                                            })
+                                            setNewmember('');
+                                            setShowAddMember(false);
+                                        })
+                                    })
+                                }
                             })
-                        })
+                    } else {
+                        setNewmember('');
+                        setShowAddMember(false);
+                        alert('Already member');
                     }
                 })
-        } else {
-            alert('Already member')
         }
     }
 
@@ -146,6 +148,9 @@ function SidebarGroup() {
                         <div>
                         </div>
                     </div>
+                    {showInventor && <div className="leftSidebarGroup__body">
+                        <GroupMemberField userInfo={userInfo} serial={0} sho={0} />
+                    </div>}
                     {showInventor && <div className="leftSidebarGroup__body" >
                     </div>}
                     <div className="leftSidebarGroup__Admin"

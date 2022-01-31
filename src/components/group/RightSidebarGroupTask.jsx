@@ -3,40 +3,38 @@ import './RightSidebarGroup.css';
 import { useHistory } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useStateValue } from '../../StateProvider';
-import { actionTypes } from '../../reducer';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import db from '../../firebase';
 
-function RightSidebarGroupTask() { 
+function RightSidebarGroupTask() {
 
     const history = useHistory();
-    const [{ userInfo, user, groupDetails,showTop }, dispatch] = useStateValue();
+    const [{ user, groupDetails, showTop }] = useStateValue();
+    const [tasks, setTasks] = useState([]);
 
-    const [tasks,setTasks]=useState([]);
-    useEffect(()=>{
-        if(user){
-        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember')
-        .orderBy("timestamp", "desc")
-            .onSnapshot((snapshot) => {
-                setTasks(
-                    snapshot.docs.map((doc) => ({
-                        data: doc.data(),
-                        id: doc.id,
-                    }))
-                );
-            });
+    useEffect(() => {
+        if (user) {
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember')
+                .orderBy("timestamp", "desc")
+                .onSnapshot((snapshot) => {
+                    setTasks(
+                        snapshot.docs.map((doc) => ({
+                            data: doc.data(),
+                            id: doc.id,
+                        }))
+                    );
+                });
         }
-    },[user])
-console.log(tasks)
+    }, [user]);
+
     return (
         <div className='RightSidebarGroup'>
-            <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
+            <div className={showTop ? 'rightSidebarGroup__headerShow' : "rightSidebarGroup__header"}>
                 <div className="rightSidebarGroup__headMoreTask">
-                <ArrowBackRoundedIcon onClick={() => {
-                           history.push('/group')
-                        }}/>
+                    <ArrowBackRoundedIcon onClick={() => {
+                        history.push('/group')
+                    }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
                     {groupDetails?.GroupName} Chat
@@ -44,33 +42,32 @@ console.log(tasks)
                 <div></div>
             </div>
             <div className="rightSidebarGroup__bodyTask">
-                {tasks.map((task)=>(
-                <div className='taskOuter'>
-                <div className="taskUpper">
-                    Name :-
-                    <span>{task?.data?.name} </span>
-                </div>
-                <div className="taskUpper">
-                    Task Given By :-
-                    <span>{task?.data?.givenBy} </span>
-                </div>
-                <div className="taskUpper">
-                    Due Date :-
-                    <span>{task?.data?.Duedate ? task?.data?.Duedate:'Not set yet'} </span>
-                </div>
-                <div className="taskUpper">
-                    <div className="taskUpperHead">
-                        Task
+                {tasks.map((task) => (
+                    <div className='taskOuter'>
+                        {task?.data?.task != null ? <><div className="taskUpper">
+                            To
+                            <span>{task?.data?.name} </span>
+                            ,
+                            Due Date :-
+                            <span>{task?.data?.Duedate ? task?.data?.Duedate : 'Not set yet'} </span>
+                        </div>
+                            <div className="taskUpper">
+                                <div className="taskUpperHead">
+                                    Task
+                                </div>
+                                <p>
+                                    {task?.data?.task}
+                                </p>
+                                <Stack spacing={2} direction="row">
+                                    <Button >{task?.data?.status} on {task?.data?.statusDateDone ? task?.data?.statusDateDone : task?.data?.statusDateDoing}</Button>
+                                </Stack>
+                            </div></> :
+                            <div>
+                                No task given
+                            </div>
+                        }
                     </div>
-                    <p>
-                    {task?.data?.task}
-                    </p>
-                    <Stack spacing={2} direction="row">
-                        <Button >{task?.data?.status}</Button>
-                    </Stack>
-                    </div>
-                    </div>
-                    ))}
+                ))}
             </div>
         </div>
     )

@@ -2,8 +2,6 @@ import React from 'react';
 import styled from "styled-components";
 import { CircularProgress } from '@mui/material';
 
-
-
 function Loading() {
     return (
         <>
@@ -17,12 +15,9 @@ function Loading() {
 };
 
 const Container  = styled.div`
-  color: black;
-  background-color: #858484cc;
   display: flex;
+  position: absolute;
   justify-content: center;
-  width : 100vw;
-  height : 100vh; 
 
   .circular_icon{
       margin: auto;
