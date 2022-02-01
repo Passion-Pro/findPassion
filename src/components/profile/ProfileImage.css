@@ -1,6 +1,7 @@
 .profileImage{
     display: flex;
-    /* height: 50px; */
+    align-items: center;
+    justify-content: center;
     width: 50px;
     border-radius: 50%;
 }

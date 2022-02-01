@@ -1,5 +1,4 @@
-import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import CreateAccount from "./components/sign/CreateAccount/CreateAcount";
 import Login from "./components/sign/Login";
 import "./App.css";
@@ -9,7 +8,6 @@ import ChatPage from "./components/chat/ChatPage";
 import WorldPage from "./components/world/WorldPage";
 import LearningGroup from "./components/world/Learnings/LearningGroup";
 import StoriesPage from "./components/world/StoriesPage";
-import VideoPlayer from "./components/world/Stories/VideoPlayer";
 import StoryPage from "./components/world/Stories/StoryPage";
 import LearnersPage from "./components/world/Learnings/LearnersPage";
 import AddStoryPage from "./components/world/Stories/AddStoryPage";
@@ -42,16 +40,12 @@ import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
 import { useHistory } from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
-
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
-import GroupTasklist from "./components/group/GroupTasklist";
-import ShowTask from "./components/group/ShowTask";
-import { CircularProgress } from '@mui/material';
 
 function App() {
 
-  const [{ user,loading, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight }, dispatch] = useStateValue();
+  const [{ user, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight }, dispatch] = useStateValue();
   const history = useHistory();
 
   useEffect(() => {
@@ -138,10 +132,22 @@ function App() {
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
+        {/* laptop */}
+        <div className="header__APPlaptop"> 
+          {window.location.pathname !== "/withoutlogin" &&
+            window.location.pathname !== "/addJourney/photos" &&
+            window.location.pathname !== "/addJourney/words" &&
+            window.location.pathname !== "/addJourney/video" && <Header />}
+        </div>
+        {/* phone */}
+        <div className="header__APPphone">
         {window.location.pathname !== "/withoutlogin" &&
           window.location.pathname !== "/addJourney/photos" &&
           window.location.pathname !== "/addJourney/words" &&
-          window.location.pathname !== "/addJourney/video" && <Header />}
+          window.location.pathname !== "/addJourney/video" && 
+          window.location.pathname !== "/shareexperience" && 
+          <Header />}
+        </div>
         <Switch>
           <Route path="/searchPage">
             <SearchPage />

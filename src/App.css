@@ -1,0 +1,14 @@
+.header__APPlaptop{
+    display: flex;
+}
+.header__APPphone{
+    display: none;
+}
+@media(max-width:800px){
+    .header__APPlaptop{
+        display: none;
+    }
+    .header__APPphone{
+        display: flex;
+    }
+}

@@ -7,7 +7,7 @@
     top: 0;
     background-color:#0088CC;
     z-index: 200;
-    padding:1vh 0;
+    padding:0.25vh 0;
     height: 8vh;
     overflow:hidden;
 }
@@ -68,9 +68,11 @@
 }
 .Loginheader_profileName{
     display: flex;
-    font-size: small;
+    font-size: xx-small;
     color: whitesmoke;
     font-weight: 500;
+    width: 40px;
+    overflow: hidden;
     align-items: center;
     justify-content: center;
 }
