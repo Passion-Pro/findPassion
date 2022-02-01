@@ -1,6 +1,3 @@
-/* .HeaderSecond{
-    display: none;
-} */
 .showHeadDiv{
     display: flex;
     flex-direction: column;
@@ -11,13 +8,14 @@
     background-color: white; 
     min-width: 15vw;
     height: fit-content;
-    width: fit-content;
+    /* width: fit-content; */
     padding: 4px 12px 4px 12px;
     margin: 12px;
     margin-top: 2px;
     margin-right: -10px;
     z-index: 11;
-    max-width: 30vw;
+    width: fit-content;
+    max-width: 200px;
     max-height: 50vh;
     overflow:scroll;
     border-radius: 8px;
@@ -41,7 +39,7 @@
     .HeaderSecond{
         display: flex;
         position: sticky;
-        top: 10vh;
+        top: 8.5vh;
         align-items: center;
         justify-content: space-between;
         padding: 0 2vw;

@@ -33,7 +33,7 @@ export const initialState = {
   showgroupMoreRight:true,
   openAddLearntPopup: false,
   chatId: null,
-  addPartnerInfo : []
+  addPartnerInfo : [],
   // for loading
   loading:false,
   showgroupAdd:false,
