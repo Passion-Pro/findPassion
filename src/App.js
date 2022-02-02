@@ -21,6 +21,7 @@ import ViewPdf from "./components/world/Learnings/ViewPdf";
 import UserProfile from "./components/UserProfile/UserProfile";
 import WithoutLogin from "./components/withoutlogin/WithoutLoginHome";
 import Group from "./components/group/Group";
+import GroupTasklist from "./components/group/GroupTasklist";
 import GroupOther from "./components/otherGroups/Group";
 import Createpost from "./components/post/Createpost";
 import Home from "./components/home/Home";
@@ -42,6 +43,8 @@ import { useHistory } from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
+import ShowAllTask from "./components/group/ShowAllTask";
+import ShowTask from "./components/group/ShowTask";
 
 function App() {
 
@@ -170,6 +173,9 @@ function App() {
           <Route path="/grouptaskother/:id">
             <GroupTaskOther />
           </Route>
+          <Route path="/showalltask/:id">
+            <ShowTask/>
+          </Route>
           <Route path="/groupchatother/:id">
             <GroupChatOther />
           </Route>
@@ -178,6 +184,9 @@ function App() {
           </Route>
           <Route path="/grouptask">
             <GroupTask />
+          </Route>
+          <Route path="/grouptasklist">
+            <GroupTasklist />
           </Route>
           <Route path="/groupchat">
             <GroupChat />

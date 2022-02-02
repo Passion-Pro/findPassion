@@ -126,6 +126,7 @@ export default function AddPost() {
                             imageName: id,
                             imageOriginalName: upImgImage.name,
                             userimage:userInfo.profilePhotoUrl,
+                            totalLike:0,
                         })
                         .then(() => {
                             // adding post in user private collection
@@ -145,6 +146,7 @@ export default function AddPost() {
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                     imageName: id,
                                     imageOriginalName: upImgImage.name,
+                                    totalLike:0,
                                 })
                                 .then(() => {
                                     setLoading(false);

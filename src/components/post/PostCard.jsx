@@ -26,6 +26,7 @@ function PostCard({ data }) {
                 ) : firebase.firestore.FieldValue.arrayRemove(
                     user?.email
                 ),
+                totalLike:data?.data?.totalLike+1,
             }).then(() => {
                 db.collection("users")
                     .doc(user.uid)
@@ -35,6 +36,7 @@ function PostCard({ data }) {
                         ) : firebase.firestore.FieldValue.arrayRemove(
                             user?.email
                         ),
+                        totalLike:data?.data?.totalLike-1
                     })
                 console.log("sucess", user.uid, data.id);
             }).catch(() => {

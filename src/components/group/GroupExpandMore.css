@@ -27,8 +27,8 @@
     align-items: center;
     color: rgb(44, 37, 37);
     font-weight: 700;
-    font-size: large;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: medium;
+    font-family: sans-serif;
     padding-bottom: 3px;
     justify-content: flex-start !important;
 }

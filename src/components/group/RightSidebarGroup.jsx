@@ -20,7 +20,7 @@ function RightSidebarGroup() {
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                {groupDetails?.GroupName} Chat
+                {groupDetails?.GroupName}'s Chat
                 </div>
             </div>
             <div className="rightSidebarGroup__body">

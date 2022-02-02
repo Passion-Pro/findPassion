@@ -1,7 +1,13 @@
 .header__APPlaptop{
     display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 200;
 }
 .header__APPphone{
+    display: none;
+}
+::-webkit-scrollbar{
     display: none;
 }
 @media(max-width:800px){
@@ -10,5 +16,8 @@
     }
     .header__APPphone{
         display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 200;
     }
 }

@@ -40,7 +40,7 @@ function Group() {
           </div>
         </> </div>:
         <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
-         You have not started any group . <Button color="secondary" onClick={()=>{
+         You haven't started any group. <Button color="secondary" onClick={()=>{
            dispatch({
             type: actionTypes.SET_SHOW_GROUP_ADD,
             showgroupAdd: true,
