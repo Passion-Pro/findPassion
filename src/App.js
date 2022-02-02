@@ -43,7 +43,6 @@ import { useHistory } from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
-import ShowAllTask from "./components/group/ShowAllTask";
 import ShowTask from "./components/group/ShowTask";
 
 function App() {
@@ -136,7 +135,7 @@ function App() {
     <div className="App" onClick={handleCourseDiv}>
       <Router>
         {/* laptop */}
-        <div className="header__APPlaptop"> 
+        <div className="header__APPlaptop">
           {window.location.pathname !== "/withoutlogin" &&
             window.location.pathname !== "/addJourney/photos" &&
             window.location.pathname !== "/addJourney/words" &&
@@ -144,43 +143,43 @@ function App() {
         </div>
         {/* phone */}
         <div className="header__APPphone">
-        {window.location.pathname !== "/withoutlogin" &&
-          window.location.pathname !== "/addJourney/photos" &&
-          window.location.pathname !== "/addJourney/words" &&
-          window.location.pathname !== "/addJourney/video" && 
-          window.location.pathname !== "/shareexperience" && 
-          <Header />}
+          {window.location.pathname !== "/withoutlogin" &&
+            window.location.pathname !== "/addJourney/photos" &&
+            window.location.pathname !== "/addJourney/words" &&
+            window.location.pathname !== "/addJourney/video" &&
+            window.location.pathname !== "/shareexperience" &&
+            <Header />}
         </div>
         <Switch>
           <Route path="/searchPage">
-            <SearchPage />
+            {user?.email ? <SearchPage /> : <Login />}
           </Route>
           <Route path="/createStory">
-            <CreateStoryPage />
+            {user?.email ? <CreateStoryPage /> : <Login />}
           </Route>
           <Route path="/viewstory/:id">
-            <ShowStories />
+            {user?.email ? <ShowStories /> : <Login />}
           </Route>
           <Route path="/viewprofile/:id">
-            <ViewProfile />
+            {user?.email ? <ViewProfile /> : <Login />}
           </Route>
           <Route path="/withoutlogin">
-            <WithoutLogin />
+            {user?.email ? <WithoutLogin /> : <Login />}
           </Route>
           <Route path="/shareexperience">
-            <ShareExperience />
+            {user?.email ? <ShareExperience /> : <Login />}
           </Route>
           <Route path="/grouptaskother/:id">
-            <GroupTaskOther />
+            {user?.email ? <GroupTaskOther /> : <Login />}
           </Route>
           <Route path="/showalltask/:id">
-            <ShowTask/>
+            {user?.email ? <ShowTask /> : <Login />}
           </Route>
           <Route path="/groupchatother/:id">
-            <GroupChatOther />
+            {user?.email ? <GroupChatOther /> : <Login />}
           </Route>
           <Route path="/groupevolvementother/:id">
-            <GroupEnvolvementOther />
+            {user?.email ? <GroupEnvolvementOther /> : <Login />}
           </Route>
           <Route path="/grouptask">
             <GroupTask />
@@ -267,9 +266,9 @@ function App() {
             <ViewPdf />
           </Route>
           <Route path="/userProfile">
-            <UserProfile />
+            {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/">{user?.email && <Home />}</Route>
+          <Route path="/">{user?.email ? <Home /> : <Login />}</Route>
         </Switch>
       </Router>
     </div>

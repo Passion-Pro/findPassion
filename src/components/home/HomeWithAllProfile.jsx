@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
-import Header from '../header/Header';
 import ProfileCard from '../profilecard/ProfileCard';
 import CreateStory from '../stories/CreateStory';
-import Stories from '../stories/Stories';
-import PostCard from '../post/PostCard';
 import HeaderSecond from '../header/HeaderSecond';
 import db from '../../firebase';
 import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
@@ -64,7 +61,7 @@ function HomeWithAllProfile() {
                 </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        People have the same passion
+                        Similiar Passion
                     </div>
                     <div className="recommendPeople" id='box1'>
                         {data.map((data) => (
@@ -77,7 +74,7 @@ function HomeWithAllProfile() {
                 </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        People have the other passion
+                        Other Passion
                     </div>
                     <div className="recommendPeople" id='box'>
                         {data.map((data) => (

@@ -218,11 +218,10 @@ export default function ShareExperience() {
             }
             {
                 <div className="addPost">
-                    {/* <div className="shareExpHead">
-                        <Header />
-                    </div> */}
                     <div className="shareExpHeadForMobile">
-                        <div className="ShareExp__backicon">
+                        <div className="ShareExp__backicon" onClick={()=>{
+                            history('/')
+                        }}>
                             <ArrowBackRoundedIcon />
                         </div>
                         <div className="ShareExpHead">
