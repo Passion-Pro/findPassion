@@ -62,7 +62,6 @@ function Home() {
   return (
     <>
       <div className='home'>
-        {/* <Header /> */}
         <HeaderSecond />
         <div className="homeBody">
           <div className="stories">
@@ -71,8 +70,6 @@ function Home() {
             </div>
             <ShowStoriesSeries />
           </div>
-          {/* background-color: rgba(128, 128, 128, 0.329); */}
-
           {<div className="recommendPosts">
             {postHome && postHome.map((data) => (
               <PostCard data={data} />
