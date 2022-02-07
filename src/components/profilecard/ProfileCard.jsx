@@ -11,16 +11,12 @@ import { useHistory } from 'react-router-dom';
 function ProfileCard({ data }) {
 
   const history = useHistory();
+
   const learning = 'Currently i am learning Bloakchain guys.Currently i am learning Bloakchain guys.Currently i am learning Bloakchain guys';
   const learned = 'Kailashpur, Dehradun';
   const State = "UttaraKhand";
   var lengthOfArray=0;
 
-//   const checkLength=(lengthOfArray)=>{
-// if(lengthOfArray>10){
-//  break;
-// }
-  // }
   return (
     <Card className='profilecard' onClick={() => {
       history.push(`viewprofile/${data?.id}`);
@@ -30,7 +26,6 @@ function ProfileCard({ data }) {
           component="img"
           height="140"
           image={'https://www.teahub.io/photos/full/150-1504904_graphic-designer-backgrounds-graphic-design.jpg'}
-          // image={data?.data?.backgroundimage}
           alt="green iguana"
         />
         <div className='profileimage__profilecard'>

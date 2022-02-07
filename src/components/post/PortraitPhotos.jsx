@@ -4,7 +4,6 @@ import 'react-image-crop/dist/ReactCrop.css';
 import './AddPost.css';
 import { v4 as uuid } from "uuid";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Header from '../header/Header';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
@@ -97,10 +96,6 @@ export default function PortraitPhotos() {
         );
     }, [completedCrop]);
 
-    if (croppedImage) {
-        console.log("?", upImgImage.name);
-    }
-
     const UploadImage = async () => {
         setLoading(true)
         if (croppedImage && userInfo) {
@@ -114,7 +109,6 @@ export default function PortraitPhotos() {
                         .collection("Posts")
                         .doc(id)
                         .set({
-                            username: userInfo.name,
                             userEmail: userInfo.email,
                             imageURL: url,
                             date: datetime,
@@ -125,8 +119,8 @@ export default function PortraitPhotos() {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
-                            userimage:userInfo.profilePhotoUrl,
                             totalLike: 0,
+                            userID: user.uid,
                         })
                         .then(() => {
                             // adding post in user private collection
@@ -135,8 +129,6 @@ export default function PortraitPhotos() {
                                 .collection("Posts")
                                 .doc(id)
                                 .set({
-                                    username: userInfo.name,
-                                    userEmail: userInfo.email,
                                     imageURL: url,
                                     date: datetime,
                                     postType: 'portrait',
@@ -171,14 +163,17 @@ export default function PortraitPhotos() {
     }
 
     return (
-        <>{loading &&
-            <div className="popupImageCrop">
-                <Box sx={{ display: 'flex' }}>
-                    <CircularProgress />
-                </Box>
-            </div>
-        }
-            {popUpImageCrop &&
+        <>
+            {
+                loading &&
+                <div className="popupImageCrop">
+                    <Box sx={{ display: 'flex' }}>
+                        <CircularProgress />
+                    </Box>
+                </div>
+            }
+            {
+                popUpImageCrop &&
                 <div className="popupImageCrop">
                     <div className="popupImageCrop__In" >
                         <div className="image__Show_toCrop">
@@ -225,36 +220,36 @@ export default function PortraitPhotos() {
                         <div className="addPost__InIN">
                             <div className="adddPost__Head">
                                 Portrait Post
-                                {/* <div className="button__uploadImage"> */}
                                 <Stack direction="row">
                                     <Button variant="contained" onClick={UploadImage} endIcon={<SendIcon />}>
                                         Upload
                                     </Button>
                                 </Stack>
-                                {/* </div> */}
                             </div>
                             <div className="addPost__Image">
-                            {!croppedImage && 
+                                {
+                                    !croppedImage &&
                                     <label htmlFor="image">
-                                <div className="Upload__ImageIcon"  onClick={() => {
-                                                setPopUpImageCrop(true)
-                                            }}>
-                                        <AddAPhotoIcon
-                                            className="footer_icon"
-                                            style={{ fontSize: 15 }}
-                                        />
-                                        Add Photo
-                                    <input
-                                        type="file"
-                                        id={"image"}
-                                        style={{ display: "none" }}
-                                        onChange={onSelectFile}
-                                        accept="image/git , image/jpeg , image/png"
-                                        />
+                                        <div className="Upload__ImageIcon" onClick={() => {
+                                            setPopUpImageCrop(true)
+                                        }}>
+                                            <AddAPhotoIcon
+                                                className="footer_icon"
+                                                style={{ fontSize: 15 }}
+                                            />
+                                            Add Photo
+                                            <input
+                                                type="file"
+                                                id={"image"}
+                                                style={{ display: "none" }}
+                                                onChange={onSelectFile}
+                                                accept="image/git , image/jpeg , image/png"
+                                            />
                                         </div>
-                                        </label>
+                                    </label>
                                 }
-                                {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
+                                {
+                                    croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">
                                     <textarea className='textareaHead' placeholder='Write heading of your post ' onChange={e => setPostHead(e.target.value)} />
                                     <textarea className='textareaSecond' placeholder='Write about the post' onChange={e => setPostText(e.target.value)} />

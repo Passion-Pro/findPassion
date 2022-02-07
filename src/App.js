@@ -43,6 +43,7 @@ import { useHistory } from "react-router-dom"
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
+import HeaderNot from "./components/withoutlogin/Header";
 import ShowTask from "./components/group/ShowTask";
 
 function App() {
@@ -134,22 +135,28 @@ function App() {
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-        {/* laptop */}
-        <div className="header__APPlaptop">
-          {window.location.pathname !== "/withoutlogin" &&
-            window.location.pathname !== "/addJourney/photos" &&
-            window.location.pathname !== "/addJourney/words" &&
-            window.location.pathname !== "/addJourney/video" && <Header />}
-        </div>
+        {user?.email &&
+          <div className="header__APPlaptop">
+            {window.location.pathname !== "/withoutlogin" &&
+              window.location.pathname !== "/addJourney/photos" &&
+              window.location.pathname !== "/addJourney/words" &&
+              window.location.pathname !== "/addJourney/video" && <Header />}
+          </div>
+        }
         {/* phone */}
-        <div className="header__APPphone">
-          {window.location.pathname !== "/withoutlogin" &&
-            window.location.pathname !== "/addJourney/photos" &&
-            window.location.pathname !== "/addJourney/words" &&
-            window.location.pathname !== "/addJourney/video" &&
-            window.location.pathname !== "/shareexperience" &&
-            <Header />}
-        </div>
+        {user?.email &&
+          <div className="header__APPphone">
+            {window.location.pathname !== "/withoutlogin" &&
+              window.location.pathname !== "/addJourney/photos" &&
+              window.location.pathname !== "/addJourney/words" &&
+              window.location.pathname !== "/addJourney/video" &&
+              window.location.pathname !== "/shareexperience" &&
+              <Header />}
+          </div>
+        }
+        {!user?.email &&
+        <HeaderNot/>
+        }
         <Switch>
           <Route path="/searchPage">
             {user?.email ? <SearchPage /> : <Login />}
@@ -182,88 +189,88 @@ function App() {
             {user?.email ? <GroupEnvolvementOther /> : <Login />}
           </Route>
           <Route path="/grouptask">
-            <GroupTask />
+            {user?.email ? <GroupTask /> : <Login />}
           </Route>
           <Route path="/grouptasklist">
-            <GroupTasklist />
+            {user?.email ? <GroupTasklist /> : <Login />}
           </Route>
           <Route path="/groupchat">
-            <GroupChat />
+            {user?.email ? <GroupChat /> : <Login />}
           </Route>
           <Route path="/groupevolvement">
-            <GroupEnvolvement />
+            {user?.email ? <GroupEnvolvement /> : <Login />}
           </Route>
           <Route path="/group">
-            <Group />
+            {user?.email ? <Group /> : <Login />}
           </Route>
           <Route path="/groupother/:id">
-            <GroupOther />
+            {user?.email ? <GroupOther /> : <Login />}
           </Route>
           <Route path="/createpost">
-            <Createpost />
+            {user?.email ? <Createpost /> : <Login />}
           </Route>
           <Route path="/all_profile">
-            <HomeWithAllProfile />
+            {user?.email ? <HomeWithAllProfile /> : <Login />}
           </Route>
           <Route path="/landspacepost">
-            <LandspacePost />
+            {user?.email ? <LandspacePost /> : <Login />}
           </Route>
           <Route path="/addpost">
-            <AddPost />
+            {user?.email ? <AddPost /> : <Login />}
           </Route>
           <Route path="/portraitpost">
-            <PortraitPhotos />
+            {user?.email ? <PortraitPhotos /> : <Login />}
           </Route>
           <Route path="/newAccount">
-            <CreateAccount />
+            {user?.email ? <CreateAccount /> : <Login />}
           </Route>
           <Route path="/signIn">
             <Login />
           </Route>
           <Route path="/chat/:chatId">
-            <Chat />
+            {user?.email ? <Chat /> : <Login />}
           </Route>
           <Route path="/chat">
-            <Chat />
+            {user?.email ? <Chat /> : <Login />}
           </Route>
           <Route path="/messages">
-            <ChatPage />
+            {user?.email ? <ChatPage /> : <Login />}
           </Route>
           <Route path="/world">
-            <WorldPage />
+            {user?.email ? <WorldPage /> : <Login />}
           </Route>
           <Route path="/journey/:journeyId">
-            <StoryPage />
+            {user?.email ? <StoryPage /> : <Login />}
           </Route>
           <Route path="/stories">
-            <StoriesPage />
+            {user?.email ? <StoriesPage /> : <Login />}
           </Route>
           <Route path="/learning/:learningId">
-            <LearningGroup />
+            {user?.email ? <LearningGroup /> : <Login />}
           </Route>
           <Route path="/learners">
-            <LearnersPage />
+            {user?.email ? <LearnersPage /> : <Login />}
           </Route>
           <Route path="/profile">
-            <ProfilePage />
+            {user?.email ? <ProfilePage /> : <Login />}
           </Route>
           <Route path="/addJourney/:journeyMode">
-            <AddStoryPage />
+            {user?.email ? <AddStoryPage /> : <Login />}
           </Route>
           <Route path="/requests">
-            <RequestsPage />
+            {user?.email ? <RequestsPage /> : <Login />}
           </Route>
           <Route path="/learningsUploadPdf/:learningId">
-            <UploadPdf />
+            {user?.email ? <UploadPdf /> : <Login />}
           </Route>
           <Route path="/messagesUploadPdf/:chatId/:chatEmail">
-            <UploadChatPdf />
+            {user?.email ? <UploadChatPdf /> : <Login />}
           </Route>
           <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
-            <ViewPdf />
+            {user?.email ? <ViewPdf /> : <Login />}
           </Route>
           <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
-            <ViewPdf />
+            {user?.email ? <ViewPdf /> : <Login />}
           </Route>
           <Route path="/userProfile">
             {user?.email ? <UserProfile /> : <Login />}

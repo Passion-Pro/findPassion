@@ -13,9 +13,10 @@ function ShowAllTaskEach({ task, serial }) {
     
     var today = new Date();
     var date = today.toLocaleString();
+
     const deleteTask = () => {
-        if (user) {
-            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(groupMemberDetails.id).update({
+        if (user && groupMemberDetails.email) {
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user?.uid+groupMemberDetails.email).update({
                 task: task,
                 date: date,
                 givenBy: user?.email,
@@ -24,8 +25,10 @@ function ShowAllTaskEach({ task, serial }) {
                 statusDateDone: null,
                 totalTask: groupMemberDetails?.totalTask - 1,
             }).then(() => {
-                db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(groupMemberDetails.id).collection('Tasks').doc(task?.id).delete()
+                db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user?.uid+groupMemberDetails.email).collection('Tasks').doc(task?.id).delete()
             })
+        }else{
+            alert('Something went wrong!')
         }
     }
    
@@ -42,7 +45,8 @@ function ShowAllTaskEach({ task, serial }) {
                     </div>
                     <div className="group_photo">
                         <div className="learning_detail">
-                            Are you sure
+                            Delete task <br/>
+                           <b style={{padding:0}}>Status</b>{task?.data?.status != "pending" ? <>  {groupMemberDetails?.data?.name} {task?.data?.status != 'Done' && 'started '}{task?.data?.status} the task on {task?.data?.statusDateDone ? task?.data?.statusDateDone : task?.data?.statusDateDoing ? task?.data?.statusDateDoing : "You have't set yet"}</> : "Pending"}
                         </div>
                         <div className="start_button">
                             <button onClick={deleteTask} >Yes</button>
@@ -59,7 +63,7 @@ function ShowAllTaskEach({ task, serial }) {
                     <div>
                         {groupMemberDetails?.timestamp < task?.data?.timestamp ? "Task No. " + task?.data?.totalTask : 'Old tasks'}
                     </div>
-                    <div>
+                    <div title='Delete the assignment'>
                         <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => {
                             setshowAddTask(true)
                         }}>
@@ -83,9 +87,11 @@ function ShowAllTaskEach({ task, serial }) {
                     <p>
                         {task?.data?.task}
                     </p>
+                <div title='Status of assignment given by member'>
                     <Stack spacing={2} direction="row">
                         <Button >{task?.data?.status != "pending" ? <>  {groupMemberDetails?.data?.name} {task?.data?.status != 'Done' && 'started '}{task?.data?.status} the task on {task?.data?.statusDateDone ? task?.data?.statusDateDone : task?.data?.statusDateDoing ? task?.data?.statusDateDoing : "You have't set yet"}</> : "Pending"}</Button>
                     </Stack>
+                </div>
                 </div>
             </div>
         </>
@@ -170,10 +176,10 @@ const Container = styled.div`
     }
 
     .learning_detail {
-      width: 100%;
-      display: flex;
-      padding-left: 20px;
-      font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        padding-left: 20px;
+        width: 100%;
     }
   }
 

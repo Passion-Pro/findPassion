@@ -10,7 +10,6 @@ import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 function HomeWithAllProfile() {
 
     const [data, setData] = useState([]);
-    const [stories, setStories] = useState([]);
 
     useEffect(() => {
         db.collection('users')
@@ -24,29 +23,13 @@ function HomeWithAllProfile() {
             })
     }, []);
 
-    function sideScroll(element,direction,speed,distance,step){
-        console.log("2")
-       var scrollAmount=0;
-        var slideTimer=setInterval(function(){
-            if(direction=='left'){
-                element.scrollLeft-=step;
-            }else{
-                element.scrollleft+=step;
-            }
-            scrollAmount+=step;
-            if(scrollAmount>=distance){
-                window.clearInterval(slideTimer);
-            }
-        },speed);
-    }
-
-    const funct=()=>{
+    const funct = () => {
         console.log("object")
-        document.getElementById('box').scrollLeft+=900;
+        document.getElementById('box').scrollLeft += 900;
     }
-    const funct1=()=>{
+    const funct1 = () => {
         console.log("object")
-        document.getElementById('box1').scrollLeft+=900;
+        document.getElementById('box1').scrollLeft += 900;
     }
 
     return (
@@ -67,7 +50,7 @@ function HomeWithAllProfile() {
                         {data.map((data) => (
                             <ProfileCard data={data} />
                         ))}
-                         <div className="Arrow__showrecommendProfile" onClick={funct1}>
+                        <div className="Arrow__showrecommendProfile" onClick={funct1}>
                             <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />
                         </div>
                     </div>
@@ -80,9 +63,9 @@ function HomeWithAllProfile() {
                         {data.map((data) => (
                             <ProfileCard data={data} />
                         ))}
-                        <div className="Arrow__showrecommendProfile"  onClick={funct}>
-                            <ArrowForwardRoundedIcon 
-                            className='Arrow__showrecommendInProfile' />
+                        <div className="Arrow__showrecommendProfile" onClick={funct}>
+                            <ArrowForwardRoundedIcon
+                                className='Arrow__showrecommendInProfile' />
                         </div>
                     </div>
                 </div>

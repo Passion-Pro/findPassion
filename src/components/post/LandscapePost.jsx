@@ -99,10 +99,6 @@ export default function LandscapePost() {
         );
     }, [completedCrop]);
 
-    if (croppedImage) {
-        console.log("?", upImgImage.name);
-    }
-
     const UploadImage = async () => {
         setLoading(true)
         if (croppedImage && userInfo) {
@@ -116,7 +112,6 @@ export default function LandscapePost() {
                         .collection("Posts")
                         .doc(id)
                         .set({
-                            username: userInfo.name,
                             userEmail: userInfo.email,
                             imageURL: url,
                             date: datetime,
@@ -128,6 +123,7 @@ export default function LandscapePost() {
                             imageName: id,
                             imageOriginalName: upImgImage.name,
                             totalLike: 0,
+                            userID: user.uid,
                         })
                         .then(() => {
                             // adding post in user private collection
@@ -136,7 +132,6 @@ export default function LandscapePost() {
                                 .collection("Posts")
                                 .doc(id)
                                 .set({
-                                    username: userInfo.name,
                                     userEmail: userInfo.email,
                                     imageURL: url,
                                     date: datetime,
@@ -147,7 +142,6 @@ export default function LandscapePost() {
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                     imageName: id,
                                     imageOriginalName: upImgImage.name,
-                                    userimage: userInfo.profilePhotoUrl,
                                     totalLike: 0,
                                 })
                                 .then(() => {

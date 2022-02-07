@@ -8,7 +8,7 @@ import firebase from "firebase";
 
 function AddLearntPopup() {
   const [{ openAddLearntPopup, user, userInfo }, dispatch] = useStateValue();
-  const [platform, setPlatform] = useState();
+  const [platform, setPlatform] = useState('');
   const [input, setInput] = useState();
   const [channelName, setChannelName] = useState("");
   const [videoLink, setVideoLink] = useState("");
@@ -22,7 +22,9 @@ function AddLearntPopup() {
       openAddLearntPopup: false,
     });
   };
-
+useEffect(()=>{
+setPlatform('')
+},[openAddLearntPopup])
   const add_learnt = (e) => {
     e.preventDefault();
     if (input !== "") {

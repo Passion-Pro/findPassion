@@ -126,7 +126,7 @@ function GroupExpandMore() {
                 />
               </div>
               <div className="start_button">
-                <button onClick={AddGroup} >Add</button>
+                <button onClick={AddGroup} title='Add group'>Add</button>
               </div>
             </div>
           </div>
@@ -140,7 +140,7 @@ function GroupExpandMore() {
             type: actionTypes.SET_SHOW_EXPANDGROUP,
             showExpandGroup: true,
           })
-        }} className='Button__groupExpand'>
+        }} className='Button__groupExpand' title="More option">
           More
         </button>
 
@@ -153,7 +153,7 @@ function GroupExpandMore() {
                 editGroup: !editGroup,
               })
               console.log("Edit Group is ", editGroup)
-            }} className='Button__groupExpand'>
+            }} className='Button__groupExpand' title='Edit group'>
               Edit
             </button>
 
@@ -164,12 +164,12 @@ function GroupExpandMore() {
                     type: actionTypes.SET_SHOW_TOP,
                     showTop: false,
                   });
-                }} >
+                }} title='Hide group information' >
                   <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }}>
                     <p style={{
                       marginTop: 'auto',
                       marginBottom: 'auto',
-                    }}>
+                    }} >
                       Hide
                     </p>
                   </div>
@@ -183,12 +183,13 @@ function GroupExpandMore() {
                     type: actionTypes.SET_SHOW_TOP,
                     showTop: true,
                   });
-                }}>
+                }}  title='Show group information'>
                   <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: "100%" }}>
                     <p style={{
                       marginTop: 'auto',
                       marginBottom: 'auto',
-                    }}>Show</p>
+                    }}
+                    >Show</p>
                   </div>
                   <ChevronRightRoundedIcon style={{
                     zIndex: 11, height: "100%"
@@ -209,27 +210,27 @@ function GroupExpandMore() {
                 type: actionTypes.SET_SHOW_GROUP_ADD,
                 showgroupAdd: true,
               })
-            }}>
-              <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
-              Add Group
+            }}  title="Add your group">
+              <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} title='Add your group' />
+              Start Group
             </div> :
             <div className="showExpandGroup__AddGroup" onClick={() => {
               history.push('/group')
-            }}>
+            }} title="View your group">
               <VisibilityRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
-              View Group
+              Your Group
             </div>
           }
-          <div className="showExpandGroup__OtherGroup">
+         {groups && groups.length!=0 && <div className="showExpandGroup__OtherGroup">
             <div className="showExpandGroup__OtherGroup__Head">
               Groups
             </div>
             {groups && groups.map((group) => (
-              <>
+              <div title='Other group you have added'>
                 <GroupNameField group={group} key={group?.id} />
-              </>
+              </div>
             ))}
-          </div>
+          </div>}
         </div>
       }
     </>

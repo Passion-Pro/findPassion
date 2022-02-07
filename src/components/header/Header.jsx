@@ -11,6 +11,7 @@ import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
 import PostPopup from '../post/PostPopup';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
+import { HistoryEduRounded } from '@mui/icons-material';
 
 function Header() {
     const [{ userInfo, courseDiv }, dispatch] = useStateValue();
@@ -63,7 +64,9 @@ function Header() {
                         </div>
                     </div>
 
-                    <div className="Loginheader__profile">
+                    <div className="Loginheader__profile" onClick={()=>{
+                            history.push('/userProfile')
+                        }}>
                         {userInfo?.profilePhotoUrl ? <ProfileImage image={userInfo?.profilePhotoUrl} /> : <AccountCircleRoundedIcon style={{ fontSize: 50, color: "white" }} />}
                         <span className='Loginheader_profileName'>
                             {userInfo?.name && userInfo?.name?.length > 9 ? userInfo?.name.slice(0, 9) : userInfo?.name}

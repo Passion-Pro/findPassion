@@ -30,7 +30,7 @@ export const initialState = {
   editGroup:false,
   // for backgroundimage and profile image
   groupsOtherDetails:null,
-  showgroupMoreRight:true,
+  showgroupMoreRight:false,
   openAddLearntPopup: false,
   chatId: null,
   addPartnerInfo : [],

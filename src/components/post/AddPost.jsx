@@ -4,7 +4,6 @@ import 'react-image-crop/dist/ReactCrop.css';
 import './AddPost.css';
 import { v4 as uuid } from "uuid";
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
-import Header from '../header/Header';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
@@ -17,11 +16,10 @@ import { useHistory } from 'react-router-dom';
 
 export default function AddPost() {
     const history = useHistory();
-    const [{ userInfo, user }, dispatch] = useStateValue();
-
+    const [{ userInfo, user }] = useStateValue();
     const [loading, setLoading] = useState(false);
-    const [postHead, setPostHead] = useState('')
-    const [postText, setPostText] = useState('')
+    const [postHead, setPostHead] = useState('');
+    const [postText, setPostText] = useState('');
     const [popUpImageCrop, setPopUpImageCrop] = useState(false);
     const [upImg, setUpImg] = useState(null);
     const [upImgImage, setUpImgImage] = useState(null);
@@ -97,10 +95,6 @@ export default function AddPost() {
         );
     }, [completedCrop]);
 
-    if (croppedImage) {
-        console.log("?", upImgImage.name);
-    }
-
     const UploadImage = async () => {
         setLoading(true)
         if (croppedImage && userInfo?.passion) {
@@ -114,7 +108,6 @@ export default function AddPost() {
                         .collection("Posts")
                         .doc(id)
                         .set({
-                            username: userInfo.name,
                             userEmail: userInfo.email,
                             imageURL: url,
                             date: datetime,
@@ -125,8 +118,8 @@ export default function AddPost() {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
-                            userimage:userInfo.profilePhotoUrl,
-                            totalLike:0,
+                            userID: user.uid,
+                            totalLike: 0,
                         })
                         .then(() => {
                             // adding post in user private collection
@@ -135,8 +128,6 @@ export default function AddPost() {
                                 .collection("Posts")
                                 .doc(id)
                                 .set({
-                                    username: userInfo.name,
-                                    userEmail: userInfo.email,
                                     imageURL: url,
                                     date: datetime,
                                     postType: 'Regular',
@@ -146,7 +137,7 @@ export default function AddPost() {
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                     imageName: id,
                                     imageOriginalName: upImgImage.name,
-                                    totalLike:0,
+                                    totalLike: 0,
                                 })
                                 .then(() => {
                                     setLoading(false);
@@ -234,25 +225,25 @@ export default function AddPost() {
                                 {/* </div> */}
                             </div>
                             <div className="addPost__Image">
-                                {!croppedImage && 
+                                {!croppedImage &&
                                     <label htmlFor="image">
-                                <div className="Upload__ImageIcon"  onClick={() => {
-                                                setPopUpImageCrop(true)
-                                            }}>
-                                        <AddAPhotoIcon
-                                            className="footer_icon"
-                                            style={{ fontSize: 15 }}
-                                        />
-                                        Add Photo
-                                    <input
-                                        type="file"
-                                        id={"image"}
-                                        style={{ display: "none" }}
-                                        onChange={onSelectFile}
-                                        accept="image/git , image/jpeg , image/png"
-                                    />
+                                        <div className="Upload__ImageIcon" onClick={() => {
+                                            setPopUpImageCrop(true)
+                                        }}>
+                                            <AddAPhotoIcon
+                                                className="footer_icon"
+                                                style={{ fontSize: 15 }}
+                                            />
+                                            Add Photo
+                                            <input
+                                                type="file"
+                                                id={"image"}
+                                                style={{ display: "none" }}
+                                                onChange={onSelectFile}
+                                                accept="image/git , image/jpeg , image/png"
+                                            />
                                         </div>
-                                        </label>
+                                    </label>
                                 }
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">

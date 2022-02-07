@@ -15,14 +15,14 @@ function Group() {
   return (
     <div className='group'>
       {
-      groupDetails?.GroupName && showTop &&
+        groupDetails?.GroupName && showTop &&
         <GroupTopBody />
       }
       {loading ?
         <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
           <CircularProgress />
         </div> :
-       groupDetails?.GroupName ?  <div className={showTop ? "group__body" : 'group__bodyTwo'}> <>
+        groupDetails?.GroupName ? <div className={showTop ? "group__body" : 'group__bodyTwo'}> <>
           <div className="group__lower">
             {<div className="group__lower__leftSidebar">
               <SidebarGroup />
@@ -38,15 +38,15 @@ function Group() {
               <RightSidebarGroup />
             </div>}
           </div>
-        </> </div>:
-        <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
-         You haven't started any group. <Button color="secondary" onClick={()=>{
-           dispatch({
-            type: actionTypes.SET_SHOW_GROUP_ADD,
-            showgroupAdd: true,
-        })
-         }}>Start now</Button> </div>
-        }
+        </> </div> :
+          <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
+            You haven't started any group. <Button color="secondary" onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_GROUP_ADD,
+                showgroupAdd: true,
+              })
+            }}>Start now</Button> </div>
+      }
       <GroupExpandMore />
     </div>
   )

@@ -20,17 +20,17 @@ function RightSidebarGroup() {
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                {groupDetails?.GroupName}'s Chat
+                {groupDetails?.GroupName}
                 </div>
             </div>
             <div className="rightSidebarGroup__body">
-                <div className="group__Chat" onClick={() => history.push('/grouptasklist')}>
+                <div className="group__Chat" onClick={() => history.push('/grouptasklist')} title='Task that you have given to member'>
                     Given Task
                 </div>
                 <div className="group__Chat" onClick={() => history.push('/groupchat')}>
                     Group Chat
                 </div>
-                <div className="group__Chat" onClick={() => history.push('/groupevolvement')}>
+                <div className="group__Chat" onClick={() => history.push('/groupevolvement')} title='Involvement of member'>
                     Involvement
                 </div>
             </div>

@@ -59,13 +59,13 @@ function RightSidebarGroupChat() {
     return (
         <div className='RightSidebarGroup'>
             <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
-                <div className="rightSidebarGroup__headMoreTask">
+                <div className="rightSidebarGroup__headMoreTask" title='Back'>
                     <ArrowBackRoundedIcon onClick={() => {
                         history.push('/group')
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                    {groupDetails?.GroupName} Chat
+                    {groupDetails?.GroupName}'s Chat
                 </div>
                 <div></div>
             </div>

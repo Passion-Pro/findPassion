@@ -140,7 +140,7 @@ const AddMember = () => {
                         }}
                     >
                         <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
-                            Inventor
+                            Started by
                             {
                                 !showInventor ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
                             }
@@ -161,12 +161,13 @@ const AddMember = () => {
                         <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
                             Member
                             {
-                                !showMember ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
+                                !showMember ? <div title="Show member"><ArrowRightRoundedIcon/></div> : <div title="Hide member"><ArrowDropDownRoundedIcon/></div>
                             }
                         </div>
                         {user?.email == groupDetails?.startedby && <div onClick={() => {
                             setShowAddMember(true)
-                        }}>
+                        }}
+                        title='Add member'>
                             <AddRoundedIcon />
                         </div>}
                     </div>

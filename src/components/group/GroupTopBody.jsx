@@ -16,7 +16,7 @@ import ReactCrop from 'react-image-crop';
 
 function GroupTopBody() {
 
-  const [{ userInfo, user, showLeftSidebarGroup, groupDetails, editGroup }, dispatch] = useStateValue();
+  const [{ user, groupDetails, editGroup }, dispatch] = useStateValue();
   const [showImage, setShowImage] = useState(false);
   const [showImageProfile, setShowImageProfile] = useState(false);
   const [upImgImage, setUpImgImage] = useState(null);
@@ -132,6 +132,7 @@ function GroupTopBody() {
       alert('Something Wrong')
     }
   }
+
   const AddImageProfile = async () => {
     if (groupDetails?.id && user) {
       console.log(groupDetails?.id)
@@ -162,6 +163,7 @@ function GroupTopBody() {
       alert('Something Wrong')
     }
   }
+
   const updateName = () => {
     if (user) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details')
@@ -193,7 +195,8 @@ function GroupTopBody() {
 
   return (
     <>
-      {loading &&
+      {
+        loading &&
         <div className="popupImageCrop">
           <Box sx={{ display: 'flex' }}>
             <CircularProgress />
@@ -302,23 +305,22 @@ function GroupTopBody() {
 
       <div className="group__headBackgroundImg">
         <img src={groupDetails?.backgroundImage ? groupDetails?.backgroundImage : groupDetails?.DefaultbackgroundImage} alt="background image" />
-        {console.log("EditGroup is ", editGroup)}
         {editGroup && (<div className='group__Icon'>
-          <div className="groupIcon__circle">
+          <div className="groupIcon__circle" title='Edit Group background image'>
             <AddAPhotoRoundedIcon className='AddAPhotoRoundedIcon' onClick={() => {
               setCurrentUpdate('back');
               setShowImage(true);
             }} />
           </div>
-          <div className="groupIcon__circle">
+          {groupDetails?.backgroundImage && <div className="groupIcon__circle" title='Delete Group background image'>
             <DeleteIcon className='AddAPhotoRoundedIcon' onClick={delBackImage} />
-          </div>
+          </div>}
         </div>)}
       </div>
       <div className="group__headImg">
         <div className="group__headPro">
           <img src={groupDetails?.ProfileImage} alt="profile image" />
-          {editGroup && <div style={{ display: 'flex', position: "absolute", left: '125px', width: '100px', bottom: '10px', color: "gray" }}>
+          {editGroup && <div style={{ display: 'flex', position: "absolute", left: '125px', width: '100px', bottom: '10px', color: "gray" }} title='Edit Group image'>
             <AddAPhotoRoundedIcon onClick={() => {
               setCurrentUpdate('imageProfile');
               setShowImageProfile(true);
@@ -346,9 +348,9 @@ function GroupTopBody() {
               </div>
               : groupDetails?.GroupName}
 
-            {editGroup && currentUpdate !== 'name' && <EditRoundedIcon onClick={() => {
+            {editGroup && currentUpdate !== 'name' && <div title='Edit name of the group'><EditRoundedIcon onClick={() => {
               setCurrentUpdate('name')
-            }} />}
+            }} /></div>}
           </div>
           <div className="Group__Details__Status">
             <div className="status__group">
@@ -365,9 +367,13 @@ function GroupTopBody() {
                 </div>
                 : groupDetails?.GroupStatus}
             </div>
-            {editGroup && currentUpdate !== 'status' && <EditRoundedIcon onClick={() => {
-              setCurrentUpdate('status');
-            }} />}
+            {editGroup && currentUpdate !== 'status' &&
+              <div title='Edit status of the group'>
+                <EditRoundedIcon onClick={() => {
+                  setCurrentUpdate('status');
+                }} />
+              </div>
+            }
           </div>
         </div>
       </div>

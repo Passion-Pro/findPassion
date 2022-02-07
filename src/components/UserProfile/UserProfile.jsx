@@ -19,6 +19,7 @@ function UserProfile() {
   const [experience, setExperience] = useState();
   const [image, setImage] = useState();
   const history = useHistory();
+
   const [input, setInput] = useState("");
   const [learntStuff, setLearntStuff] = useState([]);
   const [involvement, setInvolvement] = useState("");
@@ -93,7 +94,7 @@ function UserProfile() {
               currentInvolvement: involvement,
               involvementDescription: description,
               profilePhotoUrl: imageUrl,
-              achievement : achievement
+              achievement: achievement
             }).then(() => {
               alert("Updated your account !!!")
             })
@@ -107,7 +108,7 @@ function UserProfile() {
         subInterest: input,
         currentInvolvement: involvement,
         involvementDescription: description,
-        achievement : achievement
+        achievement: achievement
       }).then(() => {
         alert("Updated your account !!!")
       })
@@ -125,8 +126,20 @@ function UserProfile() {
   };
 
   return (
-    <Container>
-      <div className="left">
+    // 1
+    // profile picture
+    // 2
+    // header
+    // 3
+    // Info
+    // post
+    // learntstuff
+
+    <div className="Userprofile">
+      <div className="userProfile__headerMobile">
+        
+      </div>
+      <div className="Userprofile__first">
         {image ? (
           <Avatar className="avatar" src={URL.createObjectURL(image)} />
         ) : (
@@ -144,101 +157,138 @@ function UserProfile() {
         <label htmlFor="photo">
           <p>Change profile photo</p>
         </label>
-        <p className="name">Ronak</p>
+        <p className="name">{userInfo?.name}</p>
       </div>
-      <div className="right">
-        <div className="right_header">
-          <p>Passion</p>
+      <div className="Userprofile__Second">
+
+      </div>
+      <div className="Userprofile__Third">
+        <div className="Userprofile__Third__info">
+          info
         </div>
-        <div className="right_details">
-          <div className="add_learnt_stuff">
-            <button onClick={open_add_learnt_popup}>
-              {learntStuff?.length > 0
-                ? `Add to your learnings`
-                : ` Show your learnt stuff`}
-            </button>
-          </div>
-          <div className="leant_stuff">
-            {learntStuff.map((learntStuff) => (
-              <LearntStuff learntStuff={learntStuff} />
-            ))}
-          </div>
-          <div className="current_involvement">
-            <input
-              type="text"
-              placeholder="Enter your current involvement  Eg.internship, project"
-              value={involvement}
-              onChange={(e) => setInvolvement(e.target.value)}
-            />
-            <textarea
-              name=""
-              id=""
-              cols="30"
-              rows="10"
-              placeholder="Describe about your involvement"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
-            <input
-              type="text"
-              placeholder="Enter any of your achievement"
-              value={achievement}
-              onChange={(e) => setAchievement(e.target.value)}
-            />
-          </div>
-          <div className="passion">
-            <p onClick={open_passion_popup} className="select_passion">
-              Your passion :{" "}
-            </p>
-            {passion ? <p>{passion}</p> : <p>{userInfo?.passion}</p>}
-          </div>
-          <>
-            <div className="subfield">
-              <p>Your subInterest in passion:</p>
-              <input
-                type="text"
-                placeholder={userInfo?.subInterest}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                style={{
-                  textTransform: "uppercase",
-                }}
-              />
-            </div>
-          </>
-
-          <div className="experience">
-            <p>Experience in your passion: </p>
-            <FormControl sx={{ m: 1, minWidth: 180 }}>
-              <InputLabel id="demo-simple-select-label">
-                {userInfo?.experience === 0
-                  ? `Less than 1 year`
-                  : `${userInfo?.experience} year`}
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={experience}
-                label="Experience"
-                onChange={handleChange}
-              >
-                <MenuItem value={0}>Less than 1 year</MenuItem>
-                <MenuItem value={1}>1 year</MenuItem>
-                <MenuItem value={2}>2 years</MenuItem>
-                <MenuItem value={3}>3 years</MenuItem>
-                <MenuItem value={4}>4 years</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-
-          <div className="create_account_button">
-            <button onClick={update_account}>Update Account</button>
-          </div>
+        <div className="Userprofile__Third__post">
+          post
+        </div>
+        <div className="Userprofile__Third__learntstuff">
+          learntstuff
         </div>
       </div>
-      <PassionPopup />
-      <AddLearntPopup />
-    </Container>
+    </div>
+
+    // <Container>
+    //   <div className="left">
+    // {image ? (
+    //   <Avatar className="avatar" src={URL.createObjectURL(image)} />
+    // ) : (
+    //   <Avatar className="avatar" src={userInfo?.profilePhotoUrl} />
+    // )}
+    // <input
+    //   type="file"
+    //   style={{
+    //     display: "none",
+    //   }}
+    //   id="photo"
+    //   onChange={selectImage}
+    //   accept="image/git , image/jpeg , image/png"
+    // />
+    // <label htmlFor="photo">
+    //   <p>Change profile photo</p>
+    // </label>
+    // <p className="name">Ronak</p>
+    //   </div>
+    //   <div className="right">
+    //     {/* <div className="right_header">
+    //       <p>Passion</p>
+    //     </div> */}
+    //     <div className="right_details">
+    //       <div className="add_learnt_stuff">
+    //         <button onClick={open_add_learnt_popup}>
+    //           {learntStuff?.length > 0
+    //             ? `Add to your learnings`
+    //             : ` Show your learnt stuff`}
+    //         </button>
+    //       </div>
+    //       <div className="leant_stuff">
+    //         {learntStuff.map((learntStuff) => (
+    //           <LearntStuff learntStuff={learntStuff} />
+    //         ))}
+    //       </div>
+    //       <div className="current_involvement">
+    //         <input
+    //           type="text"
+    //           placeholder="Enter your current involvement  Eg.internship, project"
+    //           value={involvement}
+    //           onChange={(e) => setInvolvement(e.target.value)}
+    //         />
+    //         <textarea
+    //           name=""
+    //           id=""
+    //           cols="30"
+    //           rows="10"
+    //           placeholder="Describe about your involvement"
+    //           value={description}
+    //           onChange={(e) => setDescription(e.target.value)}
+    //         ></textarea>
+    //         <input
+    //           type="text"
+    //           placeholder="Enter any of your achievement"
+    //           value={achievement}
+    //           onChange={(e) => setAchievement(e.target.value)}
+    //         />
+    //       </div>
+    //       <div className="passion">
+    //         <p onClick={open_passion_popup} className="select_passion">
+    //           Your passion :{" "}
+    //         </p>
+    //         {passion ? <p>{passion}</p> : <p>{userInfo?.passion}</p>}
+    //       </div>
+    //       <>
+    //         <div className="subfield">
+    //           <p>Your subInterest in passion:</p>
+    //           <input
+    //             type="text"
+    //             placeholder={userInfo?.subInterest}
+    //             value={input}
+    //             onChange={(e) => setInput(e.target.value)}
+    //             style={{
+    //               textTransform: "uppercase",
+    //             }}
+    //           />
+    //         </div>
+    //       </>
+
+    //       <div className="experience">
+    //         <p>Experience in your passion: </p>
+    //         <FormControl sx={{ m: 1, minWidth: 180 }}>
+    //           <InputLabel id="demo-simple-select-label">
+    //             {userInfo?.experience === 0
+    //               ? `Less than 1 year`
+    //               : `${userInfo?.experience} year`}
+    //           </InputLabel>
+    //           <Select
+    //             labelId="demo-simple-select-label"
+    //             id="demo-simple-select"
+    //             value={experience}
+    //             label="Experience"
+    //             onChange={handleChange}
+    //           >
+    //             <MenuItem value={0}>Less than 1 year</MenuItem>
+    //             <MenuItem value={1}>1 year</MenuItem>
+    //             <MenuItem value={2}>2 years</MenuItem>
+    //             <MenuItem value={3}>3 years</MenuItem>
+    //             <MenuItem value={4}>4 years</MenuItem>
+    //           </Select>
+    //         </FormControl>
+    //       </div>
+
+    //       <div className="create_account_button">
+    //         <button onClick={update_account}>Update Account</button>
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <PassionPopup />
+    //   <AddLearntPopup />
+    // </Container>
   );
 }
 
