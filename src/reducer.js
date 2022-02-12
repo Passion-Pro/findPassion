@@ -37,12 +37,14 @@ export const initialState = {
   // for loading
   loading:false,
   showgroupAdd:false,
+  EditUserProfile:false,
 };
 
 export const actionTypes = {
   SET_SHOW_GROUP_ADD:"SET_SHOW_GROUP_ADD",
   SET_LOADING:'SET_LOADING',
   SET_EDIT_GROUP:'SET_EDIT_GROUP',
+  SET_EDIT_USER_PROFILE:'SET_EDIT_USER_PROFILE',
   SET_SHOW_TOP:"SET_SHOW_TOP",
   SET_SEARCH_INPUT:'SET_SEARCH_INPUT',
   SET_SHOW_MORE_OPTION:'SET_MORE_OPTION',
@@ -87,6 +89,11 @@ export const actionTypes = {
 const reducer = (state, action) => {
   console.log(action ,state);
   switch (action.type) {
+    case actionTypes.SET_EDIT_USER_PROFILE:
+      return {
+        ...state,
+        EditUserProfile: action.EditUserProfile,
+      };
     case actionTypes.SET_SHOW_GROUP_ADD:
       return {
         ...state,
