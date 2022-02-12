@@ -52,8 +52,6 @@ function App() {
   const history = useHistory();
 
   useEffect(() => {
-
-    // will only run once when the app component loads...
     dispatch({
       type: actionTypes.SET_LOADING,
       loading: true,
@@ -151,6 +149,9 @@ function App() {
               window.location.pathname !== "/addJourney/words" &&
               window.location.pathname !== "/addJourney/video" &&
               window.location.pathname !== "/shareexperience" &&
+              window.location.pathname !== "/userProfile" &&
+              window.location.pathname !== "/userProfileLearnt" &&
+              window.location.pathname !== "/userProfilePost" &&
               <Header />}
           </div>
         }
@@ -273,6 +274,12 @@ function App() {
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
           <Route path="/userProfile">
+            {user?.email ? <UserProfile /> : <Login />}
+          </Route>
+          <Route path="/userProfilePost">
+            {user?.email ? <UserProfile /> : <Login />}
+          </Route>
+          <Route path="/userProfileLearnt">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
           <Route path="/">{user?.email ? <Home /> : <Login />}</Route>

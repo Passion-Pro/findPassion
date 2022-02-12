@@ -12,7 +12,7 @@ function HomeWithAllProfile() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        db.collection('users')
+        db.collection(userInfo?.gender=='male'? "girls":"boys")
             .onSnapshot((snapshot) => {
                 setData(
                     snapshot.docs.map((doc) => ({
