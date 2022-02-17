@@ -99,10 +99,6 @@ export default function LandscapePost() {
         );
     }, [completedCrop]);
 
-    if (croppedImage) {
-        console.log("?", upImgImage.name);
-    }
-
     const UploadImage = async () => {
         setLoading(true)
         if (croppedImage && userInfo) {
@@ -116,7 +112,6 @@ export default function LandscapePost() {
                         .collection("Posts")
                         .doc(id)
                         .set({
-                            username: userInfo.name,
                             userEmail: userInfo.email,
                             imageURL: url,
                             date: datetime,
@@ -127,6 +122,8 @@ export default function LandscapePost() {
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             imageName: id,
                             imageOriginalName: upImgImage.name,
+                            totalLike: 0,
+                            userID: user.uid,
                         })
                         .then(() => {
                             // adding post in user private collection
@@ -135,7 +132,6 @@ export default function LandscapePost() {
                                 .collection("Posts")
                                 .doc(id)
                                 .set({
-                                    username: userInfo.name,
                                     userEmail: userInfo.email,
                                     imageURL: url,
                                     date: datetime,
@@ -146,7 +142,7 @@ export default function LandscapePost() {
                                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                     imageName: id,
                                     imageOriginalName: upImgImage.name,
-                                    userimage:userInfo.profilePhotoUrl,
+                                    totalLike: 0,
                                 })
                                 .then(() => {
                                     setLoading(false);
@@ -234,25 +230,25 @@ export default function LandscapePost() {
                                 {/* </div> */}
                             </div>
                             <div className="addPost__Image">
-                            {!croppedImage && 
+                                {!croppedImage &&
                                     <label htmlFor="image">
-                                <div className="Upload__ImageIcon"  onClick={() => {
-                                                setPopUpImageCrop(true)
-                                            }}>
-                                        <AddAPhotoIcon
-                                            className="footer_icon"
-                                            style={{ fontSize: 15 }}
-                                        />
-                                        Add Photo
-                                    <input
-                                        type="file"
-                                        id={"image"}
-                                        style={{ display: "none" }}
-                                        onChange={onSelectFile}
-                                        accept="image/git , image/jpeg , image/png"
-                                        />
+                                        <div className="Upload__ImageIcon" onClick={() => {
+                                            setPopUpImageCrop(true)
+                                        }}>
+                                            <AddAPhotoIcon
+                                                className="footer_icon"
+                                                style={{ fontSize: 15 }}
+                                            />
+                                            Add Photo
+                                            <input
+                                                type="file"
+                                                id={"image"}
+                                                style={{ display: "none" }}
+                                                onChange={onSelectFile}
+                                                accept="image/git , image/jpeg , image/png"
+                                            />
                                         </div>
-                                        </label>
+                                    </label>
                                 }
                                 {croppedImage && <img src={URL.createObjectURL(croppedImage)} alt="" />}
                                 <div className="addPost__Text">

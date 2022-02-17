@@ -17,7 +17,7 @@ function RightSidebarGroupTaskList() {
             }} />
           </div>
           <div className="rightSidebarGroup__headName">
-            {groupDetails?.GroupName} Task
+            {groupDetails?.GroupName} Tasklist
           </div>
           <div></div>
         </div>

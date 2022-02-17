@@ -6,6 +6,8 @@ import { useStateValue } from '../../StateProvider';
 import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
 import { CircularProgress } from '@mui/material';
+import Button from '@mui/material/Button';
+import { actionTypes } from '../../reducer';
 
 function Group() {
   const [{ loading, showLeftSidebarGroup, groupDetails, showTop }, dispatch] = useStateValue();
@@ -13,14 +15,14 @@ function Group() {
   return (
     <div className='group'>
       {
-      groupDetails?.GroupName && showTop &&
+        groupDetails?.GroupName && showTop &&
         <GroupTopBody />
       }
       {loading ?
         <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
           <CircularProgress />
         </div> :
-        <div className={showTop ? "group__body" : 'group__bodyTwo'}> {groupDetails?.GroupName ? <>
+        groupDetails?.GroupName ? <div className={showTop ? "group__body" : 'group__bodyTwo'}> <>
           <div className="group__lower">
             {<div className="group__lower__leftSidebar">
               <SidebarGroup />
@@ -36,8 +38,15 @@ function Group() {
               <RightSidebarGroup />
             </div>}
           </div>
-        </> : "You have not added any group"}
-        </div>}
+        </> </div> :
+          <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
+            You haven't started any group. <Button color="secondary" onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_GROUP_ADD,
+                showgroupAdd: true,
+              })
+            }}>Start now</Button> </div>
+      }
       <GroupExpandMore />
     </div>
   )

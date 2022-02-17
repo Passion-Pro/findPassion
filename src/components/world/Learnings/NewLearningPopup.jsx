@@ -341,7 +341,7 @@ const Container = styled.div`
         width: 80%;
         outline: 0;
       }
-    }
+  }
   }
 
 

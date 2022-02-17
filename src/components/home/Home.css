@@ -87,6 +87,7 @@
         padding: 1vh;
         padding-top: 1vh;
         overflow-x: hidden;
+        padding-bottom: 10vh;
     }
     .recommendPosts{
         display: flex;

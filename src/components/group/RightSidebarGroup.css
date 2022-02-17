@@ -120,6 +120,7 @@
     justify-content: center;
     height: 30px;
     z-index: 12;
+    cursor: pointer;
 }
 .GroupChat__body{
     display: flex;

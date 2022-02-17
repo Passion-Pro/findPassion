@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
-import Header from '../header/Header';
 import ProfileCard from '../profilecard/ProfileCard';
 import CreateStory from '../stories/CreateStory';
-import Stories from '../stories/Stories';
-import PostCard from '../post/PostCard';
 import HeaderSecond from '../header/HeaderSecond';
 import db from '../../firebase';
 import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
@@ -14,10 +11,9 @@ import {useStateValue} from "../../StateProvider"
 function HomeWithAllProfile() {
     const[{userInfo} , dispatch] = useStateValue();
     const [data, setData] = useState([]);
-    const [stories, setStories] = useState([]);
 
     useEffect(() => {
-        db.collection('users')
+        db.collection(userInfo?.gender=='male'? "girls":"boys")
             .onSnapshot((snapshot) => {
                 setData(
                     snapshot.docs.map((doc) => ({
@@ -28,29 +24,13 @@ function HomeWithAllProfile() {
             })
     }, []);
 
-    function sideScroll(element,direction,speed,distance,step){
-        console.log("2")
-       var scrollAmount=0;
-        var slideTimer=setInterval(function(){
-            if(direction=='left'){
-                element.scrollLeft-=step;
-            }else{
-                element.scrollleft+=step;
-            }
-            scrollAmount+=step;
-            if(scrollAmount>=distance){
-                window.clearInterval(slideTimer);
-            }
-        },speed);
-    }
-
-    const funct=()=>{
+    const funct = () => {
         console.log("object")
-        document.getElementById('box').scrollLeft+=900;
+        document.getElementById('box').scrollLeft += 900;
     }
-    const funct1=()=>{
+    const funct1 = () => {
         console.log("object")
-        document.getElementById('box1').scrollLeft+=900;
+        document.getElementById('box1').scrollLeft += 900;
     }
 
     return (
@@ -74,7 +54,7 @@ function HomeWithAllProfile() {
                               )}
                             </>
                         ))}
-                         <div className="Arrow__showrecommendProfile" onClick={funct1}>
+                        <div className="Arrow__showrecommendProfile" onClick={funct1}>
                             <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />
                         </div>
                     </div>

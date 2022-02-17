@@ -15,7 +15,6 @@ function GroupMemberField({ member, userInfo }) {
   const [showRemove, setshowRemove] = useState(false);
   const [dueDate, setDueDate] = useState(null)
   const [task, settask] = useState('');
-  const [confirmEmail, setConfirmEmail] = useState('');
 
   var today = new Date();
   var date = today.toLocaleString();
@@ -47,9 +46,9 @@ function GroupMemberField({ member, userInfo }) {
   }
 
   const removeMember = () => {
-    if (user && confirmEmail == member?.data?.email && groupDetails) {
+    if (user  && groupDetails && member?.data?.email) {
       db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(member.id).delete().then(() => {
-        db.collection('users').where('email', '==', confirmEmail)
+        db.collection('users').where('email', '==', member?.data?.email)
           .get()
           .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -60,6 +59,8 @@ function GroupMemberField({ member, userInfo }) {
             })
           })
       })
+    }else{
+      alert('Something went wrong!')
     }
   }
   return (
@@ -84,9 +85,7 @@ function GroupMemberField({ member, userInfo }) {
               </div>
               <div className="learning_detail">
                 <div style={{ display: 'flex', flexDirection: "column", width: '150px' }}>
-                  {/* <div> */}
                   Set due date
-                  {/* </div> */}
                   <div style={{ display: "flex", fontSize: 'xx-small', color: '#e01515', fontWeight: "600" }}>
                     If you not set due date {member?.data?.name} can set the due date.
                   </div>
@@ -99,13 +98,12 @@ function GroupMemberField({ member, userInfo }) {
                 </div>
               </div>
               <div className="start_button">
-                <button onClick={AddTask} >Add</button>
+                <button onClick={AddTask} title='Add task' >Add</button>
               </div>
             </div>
           </div>
         </Container>
       )}
-
       {showRemove && (
         <Container>
           <div className="addLearning">
@@ -118,14 +116,10 @@ function GroupMemberField({ member, userInfo }) {
             </div>
             <div className="group_photo">
               <div className="learning_detail">
-                <input
-                  type="text"
-                  placeholder="Confirm Email"
-                  onChange={e => setConfirmEmail(e.target.value)}
-                />
+                Remove  "<span style={{fontWeight:"bold"}}>{member?.data?.email}</span>"
               </div>
               <div className="start_button">
-                <button onClick={removeMember} >Remove</button>
+                <button onClick={removeMember} >Yes</button>
               </div>
             </div>
           </div>
@@ -147,12 +141,13 @@ function GroupMemberField({ member, userInfo }) {
         {!userInfo?.email && <div className='groupField__Icon'>
           <div className="groupmember__icons" onClick={() => {
             setshowAddTask(true)
-          }}>
+          }} title='Give task'>
             <AddTaskRoundedIcon />
           </div>
           <div className="groupmember__icons" onClick={() => {
             setshowRemove(true)
-          }}>
+          }} 
+          title='Remove member'>
             <PersonRemoveAlt1RoundedIcon />
           </div>
         </div>}
@@ -175,13 +170,13 @@ const Container = styled.div`
   color: black;
   background-color: #858484cc;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   animation: fadeIn 0.7s;
   z-index:101;
 
   .addLearning {
     background-color: #fff;
-    width: 400px;
+    width: 300px;
     height: fit-content;
     margin: auto;
     border-radius: 7px;
@@ -207,7 +202,7 @@ const Container = styled.div`
       }
     }
 
-    .group_photo {
+    /* .group_photo {
       display: flex;
       justify-content: center;
       align-items:center;
@@ -226,12 +221,12 @@ const Container = styled.div`
         margin-left: auto;
         margin-right: auto;
       }
-    }
+    } */
 
     .learning_detail {
       width: 100%;
       display: flex;
-      justify-content: space-around;
+      padding-left: 10px;
       margin-bottom:8px;
       align-items: center;
 

@@ -1,0 +1,121 @@
+.Userprofile{
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.Userprofile__In{
+    max-width: 1300px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.userProfile__headerMobile{
+    display: none; 
+    position: sticky;
+    z-index: 100;
+    width: 100%;
+    justify-content: space-between;
+    height: 6vh;
+    align-items: center;
+    background-color: rgb(58, 204, 248);
+    top: 0;
+}
+.Userprofile__first{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    padding-top: 1vh;
+    height: 20vh;
+}
+.Userprofile__Second{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid rgb(9, 132, 163);
+    background-color: rgb(105, 195, 236);
+    padding: 4px 2px 4px 2px;
+    height: 4vh;
+    font-weight: 600;
+    position: sticky;
+    top: 6vh;
+}
+.Userprofile__Second_Option{
+    color: rgb(53, 50, 50);
+    justify-content: center;
+    cursor: pointer;
+}
+.Userprofile__Second_Option_Active{
+    color: black;
+    font-weight: 700;
+    justify-content: center;
+    cursor: pointer;
+}
+.profile__Branch{
+    display: flex;
+}
+.changeImage{
+    display: flex;
+    font-size: x-small;
+}
+.Userprofile__Third__info{
+    display: flex;
+    flex-direction: column;
+}
+.Userprofile__Third__info{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+}
+.Userprofile__Third__infoIn{
+    display: flex;
+    flex-direction: column;
+    width: 96%;
+    padding: 2%;
+    padding-top: 1%;
+    max-width: 600px!important;
+}
+.Userprofile_experienceText{
+    display: flex;
+    color: rgb(59, 51, 51);
+}
+.current_involvement{
+    display: flex;
+    flex-direction: column;
+}
+.userProfile__input{
+    display: flex;
+    padding: 1vh 0!important;
+    max-width: 100%!important;
+}
+.passion__userProfile{
+    display: flex;
+}
+.InputLabel__userProfile{
+    padding: 0;
+}
+.subfield__userProfile{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1vh 0;
+}
+.InputLabel__userProfile{
+    display: flex!important;
+    padding: 0!important;
+    margin: 0!important;
+}
+@media(max-width:800px){
+    .userProfile__headerMobile{
+        display: flex;
+        z-index: 100;
+    }
+    .Userprofile__first{
+        height: 23vh;
+    }
+}

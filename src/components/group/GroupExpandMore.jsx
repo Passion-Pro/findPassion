@@ -17,8 +17,7 @@ import { v4 as uuid } from "uuid";
 
 function GroupExpandMore() {
   const history = useHistory();
-  const [{ showExpandGroup,editGroup, user,userInfo,showTop, mygroupDetail }, dispatch] = useStateValue();
-  const [showAddGroup, setShowAddGroup] = useState(false);
+  const [{ showExpandGroup, showgroupAdd, editGroup, user, userInfo, showTop, mygroupDetail }, dispatch] = useStateValue();
   const [groupName, setGroupName] = useState('');
   const [groups, setGroups] = useState([]);
 
@@ -52,10 +51,10 @@ function GroupExpandMore() {
             loading: false,
           })
         })
-        dispatch({
-          type: actionTypes.SET_LOADING,
-          loading: false,
-        })
+      dispatch({
+        type: actionTypes.SET_LOADING,
+        loading: false,
+      })
     }
   }, [user])
 
@@ -73,11 +72,14 @@ function GroupExpandMore() {
         backgroundImage: '',
         DefaultbackgroundImage: 'https://firebasestorage.googleapis.com/v0/b/find-passion.appspot.com/o/LearningImages%2F8b87d5d2-1ff3-4830-a62f-d30b5046a1d3?alt=media&token=d8a46f9c-6666-4466-bba8-beb20bf439e1',
         id: id,
-        name:userInfo?.name,
-        groupSlogan:'Improve your performance by discuss the skill you have common with others.',
+        name: userInfo?.name,
+        groupSlogan: 'Improve your performance by discuss the skill you have common with others.',
       }).then(() => {
         setGroupName('')
-        setShowAddGroup(false)
+        dispatch({
+          type: actionTypes.SET_SHOW_GROUP_ADD,
+          showgroupAdd: false,
+        })
       }).catch(err => {
         console.log(err.message);
       })
@@ -99,28 +101,18 @@ function GroupExpandMore() {
     }
   }, [user])
 
-  // useEffect(() => {
-  //   if (user?.uid) {
-  //     db.collection('users').doc(user.uid).collection('Groups')
-  //       .onSnapshot((snapshot) => (
-  //         setGroups(
-  //           snapshot.docs.map((doc) => ({
-  //             data: doc.data(),
-  //             id: doc.id,
-  //           })))
-  //       ));
-  //   }
-  // }, [user])
-
   return (
     <>
-      {showAddGroup && (
+      {showgroupAdd && (
         <Container>
           <div className="addLearning">
             <div className="add_learning_header">
               <CloseIcon className="close_icon"
                 onClick={() => {
-                  setShowAddGroup(false)
+                  dispatch({
+                    type: actionTypes.SET_SHOW_GROUP_ADD,
+                    showgroupAdd: false,
+                  })
                 }}
               />
             </div>
@@ -134,7 +126,7 @@ function GroupExpandMore() {
                 />
               </div>
               <div className="start_button">
-                <button onClick={AddGroup} >Add</button>
+                <button onClick={AddGroup} title='Add group'>Add</button>
               </div>
             </div>
           </div>
@@ -142,92 +134,103 @@ function GroupExpandMore() {
       )}
 
       <div className="groupHead__More">
+
         <button onClick={() => {
           dispatch({
             type: actionTypes.SET_SHOW_EXPANDGROUP,
             showExpandGroup: true,
           })
-        }} className='Button__groupExpand'>
+        }} className='Button__groupExpand' title="More option">
           More
         </button>
 
-        <button onClick={() => {
-          dispatch({
-            type: actionTypes.SET_EDIT_GROUP,
-            editGroup: !editGroup,
-          })
-          console.log("Edit Group is " , editGroup)
-        }} className='Button__groupExpand'>
-          Edit
-        </button>
 
-        {<button style={{ display: "flex",  padding: "4px", margin: "4px",  border: 'none', outline: "none", alignItems: 'center', justifyContent: 'center', borderRadius: '16px', fontWeight: 'bold'}} className='Button__groupExpandHide' variant="contained">
-          {showTop ?
-            <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }} onClick={() => {
+        {mygroupDetail?.GroupName &&
+          <>
+            <button onClick={() => {
               dispatch({
-                type: actionTypes.SET_SHOW_TOP,
-                showTop: false,
-              });
-            }} >
-              <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }}>
-                <p style={{
-                  marginTop: 'auto',
-                  marginBottom: 'auto',
-                }}>
-                  Hide
-                </p>
-              </div>
-              <ExpandMoreRoundedIcon style={{
-                zIndex: 11, height: "100%"
-              }} />
-            </div>
-            :
-            <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px',cursor: 'pointer', }} onClick={() => {
-              dispatch({
-                type: actionTypes.SET_SHOW_TOP,
-                showTop: true,
-              });
-            }}>
-              <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: "100%" }}>
-                <p style={{
-                  marginTop: 'auto',
-                  marginBottom: 'auto',
-                }}>Show</p>
-              </div>
-              <ChevronRightRoundedIcon style={{
-                zIndex: 11, height: "100%"
-              }} />
-            </div>
-          }
-        </button>}
+                type: actionTypes.SET_EDIT_GROUP,
+                editGroup: !editGroup,
+              })
+              console.log("Edit Group is ", editGroup)
+            }} className='Button__groupExpand' title='Edit group'>
+              Edit
+            </button>
+
+            <button style={{ display: "flex", padding: "4px", margin: "4px", border: 'none', outline: "none", alignItems: 'center', justifyContent: 'center', borderRadius: '16px', fontWeight: 'bold' }} className='Button__groupExpandHide' variant="contained">
+              {showTop ?
+                <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }} onClick={() => {
+                  dispatch({
+                    type: actionTypes.SET_SHOW_TOP,
+                    showTop: false,
+                  });
+                }} title='Hide group information' >
+                  <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }}>
+                    <p style={{
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
+                    }} >
+                      Hide
+                    </p>
+                  </div>
+                  <ExpandMoreRoundedIcon style={{
+                    zIndex: 11, height: "100%"
+                  }} />
+                </div>
+                :
+                <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }} onClick={() => {
+                  dispatch({
+                    type: actionTypes.SET_SHOW_TOP,
+                    showTop: true,
+                  });
+                }}  title='Show group information'>
+                  <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: "100%" }}>
+                    <p style={{
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
+                    }}
+                    >Show</p>
+                  </div>
+                  <ChevronRightRoundedIcon style={{
+                    zIndex: 11, height: "100%"
+                  }} />
+                </div>
+              }
+            </button>
+          </>
+        }
+
       </div>
-      
+
       {showExpandGroup &&
         <div className="showExpandGroup">
           {!mygroupDetail?.GroupName ?
             <div className="showExpandGroup__AddGroup" onClick={() => {
-              setShowAddGroup(true)
-            }}>
-              <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
-              Add Group
+              dispatch({
+                type: actionTypes.SET_SHOW_GROUP_ADD,
+                showgroupAdd: true,
+              })
+            }}  title="Add your group">
+              <AddCircleRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} title='Add your group' />
+              Start Group
             </div> :
             <div className="showExpandGroup__AddGroup" onClick={() => {
               history.push('/group')
-            }}>
+            }} title="View your group">
               <VisibilityRoundedIcon style={{ color: '#0173ab', paddingRight: "12px" }} />
-              View Group
+              Your Group
             </div>
           }
-          <div className="showExpandGroup__OtherGroup">
+         {groups && groups.length!=0 && <div className="showExpandGroup__OtherGroup">
             <div className="showExpandGroup__OtherGroup__Head">
               Groups
             </div>
             {groups && groups.map((group) => (
-              <>
+              <div title='Other group you have added'>
                 <GroupNameField group={group} key={group?.id} />
-              </>
+              </div>
             ))}
-          </div>
+          </div>}
         </div>
       }
     </>

@@ -43,7 +43,7 @@ function ShowAllTask() {
         <>
             <div className='RightSidebarGroup' >
                 <div className={showTop ? 'rightSidebarGroup__headerShow' : "rightSidebarGroup__header"}>
-                    <div className="rightSidebarGroup__headMoreTask">
+                    <div className="rightSidebarGroup__headMoreTask" title='back to task list of member'>
                         <ArrowBackRoundedIcon onClick={() => {
                             history.push('/grouptasklist')
                         }} />

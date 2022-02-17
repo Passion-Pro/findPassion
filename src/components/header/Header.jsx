@@ -13,10 +13,10 @@ import ChatIcon from '@mui/icons-material/Chat';
 import PostPopup from '../post/PostPopup';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
-import searchSvg from '../img/search.svg';
+import { HistoryEduRounded } from '@mui/icons-material';
 
 function Header() {
-    const [{ user, userInfo, courseDiv }, dispatch] = useStateValue();
+    const [{ userInfo, courseDiv }, dispatch] = useStateValue();
     const history = useHistory();
     const [input, setInput] = useState('');
 
@@ -45,7 +45,6 @@ function Header() {
                             <input placeholder='Search' className='searchHeader__input' onChange={e => setInput(e.target.value)} />
                         </div>
                     </div>
-
                     <div className="Loginheader__Icons">
                         <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                             <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
@@ -104,10 +103,10 @@ function Header() {
                 courseDiv &&
                 <div style={{
                     display: 'flex',
-                    position:'fixed',bottom:'0',left:'0',right:'0',
-                    height: '90vh', width: '100vw',
+                    position: 'absolute', bottom: '0', left: '0', right: '0',
+                    height: '91.5vh', width: '100vw',
                     backgroundColor: 'rgba(204,204,204,1)',
-                    zIndex:'21'
+                    zIndex: '21'
                 }}>
                     <div className="postPopup">
                         <PostPopup />
