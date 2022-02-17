@@ -32,8 +32,6 @@ function UserProfile() {
   const [involvement, setInvolvement] = useState("");
   const [description, setDescription] = useState("");
   const [achievement, setAchievement] = useState("");
-  const[tags, setTags] = useState([]);
-  const[passions ,setPassions] = useState([]);
 
 useEffect(()=>{
 if(user?.uid){
@@ -63,15 +61,6 @@ console.log(post);
           )
         );
 
-        db.collection("passions").onSnapshot((snapshot) => {
-          setPassions(
-            snapshot.docs.map((doc) => ({
-              id : doc.id,
-              data : doc.data(),
-            }))
-          )
-        })
-
       setExperience(userInfo?.experience);
       dispatch({
         type: actionTypes.SET_PASSION,
@@ -79,21 +68,6 @@ console.log(post);
       });
     }
   }, [user]);
-
-  useEffect(() => {
-    if(passions?.length > 0) {
-       
-        for(let i = 0; i < passions?.length; i++){
-          db.collection("passions").doc(passions[i].id).collection("learningTags").onSnapshot((snapshot) => (
-            
-               snapshot.docs.map((doc) => {
-                 tags.push(doc.data())
-               }) 
-            
-          ))
-        }
-     }
-  } , [passions, user ]);
 
   const open_passion_popup = () => {
     dispatch({
@@ -254,7 +228,7 @@ console.log(post);
           </div>
           <div className="leant_stuff">
             {learntStuff.map((learntStuff) => (
-              <LearntStuff learntStuff={learntStuff} tags = {tags} />
+              <LearntStuff learntStuff={learntStuff} />
             ))}
           </div>
         </div>
@@ -479,225 +453,10 @@ console.log(post);
           }
         </div>
         }
+        <AddLearntPopup />
       </div>
-      <PassionPopup />
-      <AddLearntPopup tags = {tags} />
-    </Container>
+    </div>
   );
 }
 
-const Container = styled.div`
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  overflow: hidden;
-
-  @media (max-width: 500px) {
-    display: flex;
-    flex-direction: column;
-    overflow: scroll;
-    padding-bottom: 20px;
-  }
-
-  .left {
-    flex: 0.3;
-    padding-top: 20px;
-    border-right: 1px solid lightgray;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-
-    label {
-      p {
-        color: #006eff;
-        text-align: center;
-        margin-bottom: 10px;
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .avatar {
-    width: 150px !important;
-    height: 150px !important;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 40px;
-  }
-
-  .right {
-    flex: 0.7;
-    display: flex;
-    flex-direction: column;
-
-    .right_header {
-      padding-left: 20px;
-      border-bottom: 1px solid lightgray;
-    }
-
-    .right_details {
-      padding-left: 20px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: scroll;
-      padding-bottom: 20px;
-    }
-
-    .right_details::-webkit-scrollbar {
-      display: none;
-    }
-
-    .info {
-      p {
-        margin-bottom: 6px;
-      }
-      input {
-        margin-bottom: 0px;
-        border-radius: 5px;
-        height: 15px;
-        padding: 5px;
-        width: 40%;
-      }
-    }
-
-    .description {
-    }
-
-    .let_us {
-      &:hover {
-        cursor: pointer;
-        color: blue;
-      }
-    }
-
-    .selected_qualities_div {
-      display: flex;
-      flex-direction: column;
-      border: 1px solid lightgray;
-      padding-left: 10px;
-      padding-top: 10px;
-      width: 75%;
-      border-radius: 10px;
-    }
-
-    .selected_qualities_div_qualities {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .your_qualities {
-      margin-bottom: 10px;
-      margin-top: 0px;
-    }
-
-    .passion {
-      margin-top: 15px;
-      .select_passion {
-        margin-bottom: 10px;
-        &:hover {
-          cursor: pointer;
-          color: blue;
-        }
-      }
-      p {
-        margin-top: 0px;
-      }
-    }
-
-    .create_account_button {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-
-      button {
-        /* padding-top : 10px;
-            padding-bottom : 10px; */
-        border-radius: 20px;
-        padding: 10px;
-        background-color: #7cdff8;
-        border: 1px solid lightgray;
-
-        &:hover {
-          cursor: pointer;
-          background-color: #56caf8;
-        }
-      }
-    }
-
-    .subfield {
-      p {
-        margin-bottom: 5px;
-      }
-
-      input {
-        border-radius: 5px;
-        border: 1px solid gray;
-        padding: 7px;
-        width: 50%;
-        outline: 0;
-      }
-    }
-  }
-
-  .name {
-    text-align: center;
-    margin-top: 0;
-    font-family: "Helvetica Neue";
-    font-size: 20px;
-  }
-
-  .add_learnt_stuff {
-    margin-top: 20px;
-    margin-bottom: 10px;
-
-    button {
-      width: 200px;
-      padding: 10px;
-      border: 0;
-      border-radius: 20px;
-      background-color: #00a2ff;
-      color: white;
-
-      &:hover {
-        cursor: pointer;
-        background-color: #418dff;
-      }
-    }
-  }
-
-  .current_involvement {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-
-    input {
-      border-radius: 5px;
-      height: 15px;
-      padding: 10px;
-      width: 60%;
-      border: 1px solid gray;
-      margin-bottom: 20px;
-      outline: 0;
-    }
-
-    textarea {
-      resize: none;
-      border-radius: 5px;
-      width: 70%;
-      border: 1px solid gray;
-      padding: 5px;
-      outline: 0;
-      margin-bottom : 20px;
-    }
-  }
-
-  .selected_tags{
-    display : flex;
-    flex-wrap : wrap;
-    margin-top : 10px;
-  }
-`;
-
-export default UserProfile;
+export default UserProfile
