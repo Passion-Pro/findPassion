@@ -5,15 +5,16 @@ import CreateStory from '../stories/CreateStory';
 import HeaderSecond from '../header/HeaderSecond';
 import db from '../../firebase';
 import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
-import {useStateValue} from "../../StateProvider"
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import { useStateValue } from '../../StateProvider';
 
 function HomeWithAllProfile() {
-    const[{userInfo} , dispatch] = useStateValue();
+
     const [data, setData] = useState([]);
+    const [{ userInfo }, dispatch] = useStateValue();
 
     useEffect(() => {
-        db.collection(userInfo?.gender=='male'? "girls":"boys")
+        db.collection('users')
             .onSnapshot((snapshot) => {
                 setData(
                     snapshot.docs.map((doc) => ({
@@ -35,24 +36,21 @@ function HomeWithAllProfile() {
 
     return (
         <div className='home'>
+            <HeaderSecond />
             <div className="homeBody">
-                {/* <div className="stories">
+                <div className="stories">
                     <div className="createStory" >
                         <CreateStory />
                     </div>
                     <ShowStoriesSeries />
-                </div> */}
+                </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                       Find students in {userInfo?.passion}
+                        Similiar Passion
                     </div>
                     <div className="recommendPeople" id='box1'>
                         {data.map((data) => (
-                            <>
-                              {data?.data?.passion === userInfo?.passion && (
-                                  <ProfileCard data={data} />
-                              )}
-                            </>
+                            <ProfileCard data={data} />
                         ))}
                         <div className="Arrow__showrecommendProfile" onClick={funct1}>
                             <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />
@@ -61,16 +59,16 @@ function HomeWithAllProfile() {
                 </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        
+                        Other Passion
                     </div>
-                    <div className="other_students" id='box'>
-                    {data.map((data) => (
-                            <>
-                              {data?.data?.passion !== userInfo?.passion && (
-                                  <ProfileCard data={data} />
-                              )}
-                            </>
+                    <div className="recommendPeople" id='box'>
+                        {data.map((data) => (
+                            <ProfileCard data={data} />
                         ))}
+                        <div className="Arrow__showrecommendProfile" onClick={funct}>
+                            <ArrowForwardRoundedIcon
+                                className='Arrow__showrecommendInProfile' />
+                        </div>
                     </div>
                 </div>
             </div>
