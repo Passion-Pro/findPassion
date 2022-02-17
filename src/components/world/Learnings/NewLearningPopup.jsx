@@ -8,13 +8,17 @@ import db, { auth, storage } from "../../../firebase";
 import firebase from "firebase";
 import { v4 as uuid } from "uuid";
 
-function NewLearningPopup() {
+function NewLearningPopup({tags}) {
   const [{ openNewLearningPopup, user, userInfo }, dispatch] = useStateValue();
   const [image, setImage] = useState();
   const [input, setInput] = useState();
   const [imageUrl, setImageUrl] = useState("");
   const [learnings, setLearnings] = useState([]);
   const[launch , setLaunch] = useState(false);
+  const[tagInput , setTagInput] = useState("");
+  const[suggestedTags ,setSuggestedTags] = useState([]);
+  const[x , setX] = useState(0)
+  
 
   useEffect(() => {
     if (user && openNewLearningPopup === true) {
@@ -28,9 +32,15 @@ function NewLearningPopup() {
               data: doc.data(),
             }))
           )
-        );
+        );       
     }
   }, [user]);
+
+
+  useEffect(() => {
+     console.log("tags are" , tags)
+  } , [tags?.length ]);
+
 
 
 
@@ -79,10 +89,11 @@ function NewLearningPopup() {
                 .add({
                   learning: input,
                   learningImageUrl: url,
-                  started_by: userInfo,
+                  started_by : userInfo,
                   learnersLength: 1,
                   fires: [],
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  tags : suggestedTags
                 })
                 .then(() => {
                   console.log("THen Step is arrived");
@@ -124,6 +135,7 @@ function NewLearningPopup() {
           learnersLength: 1,
           fires: [],
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          tags : suggestedTags
         });
       }
       setTimeout(() => {
@@ -178,6 +190,66 @@ function NewLearningPopup() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />
+                <div className="selected_tags">
+                  {suggestedTags.map((tag , index) => (
+                    <div className="selected_tag">
+                      <p>{tag?.name}</p>
+                      <CloseIcon className="tag_close_icon" onClick = {() => {
+                         suggestedTags.splice(index,1); 
+                         setX(x+1);
+                         
+                      }}/>
+
+                    </div>
+                  ))}
+                </div>
+                <div className="add_tags">
+                     <p
+                      style = {{
+                        display : 'none'
+                      }}
+                     >{x}</p>
+                     <p>Add Tags</p>
+                      <input type="text" 
+                       placeholder="Enter technology name eg.language , framework"
+                       value = {tagInput}
+                       onChange={(e) => setTagInput(e.target.value)}
+                      />
+
+                      <div className="suggested_tags">
+                         {tagInput && tags && 
+                          tags
+                          .filter((item) => {
+                            return item?.name
+                              .toLowerCase()
+                              .includes(tagInput.toLowerCase());
+                          })
+                          .map((data) => (
+                            <p className = "tag"
+                             onClick = {() => {
+                               let x = 0;
+                               if(suggestedTags?.length > 0){
+                                for(let i = 0 ; i < suggestedTags?.length ; i++){
+                                  if(suggestedTags[i] === data){
+                                    x = 1;
+                                  }
+                                  if(x === 0 && i === suggestedTags.length-1){
+                                    suggestedTags.push(data);
+                                    setTagInput("")
+                                    console.log( "Suggested Tags are ", suggestedTags);
+                                  }
+                                }
+                               }else{
+                                suggestedTags.push(data);
+                                console.log( "Suggested Tags are ", suggestedTags);
+                                setTagInput("")
+                               }
+                             }}
+                            >{data?.name}</p>
+                          ))
+                         }
+                      </div>
+                </div>
               </div>
               <div className="start_button">
                 <button onClick={start_learning}>Start🚀</button>
@@ -258,6 +330,7 @@ const Container = styled.div`
       width: 100%;
       display: flex;
       justify-content: center;
+      flex-direction: column;
 
       input {
         margin-left: auto;
@@ -377,6 +450,93 @@ const Container = styled.div`
       }
     }
   }
+
+  .add_tags{
+    margin-left : 30px;
+    p{
+      margin-top : 10px;
+      margin-bottom : 10px;
+      
+      width : fit-content;
+    }
+    
+    input{
+      width : 85% !important;
+    }
+
+
+  }
+
+  .suggested_tags{
+    display : flex;
+    flex-wrap : wrap;
+    max-height : 100px;
+    overflow-y : scroll;
+    margin-top : 20px;
+
+    ::-webkit-scrollbar {
+      display : none;
+    }
+
+  }
+
+
+  .tag{
+    padding : 7px;
+    border-radius : 5px;
+    margin-right : 10px;
+    margin-top : 5px;
+    margin-bottom : 5px;
+    border : 1px solid lightgray;
+    font-size : 13px;
+    background-color : #e6e4e4;
+
+    &:hover {
+      cursor : pointer;
+      background-color : #bdbdbd;
+    }
+
+  }
+
+  .selected_tag{
+    display : flex; 
+    background-color : #f1f0f0;
+    padding : 7px;
+    border-radius : 5px;
+    margin-right : 10px;
+    margin-top : 5px;
+    margin-bottom : 5px;
+    border : 1px solid lightgray;
+    
+    p{
+      margin-top : 0;
+      margin-bottom : 0;
+      width : fit-content;
+      font-size : 13px;
+
+    }
+  }
+
+  .tag_close_icon{
+    font-size : 17px;
+    margin-left : 5px;
+    margin-top : 2px;
+
+    &:hover {
+      cursor : pointer;
+      color : #3d3d3d;
+    }
+
+  }
+
+  .selected_tags{
+    display : flex;
+    flex-wrap : wrap;
+    margin-left : 30px;
+    margin-top : 10px;
+  }
+
+  
 `;
 
 export default NewLearningPopup;

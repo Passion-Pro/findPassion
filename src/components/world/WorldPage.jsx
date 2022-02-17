@@ -30,7 +30,16 @@ function WorldPage() {
   const [newLearnings, setNewLearnings] = useState([]);
   const [x, setX] = useState(0);
   const[jlLength , setJlLength] = useState();
+  const[tags, setTags] = useState([]);
+  const[passions ,setPassions] = useState([]);
   // let newLearnings = allLearnings
+  
+  useEffect(() => {
+    setLearnings([]);
+    setAllLearnings([]);
+    setNewLearnings([]);
+    setJoinedLearnings([]);
+  } , [])
 
   useEffect(() => {
     db.collection("learnings").onSnapshot((snapshot) =>
@@ -63,6 +72,15 @@ function WorldPage() {
           });
         });
 
+        db.collection("passions").onSnapshot((snapshot) => {
+          setPassions(
+            snapshot.docs.map((doc) => ({
+              id : doc.id,
+              data : doc.data(),
+            }))
+          )
+        })
+
       db.collection("users")
         .doc(user?.uid)
         .collection("myJoinedLearnings")
@@ -83,6 +101,23 @@ function WorldPage() {
   }, [user?.uid]);
 
   useEffect(() => {
+    if(passions?.length > 0) {
+       
+        for(let i = 0; i < passions?.length; i++){
+          db.collection("passions").doc(passions[i].id).collection("learningTags").onSnapshot((snapshot) => (
+            
+               snapshot.docs.map((doc) => {
+                 tags.push(doc.data())
+               }) 
+            
+          ))
+        }
+     }
+  } , [passions, user]);
+
+  
+
+  useEffect(() => {
     if (allLearnings?.length > 0 && joinedLearnings?.length > 0) {
       for (let i = 0; i < allLearnings?.length; i++) {
         for (let j = 0; j < joinedLearnings?.length; j++) {
@@ -90,7 +125,7 @@ function WorldPage() {
             newLearnings[i]?.data?.learning ===
             joinedLearnings[j]?.data?.learning?.data?.learning
           ) {
-            newLearnings.splice(i);
+            newLearnings.splice(i , 1);
             console.log("Spliced", newLearnings);
           }
         }
@@ -115,7 +150,11 @@ function WorldPage() {
       newLearnings?.length > 0 &&
       allLearnings?.length > 0 &&
       joinedLearnings?.length > 0
-    ) {
+      ) {
+      console.log("STEP 2 Achieved");
+      console.log("NL is " , newLearnings?.length);
+      console.log("AL is " , allLearnings?.length);
+      console.log("JL is " , joinedLearnings?.length);
       if (
         newLearnings?.length ===
         allLearnings?.length - joinedLearnings?.length
@@ -198,9 +237,7 @@ function WorldPage() {
     learnings?.length,
     userInfo?.passion,
     userInfo?.experience,
-    user,
-    joinedLearnings?.length,
-    jlLength
+    user
   ]);
 
   const add_learning = () => {
@@ -227,7 +264,15 @@ function WorldPage() {
             className="stories_button"
             onClick={(e) => history.push("/stories")}
           >
-            Stories
+            Journeys
+          </button>
+          <button className="stories_button"
+            style = {{
+              marginLeft : '20px'
+            }}
+            onClick={(e) => history.push("/posts")}
+          >
+            Posts
           </button>
         </div>
 
@@ -304,7 +349,7 @@ function WorldPage() {
           ))}
         </div>
       )}
-      <NewLearningPopup />
+      <NewLearningPopup  tags = {tags}/>
     </Container>
   );
 }
@@ -316,10 +361,12 @@ const Container = styled.div`
   height : fit-content;
   display: flex;
   flex-direction: column;
-  background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
+  /* background-image: url("https://itxitpro.com/front/img/web-development-services.jpg"); */
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-color : #003663;
+
 
   
   @media(max-width: 700px){

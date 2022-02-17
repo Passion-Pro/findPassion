@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import { makeStyles } from "@material-ui/core/styles";
 import { useStateValue } from "../../../StateProvider";
@@ -19,6 +20,44 @@ import LearningsPopup from "./LearningsPopup";
 import Learning from "./Learning";
 import Skill from "./Skill";
 import firebase from "firebase";
+import { styled as style } from "@mui/material/styles";
+
+import { PhotoCamera } from "@mui/icons-material";
+
+const StyledBadge = style(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
+const SmallAvatar = style(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
 
 function CreateAccount() {
   const [{ selectedQualities, passion, user, learnings }, dispatch] =
@@ -31,17 +70,20 @@ function CreateAccount() {
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
   const [input, setInput] = useState("");
-  const[year , setYear] = useState();
-  const[branch , setBranch] = useState();
+  const [year, setYear] = useState();
+  const [branch, setBranch] = useState();
+  const[coverImage ,setCoverImage] = useState();
 
   useEffect(() => {
-    if(year === 1){
+    if (year === 1) {
       dispatch({
-        type : actionTypes.SET_PASSION,
-        passion : "Don't know"
-      })
+        type: actionTypes.SET_PASSION,
+        passion: "Don't know",
+      });
     }
-  } , [year])
+
+    console.log("User is " , user)
+  }, [year]);
 
   const openQaulitiesPopup = () => {
     dispatch({
@@ -77,46 +119,43 @@ function CreateAccount() {
   const create_account = (e) => {
     e.preventDefault();
 
-    if (email && password && name && selectedQualities.length > 0 && passion && branch && year) {
+    if (
+      name &&
+      selectedQualities.length > 0 &&
+      passion &&
+      branch &&
+      year
+      && user?.uid
+    ) {
       console.log(experience);
       if (
         (passion !== "Don't know" && experience) ||
         passion === "Don't know"
       ) {
-        auth
-          .createUserWithEmailAndPassword(email, password)
-          .then((auth) => {
-            if (auth) {
-              dispatch({
-                type: actionTypes.SET_USER,
-                user: auth.user,
-              });
-
               if (passion === "Don't know") {
-                db.collection("users").doc(auth.user.uid).set({
+                db.collection("users").doc(user.uid).set({
                   name: name,
-                  email: email,
+                  email: user?.email,
                   qualities: selectedQualities,
                   passion: passion,
-                  subInterest : input,
-                  branch : branch,
-                  year : year,
+                  subInterest: input,
+                  branch: branch,
+                  year: year,
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 });
               } else {
-                db.collection("users").doc(auth.user.uid).set({
+                db.collection("users").doc(user.uid).set({
                   name: name,
-                  email: email,
+                  email: user?.email,
                   qualities: selectedQualities,
                   passion: passion,
                   experience: experience,
-                  subInterest : input,
-                  branch : branch,
-                  year : year,
+                  subInterest: input,
+                  branch: branch,
+                  year: year,
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 });
               }
-
               const id = uuid();
 
               if (image) {
@@ -137,7 +176,7 @@ function CreateAccount() {
                   async () => {
                     const url = await upload.snapshot.ref.getDownloadURL();
                     if (url) {
-                      db.collection("users").doc(auth.user.uid).update({
+                      db.collection("users").doc(user.uid).update({
                         profilePhotoUrl: url,
                       });
                     }
@@ -145,10 +184,34 @@ function CreateAccount() {
                 );
               }
 
+              if(coverImage){
+                const upload = storage.ref(`images/${id}`).put(coverImage);
+
+                upload.on(
+                  "state_changed",
+                  (snapshot) => {
+                    const progress =
+                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+                    console.log(`Progress : ${progress}%`);
+                    if (snapshot.state === "RUNNING") {
+                      console.log(`Progress : ${progress}%`);
+                    }
+                  },
+                  (error) => console.log(error.code),
+                  async () => {
+                    const url = await upload.snapshot.ref.getDownloadURL();
+                    if (url) {
+                      db.collection("users").doc(user.uid).update({
+                        coverImageUrl: url,
+                      });
+                    }
+                  }
+                );
+              }
+
               history.push("/world");
-            }
-          })
-          .catch((error) => alert(error.message));
+            
       } else {
         alert("Please fill all the details");
       }
@@ -157,147 +220,179 @@ function CreateAccount() {
     }
   };
 
+  const add_background_image = (e) => {
+    e.preventDefault();
+    if (e.target.files[0]) {
+      setCoverImage(e.target.files[0]);
+    }
+  }
+
   return (
     <Container>
-      <div className="left">
-        {image ? (
-          <Avatar className="avatar" src={URL.createObjectURL(image)} />
-        ) : (
-          <Avatar className="avatar" />
-        )}
-        <input
-          type="file"
-          style={{
-            display: "none",
-          }}
-          id="photo"
-          onChange={selectImage}
-          accept="image/git , image/jpeg , image/png"
-        />
-        <label htmlFor="photo">
-          <p>Select a profile photo</p>
-        </label>
-      </div>
-      <div className="right">
-        <div className="right_header">
-          <p>Passion</p>
-        </div>
-        <div className="right_details">
-          <div className="info">
-            <p>Email:</p>
-            <input
-              type="text"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="info">
-            <p>Password:</p>
-            <input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="info">
-            <p>Username:</p>
-            <input
-              type="text"
-              placeholder="Enter username"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="info">
-            <p>Branch:</p>
-            <input
-              type="text"
-              placeholder="Enter branch"
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-            />
-          </div>
-          <div className="info">
-            <p>Year:</p>
-            <input
-              type="text"
-              placeholder="Enter email"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-            />
-          </div>
-          <div className="description">
-            <p onClick={openQaulitiesPopup} className="let_us">
-              Let us know more about you
-            </p>
-            {selectedQualities.length > 0 && (
-              <div className="selected_qualities_div">
-                {selectedQualities?.length > 0 && (
-                  <p className="your_qualities">Your Qualities:</p>
-                )}
-                <div className="selected_qualities_div_qualities">
-                  {selectedQualities.map((quality) => (
-                    <Quality quality={quality} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-         <div className="passion">
-            <p onClick={open_passion_popup} className="select_passion">
-              Select your passion , interest:{" "}
-            </p>
-            <p>{passion}</p>
-          </div>
-          {passion && passion !== "Don't know" && (
-            <>
-              <div className="subfield">
-                <p>Mention subInterest in your passion:</p>
-                <input
-                  type="text"
-                  placeholder=""
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  style = {{
-                    textTransform : "uppercase"
-                  }}
-                />
-              </div>
-            </>
-          )}
-          {passion && passion !== "Don't know" && (
-            <div className="experience">
-              <p>Experience in your passion: </p>
-              <FormControl sx={{ m: 1, minWidth: 180 }}>
-                <InputLabel id="demo-simple-select-label">
-                  Experience
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={experience}
-                  label="Experience"
-                  onChange={handleChange}
-                >
-                  <MenuItem value={0}>Less than 1 year</MenuItem>
-                  <MenuItem value={1}>1 year</MenuItem>
-                  <MenuItem value={2}>2 years</MenuItem>
-                  <MenuItem value={3}>3 years</MenuItem>
-                  <MenuItem value={4}>4 years</MenuItem>
-                </Select>
-              </FormControl>
+      <div className="createIn">
+        <div className="up"
+         style = {{
+          backgroundImage: coverImage && `url(${URL.createObjectURL(coverImage)})`
+        }}
+        >
+          {image ? (
+            <div className="photo"
+            >
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  <label htmlFor="photo" className = "camera_label">
+                    <PhotoCamera className="camera_icon" />
+                  </label>
+                }
+              >
+                <Avatar className="avatar" src={URL.createObjectURL(image)} />
+              </Badge>
+            </div>
+          ) : (
+            <div className="photo"
+            >
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  <label htmlFor="photo" className = "camera_label">
+                    <PhotoCamera className="camera_icon" />
+                  </label>
+                }
+              >
+                <Avatar className="avatar" />
+              </Badge>
             </div>
           )}
-          <div className="create_account_button">
-            <button onClick={create_account}>Create Account</button>
+          <input
+            type="file"
+            style={{
+              display: "none",
+            }}
+            id="photo"
+            onChange={selectImage}
+            accept="image/git , image/jpeg , image/png"
+          />
+          <div className="cover_photo">
+            <label htmlFor="photo_background">
+            <p>Add background image</p>
+            </label>
+            <input
+            type="file"
+            style={{
+              display: "none",
+            }}
+            id="photo_background"
+            onChange={add_background_image}
+            accept="image/git , image/jpeg , image/png"
+          />
           </div>
         </div>
+        <div className="down">
+          <div className="down_details">
+            <div className="info">
+              <input
+                type="text"
+                placeholder="Enter username"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="info">
+              <input
+                type="text"
+                placeholder="Enter branch"
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+              />
+            </div>
+            <div className="info">
+              <input
+                type="number"
+                placeholder="Enter year"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+              />
+            </div>
+            <div className="description">
+              {selectedQualities?.length === 0 && (
+                <button onClick={openQaulitiesPopup} className="let_us">
+                  Let us know more about you
+                </button>
+              )}
+              {selectedQualities.length > 0 && (
+                <div className="selected_qualities_div">
+                  <div className="selected_qualities_div_qualities">
+                    <div className="edit_button">
+                      <button onClick={openQaulitiesPopup}>Edit</button>
+                    </div>
+                    <div className="s_qualities">
+                      {selectedQualities.map((quality) => (
+                        <Quality quality={quality} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="passion">
+              {!passion && (<button onClick={open_passion_popup} className="let_us">
+                Select your passion , interest
+              </button>)}
+             {passion && ( <p>{passion}</p>)}
+            </div>
+            {passion && passion !== "Don't know" && (
+              <>
+                <div className="subfield">
+                  {passion === 'Research'?(
+                    <p>Mention your topic of Research</p>
+                  ):(<p>Mention subInterest in your passion:</p>)}
+                  <input
+                    type="text"
+                    placeholder=""
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    style={{
+                      textTransform: "uppercase",
+                    }}
+                  />
+                </div>
+              </>
+            )}
+            {passion && passion !== "Don't know" && (
+              <div className="experience">
+                <p>Experience in your passion: </p>
+                <FormControl sx={{ m: 1, minWidth: 180 }}>
+                  <InputLabel id="demo-simple-select-label">
+                    Experience
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={experience}
+                    label="Experience"
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={0}>Less than 1 year</MenuItem>
+                    <MenuItem value={1}>1 year</MenuItem>
+                    <MenuItem value={2}>2 years</MenuItem>
+                    <MenuItem value={3}>3 years</MenuItem>
+                    <MenuItem value={4}>4 years</MenuItem>
+                  </Select>
+                </FormControl>
+              </div>
+            )}
+            <div className="create_account_button">
+              <button onClick={create_account}>Create Account</button>
+            </div>
+          </div>
+        </div>
+        <QualitiesPopup />
+        <PassionPopup />
+        <LearningsPopup />
       </div>
-      <QualitiesPopup />
-      <PassionPopup />
-      <LearningsPopup />
     </Container>
   );
 }
@@ -305,9 +400,16 @@ function CreateAccount() {
 const Container = styled.div`
   height: 100vh;
   width: 100vw;
-  display: flex;
-  /* align-items : center; */
-  overflow: hidden;
+
+  .createIn {
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    /* border-left : 1px solid lightgray;
+    border-right : 1px solid lightgray; */
+  }
 
   @media (max-width: 500px) {
     display: flex;
@@ -316,23 +418,18 @@ const Container = styled.div`
     padding-bottom: 20px;
   }
 
-  .left {
-    flex: 0.3;
-    padding-top: 20px;
-    border-right: 1px solid lightgray;
+  .up {
+    padding-top: 50px;
     align-items: center;
     justify-content: center;
     height: 100%;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 20px;
+    background-color: #e9e6e6;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 
-    label {
-      p {
-        color: #006eff;
-        text-align: center;
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
   }
 
   .avatar {
@@ -341,40 +438,43 @@ const Container = styled.div`
     margin-left: auto;
     margin-right: auto;
     margin-top: 40px;
+    border: 2px solid white;
   }
 
-  .right {
-    flex: 0.7;
+  .down {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
     .right_header {
       padding-left: 20px;
       border-bottom: 1px solid lightgray;
     }
 
-    .right_details {
-      padding-left: 20px;
+    .down_details {
+      /* padding-left: 20px; */
       display: flex;
       flex-direction: column;
       overflow-y: scroll;
       padding-bottom: 20px;
+      width : 550px;
     }
 
-    .right_details::-webkit-scrollbar {
+    .down_details::-webkit-scrollbar {
       display: none;
     }
 
     .info {
-      p {
-        margin-bottom: 6px;
-      }
+      margin-bottom: 20px;
       input {
-        margin-bottom: 0px;
-        border-radius: 5px;
-        height: 15px;
-        padding: 5px;
-        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 10px;
+        border: 1px solid gray;
+        padding: 10px;
+        width: 400px;
+        outline: 0;
       }
     }
 
@@ -382,23 +482,43 @@ const Container = styled.div`
     }
 
     .let_us {
+      padding: 10px;
+      border : 1px solid lightgray;
+      border-radius : 5px;
+      background-color : white;
+
       &:hover {
-        cursor: pointer;
-        color: blue;
+        cursor : pointer;
+        background-color : lightgray;
       }
     }
 
     .selected_qualities_div {
       display: flex;
       flex-direction: column;
-      border: 1px solid lightgray;
-      padding-left: 10px;
-      padding-top: 10px;
-      width: 75%;
+      padding: 10px;
+      width: 90%;
       border-radius: 10px;
+      border: 1px solid lightgray;
     }
 
-    .selected_qualities_div_qualities {
+    .edit_button {
+      button {
+        background-color: #ecebeb;
+        border: 1px solid gray;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 7px;
+        width: 80px;
+
+        &:hover {
+          background-color: #b3b3b3;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .s_qualities {
       display: flex;
       flex-wrap: wrap;
     }
@@ -419,12 +539,17 @@ const Container = styled.div`
       }
       p {
         margin-top: 0px;
+        border : 0;
+        padding : 10px;
+        background-color : #2174f1;
+        color : white;
+        border-radius : 20px;
       }
     }
 
     .create_account_button {
       display: flex;
-      justify-content: center;
+      justify-content: flex-end;
       margin-top: 10px;
 
       button {
@@ -432,12 +557,13 @@ const Container = styled.div`
             padding-bottom : 10px; */
         border-radius: 20px;
         padding: 10px;
-        background-color: #7cdff8;
+        background-color: #847cf8;
         border: 1px solid lightgray;
+        color : white;
 
         &:hover {
           cursor: pointer;
-          background-color: #56caf8;
+          background-color: #a59fff;
         }
       }
     }
@@ -455,6 +581,39 @@ const Container = styled.div`
         outline: 0;
       }
     }
+  }
+
+  .photo {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .camera_label{
+    background-color: white;
+    padding: 5px;
+    padding-bottom: 2px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .cover_photo{
+      margin-bottom : 10px;
+      display : flex;
+      justify-content : flex-end;
+      width : 100%;
+
+      p {
+        margin-right : 10px;
+        padding : 7px;
+        border-radius : 5px;
+        background-color : white;
+        border : 1px solid lightgray;
+        font-size : 14px;
+        margin-top : 0;
+        margin-bottom : 0;
+      }
+
   }
 `;
 

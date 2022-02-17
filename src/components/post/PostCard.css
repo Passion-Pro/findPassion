@@ -6,8 +6,10 @@
     max-width: 1300px;
     display: flex;
     width: 99%;
-    margin: .5%;
+    margin: 2%;
     justify-content: center;
+    background-color:white;
+    border-radius:8px;
 }
 .PostCard__lower__head{
     display: flex;
@@ -15,14 +17,13 @@
     font-weight: 500;
     color: #07567e;
     padding: 8px;
+    padding-left: 15px;
 }
 .PostCardStartedIn{
     display: flex;
     flex-direction: column;
     width: 98%;
-    border: 1px solid lightgray;
     box-shadow: 0 0 9px -6px gray;
-    border-radius:8px;
     min-height:10vh ;
     padding: 1%;
     justify-content: center;
@@ -67,6 +68,7 @@
     font-weight: 600;
     color: rgb(85, 78, 78);
     padding: 8px;
+    padding-left : 15px;
 }
 .PostCard__image>img{
     display: flex;
@@ -90,7 +92,7 @@
     align-items: center;
     color: rgb(38, 148, 212);
     padding-top: 12px;
-    padding-left: 4px;
+    padding-left: 15px;
 }
 .postCard__likeicon>span{
     font-size: small;

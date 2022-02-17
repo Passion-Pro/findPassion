@@ -1,4 +1,4 @@
-import React from 'react'
+import React , {useState, useEffect} from 'react'
 import styled from "styled-components";
 import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
@@ -9,13 +9,73 @@ import Message from "../chat/Message"
 import AttachPopup from "../chat/AttachPopup";
 import Avatar from "@mui/material/Avatar";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import {useHistory} from "react-router-dom"
+import {useHistory , useParams} from "react-router-dom"
+import db from '../../firebase';
+import firebase from "firebase";
+import Picker from "emoji-picker-react";
+
 
 
 
 function ChatPage() {
-    const[{} , dispatch] = useStateValue();
+    const[{user , userInfo} , dispatch] = useStateValue();
     const history = useHistory();
+    const {myChatId} = useParams();
+    const {viewerId} = useParams();
+    const[messages, setMessages] = useState([])
+    const[chatInfo  ,setChatInfo] = useState([]);
+    const[profilePhotoUrl , setProfilePhotoUrl] = useState();
+    const[input , setInput] = useState("")
+    const [openEmojis, setOpenEmojis] = useState(false);
+    const [chosenEmoji, setChosenEmoji] = useState("");
+
+    useEffect(() => {
+       if(myChatId && user?.uid){
+        db.collection("users")
+        .doc(user?.uid)
+        .collection("chats")
+        .doc(myChatId)
+        .collection("messages")
+        .orderBy("timestamp", "desc")
+        .onSnapshot((snapshot) =>
+          setMessages(
+            snapshot.docs.map((doc) => ({
+              data: doc.data(),
+              id: doc.id,
+            }))
+          )
+        );
+
+        db.collection("users")
+        .doc(user?.uid).collection("chats").doc(myChatId)
+        .onSnapshot((snapshot) => {
+          setChatInfo(snapshot.data());
+        });
+
+
+       }
+    } , [myChatId , user?.uid]);
+
+    useEffect(() => {
+      if(chatInfo?.email){
+        db.collection("users")
+        .where("email", "==", chatInfo?.email)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+            
+           setProfilePhotoUrl(doc.data().profilePhotoUrl)
+          
+
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+      }
+    } , [chatInfo?.email])
 
     const open_attachPopup = () => {
         dispatch({
@@ -24,35 +84,184 @@ function ChatPage() {
         })
       }
 
+      const onEmojiClick = (event, emojiObject) => {
+        setChosenEmoji(emojiObject);
+        setInput(input + emojiObject?.emoji);
+      };
+
+      const send_message = (e) => {
+        e.preventDefault();
+        if (input !== "") {
+          if (messages?.length === 0) {
+            console.log("X is ", 0);
+            db.collection("users")
+              .doc(user?.uid)
+              .collection("chats")
+              .where("email", "==", chatInfo?.email)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+    
+                  db.collection("users")
+                    .doc(user?.uid)
+                    .collection("chats")
+                    .doc(doc.id)
+                    .collection("messages")
+                    .add({
+                      name: userInfo?.name,
+                      message: input,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      type: "text",
+                    });
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+    
+            db.collection("users")
+              .doc(viewerId)
+              .collection("chats")
+              .add({
+                name: userInfo?.name,
+                email: userInfo?.email,
+              })
+              .then(() => {
+                db.collection("users")
+                  .doc(viewerId)
+                  .collection("chats")
+                  .where("email", "==", userInfo?.email)
+                  .get()
+                  .then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                      // doc.data() is never undefined for query doc snapshots
+                      console.log(doc.id, " => ", doc.data());
+    
+                      db.collection("users")
+                        .doc(viewerId)
+                        .collection("chats")
+                        .doc(doc.id)
+                        .collection("messages")
+                        .add({
+                          name: userInfo?.name,
+                          message: input,
+                          timestamp:
+                            firebase.firestore.FieldValue.serverTimestamp(),
+                          type: "text",
+                          status : "unseen"
+                        });
+                    });
+                  })
+                  .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                  });
+              });
+          } else {
+            db.collection("users")
+              .doc(user?.uid)
+              .collection("chats")
+              .where("email", "==", chatInfo?.email)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+    
+                  db.collection("users")
+                    .doc(user?.uid)
+                    .collection("chats")
+                    .doc(doc.id)
+                    .collection("messages")
+                    .add({
+                      name: userInfo?.name,
+                      message: input,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      type: "text",
+                    });
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+    
+            db.collection("users")
+              .doc(viewerId)
+              .collection("chats")
+              .where("email", "==", userInfo?.email)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+    
+                  db.collection("users")
+                    .doc(viewerId)
+                    .collection("chats")
+                    .doc(doc.id)
+                    .collection("messages")
+                    .add({
+                      name: userInfo?.name,
+                      message: input,
+                      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      type: "text",
+                      status : "unseen"
+                    });
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+          }
+          setInput("");
+        }
+      };
+
     return (
         <Container>
         <div className="chat_section">
         <div className="chat_section_name">
           <ArrowBackIcon className = "back_icon" onClick = {e => history.goBack()}/>
-          <Avatar
+          {profilePhotoUrl && (
+            <Avatar
             className="avatar"
-            src="https://bsmedia.business-standard.com/_media/bs/img/article/2018-03/22/full/1521664011-0145.jpg"
+            src= {profilePhotoUrl}
           />
+          )}
           <div className="chat_section_name_info">
-            <p>Ronak</p>
+            <p>{chatInfo?.name}</p>
           </div>
         </div>
 
         <div className="chat_section_messages">
-            <Message/>
-            <Message/>
-            <Message/>
+            {messages.map((message) => (
+               <Message message={message} chatEmail={chatInfo?.email} />
+            ))}
         </div>
         <div className="chat_section_footer">
            <AttachFileIcon className = "attach_icon" onClick = {open_attachPopup}/>
           <div className="message_input">
-            <InsertEmoticonIcon className="emoji_icon" />
-            <input type="text" />
+            <InsertEmoticonIcon className="emoji_icon" 
+             onClick={(e) => setOpenEmojis(!openEmojis)}
+            />
+            <input type="text" 
+             value = {input}
+             placeholder = "Type your message"
+             onChange = {(e) => {setInput(e.target.value)}}
+            />
           </div>
-          <SendIcon className = "send_icon"/>
+          <SendIcon className = "send_icon" onClick={send_message}
+          />
         </div>
+        {openEmojis === true && <Picker onEmojiClick={onEmojiClick} />}
       </div>
-      <AttachPopup/>
+      <AttachPopup
+        from="chat"
+        chatMessages={messages}
+        chatInfo={chatInfo}
+        chatId={viewerId}
+      />
       </Container>
     )
 };
@@ -96,7 +305,7 @@ const Container  = styled.div`
     flex: 1;
     background-color: #0099ff;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     overflow-y : scroll;
   }
 
@@ -157,6 +366,10 @@ const Container  = styled.div`
     color : gray;
 }
   }
+
+.emoji-picker-react {
+  width : 100% !important;
+}
 
 
 `;

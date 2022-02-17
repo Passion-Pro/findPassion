@@ -62,7 +62,8 @@ function Home() {
   return (
     <>
       <div className='home'>
-        <HeaderSecond />
+        {/* <Header /> */}
+        {/* <HeaderSecond /> */}
         <div className="homeBody">
           <div className="stories">
             <div className="createStory" >

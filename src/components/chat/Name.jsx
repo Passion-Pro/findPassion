@@ -150,7 +150,7 @@ function Name({ chat, id }) {
           <Container
             className="name_for_mobile"
             onClick={(e) => {
-              history.push("/messages");
+              history.push(`/messages/${id2}/${viewerId}`);
               setX(0);
 
               db.collection("users")
@@ -183,7 +183,7 @@ function Name({ chat, id }) {
           >
             <Avatar
               className="avatar"
-              src="https://bsmedia.business-standard.com/_media/bs/img/article/2018-03/22/full/1521664011-0145.jpg"
+              src={chatInfo?.profilePhotoUrl}
             />
             <div className="chatName_info">
               <p>{chatInfo?.name}</p>

@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 100vw;
     align-items: center;
+    background-color : #003663;
 }
 .homeBody{
     display: flex;
@@ -42,13 +43,11 @@
     border: 2px solid #e8e9eb;
     background-color: #f6f9fc; 
     border-radius: 6px;
-    box-shadow: 0 0 15px -2px rgba(50,50,93,0.25);
 }  
 .header__ProfileName__Head{
     display: flex;
     padding: 12px;
-    font-weight: 700;
-    font-size: large;
+    font-size: 18px;
     color: #0a2540;
 }
 .Arrow__showrecommendProfile{
@@ -99,4 +98,9 @@
     .Arrow__showrecommendProfile{
         display: none;
     }
+}
+
+.other_students{
+    display : flex;
+    flex-wrap: wrap;
 }

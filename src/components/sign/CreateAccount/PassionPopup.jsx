@@ -4,10 +4,24 @@ import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import CloseIcon from "@mui/icons-material/Close";
 import PassionName from "./PassionName";
+import db from "../../../firebase";
+
 
 function PassionPopup() {
   const [{ openPassionPopup }, dispatch] = useStateValue();
-  const[input , setInput] = useState("")
+  const[input , setInput] = useState("");
+  const[passions , setPassions] = useState([]);
+
+  useEffect(() => {
+    db.collection("passions").onSnapshot((snapshot) => {
+      setPassions(
+        snapshot.docs.map((doc) => ({
+          id : doc.id,
+          data : doc.data(),
+        }))
+      )
+    })
+  } , [])
 
   const close_popup = () => {
     dispatch({
@@ -40,20 +54,13 @@ function PassionPopup() {
         <Container>
           <div className="passionPopup">
             <div className="passionPopup_header">
-              <p>Select your passion:</p>
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
+            <p className = "select_passion">Select your passion , interest</p>
             <div className="passion_list">
-              <PassionName name="Web Development" />
-              <PassionName name="App Development" />
-              <PassionName name="Don't know" />
-            </div>
-            <div className="add_passion">
-              <p>Add your passion</p>
-              <input type="text" placeholder = "Enter your passion" value = {input} onChange={e => setInput(e.target.value)} />
-              <div className="add_passion_button">
-                <button onClick = {add_passion}>Add</button>
-              </div>
+              {passions.map((passion) => (
+                <PassionName name = {passion?.data?.name} />
+              ))}
             </div>
           </div>
         </Container>
@@ -89,6 +96,7 @@ const Container = styled.div`
     .passionPopup_header{
       display: flex;
       width: 100%;
+      justify-content: flex-end;
       p {
         margin-bottom: 10px;
         margin-top: 0;
@@ -143,6 +151,11 @@ const Container = styled.div`
               padding-right : 5px;
           }
     }
+  }
+
+
+  .select_passion {
+    margin-top : 0;
   }
 `;
 

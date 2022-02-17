@@ -237,3 +237,30 @@
         
     }
 }
+
+.emoji_icon {
+    font-size: 25px;
+    color: #686868;
+  }
+
+.emoji_icon:hover {
+    cursor: pointer;
+    color: gray;
+}
+
+.emoji-picker-react{
+    width : 100% !important;
+    height : 390px !important;
+}
+
+.attach_icon {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 1px;
+    color: #686868;
+  }
+
+.attach_icon:hover{
+    cursor: pointer;
+    color : gray;
+}

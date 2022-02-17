@@ -11,10 +11,10 @@ import { useStateValue } from '../../StateProvider';
 function HomeWithAllProfile() {
 
     const [data, setData] = useState([]);
-    const[{userInfo} , dispatch] = useStateValue();
+    const [{ userInfo }, dispatch] = useStateValue();
 
     useEffect(() => {
-        db.collection(userInfo?.gender=='male'? "girls":"boys")
+        db.collection('users')
             .onSnapshot((snapshot) => {
                 setData(
                     snapshot.docs.map((doc) => ({
