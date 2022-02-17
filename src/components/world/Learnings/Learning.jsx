@@ -118,7 +118,8 @@ function Learning({ learning, type, learnings }) {
             .doc(doc.id)
             .collection("learnRequests")
             .add({
-              requestFrom: userInfo,
+              requestEmail : user?.email,
+              requestName : userInfo?.name,
               learning: learning,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               status: "pending",
@@ -172,6 +173,27 @@ function Learning({ learning, type, learnings }) {
     setFired(false);
   };
 
+  const goToProfilePage = (e) => {
+    e.preventDefault();
+
+    db.collection("users")
+            .where("email", "==", learning?.data?.started_by?.email)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                
+                history.push(`/viewProfile/${doc.id}`)
+              
+
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+  }
+
   return (
     <>
       <Container>
@@ -180,9 +202,12 @@ function Learning({ learning, type, learnings }) {
             style={{
               display: "flex",
             }}
-          >
+            className="learning_uploader"
+            >
             <Avatar src={profilePhotoUrl} className="avatar" />
-            <p className="learning_name">
+            <p className="learning_name"
+            onClick={goToProfilePage}
+            >
               {type === `my`
                 ? userInfo?.name
                 : learning?.data?.started_by?.name}
@@ -364,6 +389,18 @@ const Container = styled.div`
 
   .learning_name {
     margin-top: 2px !important;
+  }
+
+  .learning_uploader{
+    &:hover {
+      cursor : pointer;
+
+      p{
+        &:hover {
+          color : #1b7ae7;
+        }
+      }
+    }
   }
 `;
 

@@ -8,6 +8,8 @@ import ProfileImage from '../profile/ProfileImage';
 import AddIcon from '@mui/icons-material/Add';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
+import ChatIcon from '@mui/icons-material/Chat';
 import PostPopup from '../post/PostPopup';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
@@ -47,7 +49,7 @@ function Header() {
                         <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                             <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
-                        <div className="Loginheader__Icon__addIcon" onClick={() => {
+                        {/* <div className="Loginheader__Icon__addIcon" onClick={() => {
                             dispatch({
                                 type: actionTypes.SET_COURSEDIV,
                                 courseDiv: true,
@@ -55,18 +57,19 @@ function Header() {
                         }
                         }>
                             <AddIcon style={{ fontSize: 30, color: "white", cursor: "pointer" }} />
+                        </div> */}
+                        <div className="Loginheader__Icon__search" onClick={() => history.push('/all_profile')}>
+                            <LanguageRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
                         <div className="Loginheader__Icon__search" onClick={() => history.push('/group')}>
                             <GroupsRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
-                        <div className="Loginheader__Icon__search" onClick={() => history.push('/world')}>
-                            <LanguageRoundedIcon style={{ fontSize: 30, color: "white" }} />
-                        </div>
+                        <div className="Loginheader__Icon__search" onClick={() => history.push('/chat')}>
+                            <ChatIcon style = {{ fontSize: 30 , color : "white"}}/>
+                        </div> 
                     </div>
 
-                    <div className="Loginheader__profile" onClick={()=>{
-                            history.push('/userProfile')
-                        }}>
+                    <div className="Loginheader__profile" onClick = {() => history.push("/userProfile")}>
                         {userInfo?.profilePhotoUrl ? <ProfileImage image={userInfo?.profilePhotoUrl} /> : <AccountCircleRoundedIcon style={{ fontSize: 50, color: "white" }} />}
                         <span className='Loginheader_profileName'>
                             {userInfo?.name && userInfo?.name?.length > 9 ? userInfo?.name.slice(0, 9) : userInfo?.name}

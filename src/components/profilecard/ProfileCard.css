@@ -56,6 +56,19 @@
     font-size: small;
     font-weight:600;
 }
+
+.quality{
+    width : fit-content;
+    padding : 7px;
+    padding-right : 15px;
+    padding-left : 15px;
+    border-radius : 20px;
+    padding-bottom : 10px !important;
+    margin-right : 5px;
+    margin-bottom : 7px;
+    color : white;
+}
+
 @media(max-width:1300px){
     .profilecard{ 
         max-width: 340px;

@@ -45,6 +45,8 @@ import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
 import HeaderNot from "./components/withoutlogin/Header";
 import ShowTask from "./components/group/ShowTask";
+import { CircularProgress } from '@mui/material';
+import PostsPage from "./components/world/Posts/PostsPage";
 
 function App() {
 
@@ -234,8 +236,8 @@ function App() {
           <Route path="/chat">
             {user?.email ? <Chat /> : <Login />}
           </Route>
-          <Route path="/messages">
-            {user?.email ? <ChatPage /> : <Login />}
+          <Route path="/messages/:myChatId/:viewerId">
+            <ChatPage />
           </Route>
           <Route path="/world">
             {user?.email ? <WorldPage /> : <Login />}
@@ -249,8 +251,8 @@ function App() {
           <Route path="/learning/:learningId">
             {user?.email ? <LearningGroup /> : <Login />}
           </Route>
-          <Route path="/learners">
-            {user?.email ? <LearnersPage /> : <Login />}
+          <Route path= "/learners/:learningId">
+            <LearnersPage />
           </Route>
           <Route path="/profile">
             {user?.email ? <ProfilePage /> : <Login />}
@@ -270,6 +272,9 @@ function App() {
           <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
+          <Route path="/posts">
+            <PostsPage/>
+          </Route>
           <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
@@ -282,7 +287,7 @@ function App() {
           <Route path="/userProfileLearnt">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/">{user?.email ? <Home /> : <Login />}</Route>
+          <Route path="/">{user?.email && <WorldPage/>}</Route>
         </Switch>
       </Router>
     </div>

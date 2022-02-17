@@ -15,7 +15,6 @@ function JourneyThroughPopup({setOpenJourneyPopup}) {
         </div>
         <div className="journey_options">
             <button onClick={(e) => history.push(`/addJourney/photos`)}>Show Journey through photos and words</button>
-            <button onClick={(e) => history.push(`/addJourney/words`)}>Show Journey through words</button>
             <button onClick={(e) => history.push(`/addJourney/video`)}>Show Journey through video</button>
         </div>
      </div>
@@ -46,6 +45,10 @@ const Container  = styled.div`
     flex-direction: column;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
+
+    @media(max-width: 550px){
+      width : 85vw;
+    }
   }
 
   .journeyThrough_header{

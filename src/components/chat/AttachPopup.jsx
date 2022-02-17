@@ -15,11 +15,12 @@ import { useHistory } from "react-router-dom";
 import Loading from "../../Loading";
 import Picker from "emoji-picker-react";
 
+
 function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
   const [{ openAttachPopup, user, userInfo }, dispatch] = useStateValue();
   const [image, setImage] = useState();
   const [video, setVideo] = useState();
-  const [input, setInput] = useState();
+  const [input, setInput] = useState("");
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState(null);

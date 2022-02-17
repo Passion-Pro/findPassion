@@ -2,10 +2,13 @@
     width: 92%;
     background-color:white;
     margin: 2%;
-    padding: 8px 2% 8px 2%;
+    margin-top : 1%;
+    margin-bottom: 1%;
+    padding: 10px 2% 10px 2%;
     border-radius: 4px;
     box-shadow: 0 0 10px -6px #608db1;
     border: 1px solid #c9d8e5;
+    border-radius : 10px;
 }
 .searchNamefirstdiv{
     display:flex;
@@ -45,6 +48,12 @@
     flex: 0.9;
     width: 100%;
     color: rgb(34, 27, 27);
+}
+
+.user_passion{
+    margin-top: 3px;
+    margin-bottom: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 /* @media(max-width:800px){
     .searchName__SpanStatus{

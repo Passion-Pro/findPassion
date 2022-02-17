@@ -17,40 +17,42 @@ function SelectedQuality({quality}) {
         })
     }
     return (
-        <Container>
-          <p>{quality}</p>
+        <Container
+        style = {{
+            backgroundColor : quality?.data?.color
+        }}
+        >
+          <p>{quality?.data?.name}</p>
           <CancelIcon className="close_icon" onClick={removeQuality}/>
         </Container>
     )
 }
 
 const Container  = styled.div`
- background-color: #65a4f7;
  width : fit-content;
- padding : 2px;
+ padding : 7px;
  padding-right : 0px;
  padding-left : 15px;
  border-radius : 20px;
  display : flex;
- margin-right : 5px;
- margin-bottom : 5px;
+ margin-right : 7px;
+ margin-bottom : 7px;
  padding-bottom : 5px;
 
  p{
      margin : 0;
      padding : 0;
      font-size : 15px;
+     margin-bottom : 7px;
  }
 
- &:hover {
-     background-color : #96c0f7;
- }
+ 
 
  .close_icon{
-     font-size : 18px !important;
-     margin-top : auto;
+     font-size : 21px !important;
+     margin-top : 1px;
      margin-bottom : auto;
-     margin-left : 10px;
+     margin-left : 5px;
      &:hover {
          cursor: pointer;
      }

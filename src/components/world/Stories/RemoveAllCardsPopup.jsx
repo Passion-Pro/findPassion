@@ -41,7 +41,7 @@ function RemoveAllCardsPopup({setOpenRemovePopup , journeyId}) {
 };
 
 const Container = styled.div`
- position: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -71,7 +71,7 @@ const Container = styled.div`
     border-radius: 7px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 0 15px rgba(197, 111, 111, 0.24);
     padding: 10px;
 }
 

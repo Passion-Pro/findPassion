@@ -26,11 +26,12 @@ function PassionName({name}) {
 const Container = styled.div`
   border : 1px solid lightgray;
   margin-bottom : 10px;
-  border-radius : 5px;
+  border-radius :20px;
   background-color: white;
+  padding-left : 10px;
   p{
       margin-top : 0;
-      margin-bottom : 0;
+      margin-bottom : 5px;
       padding : 5px;
   }
 

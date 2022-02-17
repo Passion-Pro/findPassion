@@ -1,106 +1,143 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
 import db from "../../firebase";
 import Avatar from "@mui/material/Avatar";
 import firebase from "firebase";
+import { useHistory } from "react-router-dom";
 
-function Request({ request }) {
+function Request({ request, learnings }) {
   const [{ user, userInfo }, dispatch] = useStateValue();
+  const history = useHistory();
+
+  useEffect(() => {
+    console.log("ABC", request?.data?.learning?.data?.started_by);
+  }, []);
 
   const accept_request = (e) => {
     e.preventDefault();
 
-    db.collection("users")
-      .doc(user?.uid)
-      .collection("learnRequests")
-      .where("requestFrom", "==", request?.data?.requestFrom)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
+    if (request?.data?.requestEmail) {
+      console.log("YES");
+      db.collection("users")
+        .doc(user?.uid)
+        .collection("learnRequests")
+        .where("requestEmail", "==", request?.data?.requestEmail)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data().learning?.learning);
 
-          if (
-            doc.data().learning?.learning === request?.data?.learning?.learning
-          ) {
-            db.collection("users")
-              .doc(user?.uid)
-              .collection("learnRequests")
-              .doc(doc.id)
-              .update({
-                status: "accepted",
-              });
-
-            db.collection("learnings")
-              .where("started_by", "==", request?.data?.learning?.started_by)
-              .get()
-              .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  // doc.data() is never undefined for query doc snapshots
-
-                  console.log(doc.id, " => ", doc.data());
-
-                  if (
-                    doc.data()?.learning?.learning ===
-                    request?.data?.learning?.learning
-                  ) {
-                    db.collection("learnings")
-                      .doc(doc.id)
-                      .collection("learners")
-                      .add({
-                        learner: request?.data?.requestFrom,
-                      });
-                  }
-
-                  db.collection("users")
-                    .doc(doc.id)
-                    .onSnapshot((snapshot) =>
-                      dispatch({
-                        type: actionTypes.SET_USER_INFO,
-                        userInfo: snapshot.data(),
-                      })
-                    );
+            if (
+              doc.data().learning?.data?.learning ===
+              request?.data?.learning?.data?.learning
+              && doc.data().status !== "accepted"
+            ) {
+              console.log("2nd Step");
+              db.collection("users")
+                .doc(user?.uid)
+                .collection("learnRequests")
+                .doc(doc.id)
+                .update({
+                  status: "accepted",
                 });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
+
+              for (let i = 0; i < learnings?.length; i++) {
+                if (
+                  learnings[i]?.data?.started_by?.email ===
+                    request?.data?.learning?.data?.started_by?.email &&
+                  learnings[i]?.data?.learning ===
+                    request?.data?.learning?.data?.learning
+                ) {
+                  db.collection("learnings")
+                    .doc(learnings[i]?.id)
+                    .collection("learners")
+                    .add({
+                      learner: {
+                        email: request?.data?.requestEmail,
+                        name: request?.data?.requestName,
+                      },
+                    });
+
+                    console.log("GOT");
+                }
+              }
+
+              // db.collection("learnings")
+              //   .where("started_by", "==", request?.data?.learning?.data?.started_by)
+              //   .get()
+              //   .then((querySnapshot) => {
+              //     querySnapshot.forEach((doc1) => {
+              //       // doc.data() is never undefined for query doc snapshots
+
+              //       console.log(doc1.id, " => ", doc1.data());
+
+              //       if (
+              //         doc1.data()?.learning?.learning ===
+              //         request?.data?.learning?.data?.learning
+              //       ) {
+              //         console.log("ADDED");
+              //         db.collection("learnings")
+              //           .doc(doc1.id)
+              //           .collection("learners")
+              //           .add({
+              //             learner: {
+              //               email : request?.data?.requestEmail,
+              //               name : request?.data?.requestName
+              //             },
+              //           });
+              //       }
+
+              //       db.collection("users")
+              //         .doc(doc1.id)
+              //         .onSnapshot((snapshot) =>
+              //           dispatch({
+              //             type: actionTypes.SET_USER_INFO,
+              //             userInfo: snapshot.data(),
+              //           })
+              //         );
+              //     });
+              //   })
+              //   .catch((error) => {
+              //     console.log("Error getting documents: ", error);
+              //   });
+            }
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+
+      db.collection("users")
+        .where("email", "==", request?.data?.requestEmail)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+
+            db.collection("users")
+              .doc(doc.id)
+              .collection("myJoinedLearnings")
+              .add({
+                learning: request?.data?.learning,
+                joined_on: firebase.firestore.FieldValue.serverTimestamp(),
               });
-          }
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
         });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-
-    db.collection("users")
-      .where("email", "==", request?.data?.requestFrom?.email)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
-          console.log(doc.id, " => ", doc.data());
-
-          db.collection("users")
-            .doc(doc.id)
-            .collection("myJoinedLearnings")
-            .add({
-              learning: request?.data?.learning,
-              joined_on: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    }
   };
 
   const delete_request = () => {
     db.collection("users")
       .doc(user?.uid)
       .collection("learnRequests")
-      .where("requestFrom", "==", request?.data?.requestFrom)
+      .where("requestEmail", "==", request?.data?.requestEmail)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -108,7 +145,8 @@ function Request({ request }) {
           console.log(doc.id, " => ", doc.data());
 
           if (
-            doc.data().learning?.learning === request?.data?.learning?.learning
+            doc.data().learning?.learning ===
+            request?.data?.learning?.data?.learning
           ) {
             db.collection("users")
               .doc(user?.uid)
@@ -123,16 +161,32 @@ function Request({ request }) {
       });
   };
 
+  const goToProfilePage = (e) => {
+    e.preventDefault();
+
+    db.collection("users")
+      .where("email", "==", request?.data?.requestEmail)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+
+          history.push(`/viewProfile/${doc.id}`);
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  };
+
   return (
     <Container>
       <div className="request_info">
-        <Avatar
-          className="request_info_avatar"
-          src={request?.data?.requestFrom?.profilePhotoUrl}
-        />
+        <Avatar className="request_info_avatar" src="" />
         <div className="request_name_info">
-          <p>
-            <span className="name">{request?.data?.requestFrom?.name}</span> has
+          <p oncClick={goToProfilePage}>
+            <span className="name">{request?.data?.requestName}</span> has
             requested to join your learning
           </p>
           <span className="learning">
@@ -188,6 +242,13 @@ const Container = styled.div`
       p {
         margin-top: 0;
         margin-bottom: 3px;
+      }
+
+      span {
+        &:hover {
+          cursor: pointer;
+          color: #1b7ae7;
+        }
       }
     }
   }

@@ -78,6 +78,7 @@ const Container = styled.div`
     margin-left: 5px;
     margin-bottom: 3px;
     width: fit-content;
+    color : white;
   }
 
   .message_message {
