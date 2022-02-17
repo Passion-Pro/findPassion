@@ -6,10 +6,12 @@ import HeaderSecond from '../header/HeaderSecond';
 import db from '../../firebase';
 import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import { useStateValue } from '../../StateProvider';
 
 function HomeWithAllProfile() {
 
     const [data, setData] = useState([]);
+    const[{userInfo} , dispatch] = useStateValue();
 
     useEffect(() => {
         db.collection(userInfo?.gender=='male'? "girls":"boys")
