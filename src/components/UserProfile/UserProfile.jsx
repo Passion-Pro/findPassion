@@ -24,6 +24,8 @@ function UserProfile() {
   const [involvement, setInvolvement] = useState("");
   const [description, setDescription] = useState("");
   const [achievement, setAchievement] = useState("");
+  const[tags, setTags] = useState([]);
+  const[passions ,setPassions] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -39,6 +41,15 @@ function UserProfile() {
           )
         );
 
+        db.collection("passions").onSnapshot((snapshot) => {
+          setPassions(
+            snapshot.docs.map((doc) => ({
+              id : doc.id,
+              data : doc.data(),
+            }))
+          )
+        })
+
       setExperience(userInfo?.experience);
       dispatch({
         type: actionTypes.SET_PASSION,
@@ -46,6 +57,21 @@ function UserProfile() {
       });
     }
   }, [user]);
+
+  useEffect(() => {
+    if(passions?.length > 0) {
+       
+        for(let i = 0; i < passions?.length; i++){
+          db.collection("passions").doc(passions[i].id).collection("learningTags").onSnapshot((snapshot) => (
+            
+               snapshot.docs.map((doc) => {
+                 tags.push(doc.data())
+               }) 
+            
+          ))
+        }
+     }
+  } , [passions, user ]);
 
   const open_passion_popup = () => {
     dispatch({
@@ -160,7 +186,7 @@ function UserProfile() {
           </div>
           <div className="leant_stuff">
             {learntStuff.map((learntStuff) => (
-              <LearntStuff learntStuff={learntStuff} />
+              <LearntStuff learntStuff={learntStuff} tags = {tags} />
             ))}
           </div>
           <div className="current_involvement">
@@ -237,7 +263,7 @@ function UserProfile() {
         </div>
       </div>
       <PassionPopup />
-      <AddLearntPopup />
+      <AddLearntPopup tags = {tags} />
     </Container>
   );
 }
@@ -447,6 +473,12 @@ const Container = styled.div`
       outline: 0;
       margin-bottom : 20px;
     }
+  }
+
+  .selected_tags{
+    display : flex;
+    flex-wrap : wrap;
+    margin-top : 10px;
   }
 `;
 

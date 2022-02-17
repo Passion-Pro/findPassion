@@ -5,14 +5,15 @@ import { actionTypes } from "../../reducer";
 import { useHistory } from "react-router-dom";
 import Story from "./Stories/Story";
 import StoryPopup from "./Stories/StoryPopup";
-import db from "../../firebase"
-import JourneyThroughPopup from "../world/Stories/JourneyThroughPopup"
+import db from "../../firebase";
+import JourneyThroughPopup from "../world/Stories/JourneyThroughPopup";
 
 function StoriesPage() {
   const history = useHistory();
   const [{ user, userInfo }, dispatch] = useStateValue();
   const [journeys, setJourneys] = useState([]);
-  const[openJourneyPopup  , setOpenJourneyPopup] = useState(false);
+  const [openJourneyPopup, setOpenJourneyPopup] = useState(false);
+  const [myJourney, setMyJourney] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -26,8 +27,20 @@ function StoriesPage() {
             }))
           )
         );
+
+      db.collection("journeys")
+        .doc(user?.uid)
+        .onSnapshot((snapshot) => {
+          setMyJourney({
+            data: snapshot.data(),
+          });
+        });
     }
   }, [user]);
+
+  useEffect(() => {
+    console.log("My Journey is", myJourney);
+  }, [myJourney]);
 
   return (
     <div>
@@ -44,41 +57,67 @@ function StoriesPage() {
         </div> */}
         <div className="options_header">
           <div className="options_buttons">
-          <button
-            className="learnings_button"
-            onClick={(e) => history.push("/world")}
-          >
-            Learnings
-          </button>
-          <button className="stories_button">Stories</button>
+            <button
+              className="learnings_button"
+              onClick={(e) => history.push("/world")}
+            >
+              Learnings
+            </button>
+            <button className="stories_button">Journeys</button>
+            <button
+              className="learnings_button"
+              style = {{
+                marginLeft: '20px'
+              }}
+              onClick={(e) => history.push("/posts")}
+            >
+              Posts
+            </button>
           </div>
           <div className="add_story_button">
-          {userInfo?.experience > 0 && (
-              <button onClick={(e) => {
-                setOpenJourneyPopup(true)
-              }}>
-                Add your journey 🔥
-              </button>
+            {userInfo?.experience > 0 && (
+              <>
+                {myJourney?.data?.uploaderInfo?.email?(
+                  <button
+                  onClick = {(e) => history.push(`/addJourney/${myJourney?.data?.journeyThrough}`)}
+                >
+                  Update Your Journey
+                </button>
+                ):(<button
+                  onClick={(e) => {
+                    setOpenJourneyPopup(true);
+                  }}
+                >
+                  Add Your Journey
+                </button>)}
+              </>
             )}
           </div>
         </div>
         {userInfo?.passion !== "Don't know" && (
-          <div className="journeys">
-            {journeys.map((journey) => (
-              <>
-                {journey.data?.uploaderInfo?.passion === userInfo?.passion && (
-                  <Story journey={journey} />
-                )}
-              </>
-            ))}
-            {journeys.map((journey) => (
-              <>
-                {journey.data?.uploaderInfo?.passion !== userInfo?.passion && (
-                  <Story journey={journey} />
-                )}
-              </>
-            ))}
-          </div>
+          <>
+            {myJourney?.data?.uploaderInfo?.email && (
+              <div className="my_journey">
+                <Story journey={myJourney} />
+              </div>
+            )}
+            <div className="journeys">
+              {journeys.map((journey) => (
+                <>
+                  {journey.data?.uploaderInfo?.passion === userInfo?.passion &&
+                    journey.data?.upload === "yes" && (
+                      <Story journey={journey} />
+                    )}
+                </>
+              ))}
+              {journeys.map((journey) => (
+                <>
+                  {journey.data?.uploaderInfo?.passion !==
+                    userInfo?.passion && <Story journey={journey} />}
+                </>
+              ))}
+            </div>
+          </>
         )}
         {userInfo?.passion === "Don't know" && (
           <div className="stories">
@@ -89,7 +128,9 @@ function StoriesPage() {
         )}
       </Container>
       <StoryPopup />
-      {openJourneyPopup && (<JourneyThroughPopup setOpenJourneyPopup = {setOpenJourneyPopup}/>)}
+      {openJourneyPopup && (
+        <JourneyThroughPopup setOpenJourneyPopup={setOpenJourneyPopup} />
+      )}
     </div>
   );
 }
@@ -97,13 +138,14 @@ function StoriesPage() {
 const Container = styled.div`
   width: 100vw;
   min-height: 90vh;
-  height : fit-content;
+  height: fit-content;
   display: flex;
   flex-direction: column;
-  background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
+  /* background-image: url("https://itxitpro.com/front/img/web-development-services.jpg"); */
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-color : #003663;
 
   @media (max-width: 700px) {
     margin-bottom: 50px;
@@ -111,7 +153,7 @@ const Container = styled.div`
 
   .passion_logo {
     height: 35vh;
-    background-image: url("https://itxitpro.com/front/img/web-development-services.jpg");
+    /* background-image: url("https://itxitpro.com/front/img/web-development-services.jpg"); */
     background-repeat: no-repeat;
     background-size: cover;
     display: flex;
@@ -144,16 +186,16 @@ const Container = styled.div`
     padding-bottom: 0;
     justify-content: space-between;
 
-    @media (max-width: 500px){
-      flex-direction : column;
+    @media (max-width: 500px) {
+      flex-direction: column;
     }
 
     .options_buttons {
       display: flex;
 
-      @media (max-width: 500px){
-       margin-bottom : 30px;
-     }
+      @media (max-width: 500px) {
+        margin-bottom: 30px;
+      }
     }
 
     .stories_button {
@@ -193,30 +235,35 @@ const Container = styled.div`
     display: none;
   }
 
-  .add_story_button{
+  .add_story_button {
     display: flex;
     margin-right: 10px;
     button {
-        width: 150px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        border-radius: 20px;
-        border: 0;
-        background-color: #6868fa;
-        color: white;
-        margin-right: 10px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
+      width: 150px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-radius: 20px;
+      border: 0;
+      background-color: #6868fa;
+      color: white;
+      margin-right: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
 
-        @media (max-width: 500px){
-       width : 85vw;
-       margin-bottom: 0px;
-     }
-
-        &:hover {
-          cursor: pointer;
-          background-color: #9595ff;
-        }
+      @media (max-width: 500px) {
+        width: 85vw;
+        margin-bottom: 0px;
       }
+
+      &:hover {
+        cursor: pointer;
+        background-color: #9595ff;
+      }
+    }
+  }
+
+  .my_journey {
+    padding: 20px;
+    padding-left: 30px;
   }
 `;
 

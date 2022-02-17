@@ -6,7 +6,7 @@ import { actionTypes } from "../../reducer";
 import db from "../../firebase";
 import firebase from "firebase";
 
-function AddLearntPopup() {
+function AddLearntPopup({ tags }) {
   const [{ openAddLearntPopup, user, userInfo }, dispatch] = useStateValue();
   const [platform, setPlatform] = useState();
   const [input, setInput] = useState();
@@ -15,6 +15,10 @@ function AddLearntPopup() {
   const [courseName, setCourseName] = useState("");
   const [courseLink, setCourseLink] = useState("");
   const [learningInfo, setLearningInfo] = useState("");
+  const [suggestedTags, setSuggestedTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
+  const [x, setX] = useState(0);
+  
 
   const close_popup = () => {
     dispatch({
@@ -35,9 +39,11 @@ function AddLearntPopup() {
             platform: "youtube",
             channelName: channelName,
             videoLink: videoLink,
+            tags : suggestedTags,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             iconUrl:
               "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png",
+            email : user?.email
           })
           .then(() => {
             dispatch({
@@ -55,6 +61,7 @@ function AddLearntPopup() {
             learningInfo: learningInfo,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             iconUrl: "https://cdn.worldvectorlogo.com/logos/udemy-2.svg",
+            tags : suggestedTags
           })
           .then(() => {
             dispatch({
@@ -72,6 +79,7 @@ function AddLearntPopup() {
               platform: "youtube",
               courseName: courseName,
               courseLink: courseLink,
+              tags : suggestedTags,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               iconUrl:
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/2560px-YouTube_Logo_2017.svg.png",
@@ -91,6 +99,7 @@ function AddLearntPopup() {
               platform: "youtube",
               courseName: courseName,
               courseLink: courseLink,
+              tags : suggestedTags,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               iconUrl:
                 "https://images.squarespace-cdn.com/content/v1/5ff6eeb8f618516fe5a338ad/1610018598147-DDJT8UCHOA4OMES6U7YB/image-asset.png?format=1000w",
@@ -122,6 +131,82 @@ function AddLearntPopup() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
               />
+              <div className="selected_tags">
+                {suggestedTags.map((tag, index) => (
+                  <div className="selected_tag">
+                    <p>{tag?.name}</p>
+                    <CloseIcon
+                      className="tag_close_icon"
+                      onClick={() => {
+                        suggestedTags.splice(index, 1);
+                        setX(x + 1);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="add_tags">
+                <p
+                  style={{
+                    display: "none",
+                  }}
+                >
+                  {x}
+                </p>
+                <p
+                 style = {{
+                   fontSize : '14px',
+                   marginLeft : '5px'
+                 }}
+                >Add Tags to better describe your learning</p>
+                <input
+                  type="text"
+                  placeholder="Enter technology name eg.language , framework"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                />
+
+                <div className="suggested_tags">
+                  {console.log("Tags are " , tags)}
+                  {tagInput &&
+                    tags &&
+                    tags
+                      .filter((item) => {
+                        return item?.name
+                          .toLowerCase()
+                          .includes(tagInput.toLowerCase());
+                      })
+                      .map((data) => (
+                        <p
+                          className="tag"
+                          onClick={() => {
+                            let x = 0;
+                            if (suggestedTags?.length > 0) {
+                              for (let i = 0; i < suggestedTags?.length; i++) {
+                                if (suggestedTags[i] === data) {
+                                  x = 1;
+                                }
+                                if (x === 0 && i === suggestedTags.length - 1) {
+                                  suggestedTags.push(data);
+                                  setTagInput("");
+                                  console.log(
+                                    "Suggested Tags are ",
+                                    suggestedTags
+                                  );
+                                }
+                              }
+                            } else {
+                              suggestedTags.push(data);
+                              console.log("Suggested Tags are ", suggestedTags);
+                              setTagInput("");
+                            }
+                          }}
+                        >
+                          {data?.name}
+                        </p>
+                      ))}
+                </div>
+              </div>
             </div>
             <div className="learning_platform">
               <p>Choose your learning platform</p>
@@ -272,10 +357,11 @@ const Container = styled.div`
   }
 
   .learning_info {
-    width: 100%;
+    width: 90%;
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    flex-direction: column;
 
     input {
       margin-left: auto;
@@ -283,7 +369,7 @@ const Container = styled.div`
       border-radius: 10px;
       border: 1px solid gray;
       padding: 10px;
-      width: 90%;
+      width: 100%;
       outline: 0;
     }
   }
@@ -433,9 +519,83 @@ const Container = styled.div`
       }
     }
   }
-  
+
+ 
+
+  .suggested_tags{
+    display : flex;
+    flex-wrap : wrap;
+    max-height : 85px;
+    overflow-y : scroll;
+    margin-top : 20px;
+
+    ::-webkit-scrollbar{
+    width: 4px;
+    height: 4px;
+}
+::-webkit-scrollbar-track {
+    background: #d8d4d4; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+  }
 
 
+  .tag{
+    padding : 7px;
+    border-radius : 5px;
+    margin-right : 10px;
+    margin-top : 5px;
+    margin-bottom : 5px;
+    border : 1px solid lightgray;
+    font-size : 13px;
+    background-color : #e6e4e4;
+
+    &:hover {
+      cursor : pointer;
+      background-color : #bdbdbd;
+    }
+
+  }
+
+  .selected_tag{
+    display : flex; 
+    background-color : #f1f0f0;
+    padding : 7px;
+    border-radius : 5px;
+    margin-right : 10px;
+    margin-top : 5px;
+    margin-bottom : 5px;
+    border : 1px solid lightgray;
+    
+    p{
+      margin-top : 0;
+      margin-bottom : 0;
+      width : fit-content;
+      font-size : 13px;
+
+    }
+  }
+
+  .tag_close_icon{
+    font-size : 17px;
+    margin-left : 5px;
+    margin-top : 2px;
+
+    &:hover {
+      cursor : pointer;
+      color : #3d3d3d;
+    }
+
+  }
 `;
 
 export default AddLearntPopup;

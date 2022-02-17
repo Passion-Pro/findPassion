@@ -264,7 +264,7 @@ function Home() {
       } */}
       <div className='home'>
         {/* <Header /> */}
-        <HeaderSecond />
+        {/* <HeaderSecond /> */}
         <div className="homeBody">
           <div className="stories">
             <div className="createStory" >

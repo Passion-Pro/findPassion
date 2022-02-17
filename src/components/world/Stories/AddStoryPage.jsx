@@ -18,6 +18,8 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import ImageIcon from "@mui/icons-material/Image";
 import Picker from "emoji-picker-react";
 import RemoveAllCardsPopup from "./RemoveAllCardsPopup";
+import UploadJourneyPopup from "./UploadJourneyPopup";
+import CloseIcon from "@mui/icons-material/Close";
 
 function AddStoryPage() {
   const { journeyMode } = useParams();
@@ -40,6 +42,10 @@ function AddStoryPage() {
   const [name, setName] = useState();
   const [showPartners, setShowPartners] = useState([]);
   const [openRemovePopup, setOpenRemovePopup] = useState(false);
+  const [video, setVideo] = useState(null);
+  const history = useHistory();
+  const [loading, setLoading] = useState(false);
+  const [uploadJourney, setUploadJourney] = useState(false);
 
   useEffect(() => {
     if (user?.uid) {
@@ -73,6 +79,74 @@ function AddStoryPage() {
       );
     }
   }, [user?.uid, openRemovePopup]);
+
+  // const uploadJourney = (e) => {
+  //   e.preventDefault();
+  //   db.collection("journeys").doc(user?.uid).update({
+  //     upload: "yes",
+  //   }).then(() => {
+  //     history.push("/stories")
+  //   })
+  // };
+
+  const uploadVideo = (e) => {
+    e.preventDefault();
+    if (video) {
+      const id = uuid();
+      const upload = storage.ref(`JourneyVideos/${id}`).put(video);
+
+      upload.on(
+        "state_changed",
+        (snapshot) => {
+          setLoading(true);
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log(`Progress : ${progress}%`);
+          if (snapshot.state === "RUNNING") {
+            console.log(`Progress : ${progress}%`);
+          }
+        },
+        (error) => console.log(error.code),
+        async () => {
+          const url = await upload.snapshot.ref.getDownloadURL();
+          console.log("URL is ", url);
+          if (url) {
+            db.collection("journeys").doc(user?.uid).set({
+              videoUrl: url,
+              journeyThrough: "video",
+              likes: [],
+              fires: [],
+              likesLength: 0,
+              firesLength: 0,
+              uploaderInfo: userInfo,
+              views: [],
+              partners: addPartnerInfo,
+              upload: "yes",
+            });
+
+            db.collection("users")
+              .doc(user?.uid)
+              .update({
+                journeyUrl: url,
+                journeyThrough: "video",
+              })
+              .then(() => {
+                setLoading(false);
+                history.push("/stories");
+              });
+          }
+        }
+      );
+    }
+  };
+
+  const selectVideo = (e) => {
+    e.preventDefault();
+    if (e.target.files[0]) {
+      setVideo(e.target.files[0]);
+    }
+  };
 
   const selectImage = (e) => {
     if (e.target.files[0]) {
@@ -130,6 +204,7 @@ function AddStoryPage() {
                   },
                 ],
                 currentYear: currentYear,
+                upload: "no",
               });
           }
         }
@@ -161,6 +236,7 @@ function AddStoryPage() {
 
     setTimeout(() => {
       setShowYear(true);
+      setInput("");
     }, 1000);
   };
 
@@ -324,564 +400,759 @@ function AddStoryPage() {
   };
 
   return (
-    <Container>
-      {journeyMode === "photos" && (
-        <div className="journey_photos">
-          <div className="photos_options">
-            <button
-              onClick={() => {
-                setActiveTab("questions");
-              }}
-              style={{
-                backgroundColor: activeTab === "questions" ? `#6868fa` : `#fff`,
-                color: activeTab === "questions" ? `white` : `black`,
-              }}
-            >
-              Questions
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("cards");
-              }}
-              style={{
-                backgroundColor: activeTab === "cards" ? `#6868fa` : `#fff`,
-                color: activeTab === "cards" ? `white` : `black`,
-              }}
-            >
-              Cards
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("journey");
-              }}
-              style={{
-                backgroundColor: activeTab === "journey" ? `#6868fa` : `#fff`,
-                color: activeTab === "journey" ? `white` : `black`,
-              }}
-            >
-              Journey
-            </button>
-          </div>
-          {userInfo?.passion && activeTab === "questions" && (
-            <div className="question_zone">
-              <div className={addCard ? `question_add` : `question`}
-               style = {{
-                 display : (showYear || startYearJourney) && 'none'
-               }}
-              >
-                <p className="question_question">
-                  Why did you choose {userInfo?.passion}?
-                </p>
-                {image &&
-                  !openEmojis && (
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt=""
-                      style={{
-                        width: "300px",
-                        height: "200px",
-                        marginLeft: "8px",
-                        marginRight: "auto",
-                        marginTop: "10px",
-                        borderRadius: "10px",
-                      }}
-                    />
-                  )}
-                <textarea
-                  name=""
-                  id=""
-                  cols="30"
-                  rows="10"
-                  placeholder="Type here"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  maxLength={300}
-                ></textarea>
-                {openEmojis === true && <Picker onEmojiClick={onEmojiClick} />}
-                <div className="question_footer">
-                  <div className="footer_icons">
-                    <InsertEmoticonIcon
-                      className="icon"
-                      onClick={(e) => setOpenEmojis(!openEmojis)}
-                    />
-                    <label htmlFor="image">
-                      <ImageIcon className="icon" />
-                    </label>
-                    <input
-                      type="file"
-                      id={"image"}
-                      style={{ display: "none" }}
-                      onChange={selectImage}
-                      accept="image/git , image/jpeg , image/png"
-                    />
-                  </div>
-                  <button onClick={nextQuestion}>Next</button>
-                </div>
-              </div>
-              <div
-                className={showYear && `question_year`}
-                style={{
-                  display: (!showYear || startYearJourney) && "none",
-                }}
-              >
-                <p className="question_question">
-                  In which year you started learning about {userInfo?.passion}?
-                </p>
-                <div className="year_options">
-                  <button
-                    onClick={() => {
-                      db.collection("journeys").doc(user?.uid).update({
-                        yearOfStart: "1st year",
-                        currentYear: 1,
-                      });
-                    }}
-                  >
-                    1st year
-                  </button>
-                  <button
-                    onClick={() => {
-                      db.collection("journeys").doc(user?.uid).update({
-                        yearOfStart: "2nd year",
-                        currentYear: 2,
-                      });
-                    }}
-                  >
-                    2nd year
-                  </button>
-                  <button
-                    onClick={() => {
-                      db.collection("journeys").doc(user?.uid).update({
-                        yearOfStart: "3rd year",
-                        currentYear: 3,
-                      });
-                    }}
-                  >
-                    3rd year
-                  </button>
-                  <button
-                    onClick={() => {
-                      db.collection("journeys").doc(user?.uid).update({
-                        yearOfStart: "4th year",
-                        currentYear: 4,
-                      });
-                    }}
-                  >
-                    4th year
-                  </button>
-                </div>
-              </div>
-              {startYearJourney && (
-                <div
-                  className={
-                    addCard ? `startYearJourney_add` : `startYearJourney`
-                  }
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Container>
+          {journeyMode === "photos" && (
+            <div className="journey_photos">
+              <div className="photos_options">
+                <button
+                  onClick={() => {
+                    setActiveTab("questions");
+                  }}
+                  style={{
+                    backgroundColor:
+                      activeTab === "questions" ? `#6868fa` : `#fff`,
+                    color: activeTab === "questions" ? `white` : `black`,
+                  }}
                 >
-                  <p
+                  Questions
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("cards");
+                  }}
+                  style={{
+                    backgroundColor: activeTab === "cards" ? `#6868fa` : `#fff`,
+                    color: activeTab === "cards" ? `white` : `black`,
+                  }}
+                >
+                  Cards
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("journey");
+                  }}
+                  style={{
+                    backgroundColor:
+                      activeTab === "journey" ? `#6868fa` : `#fff`,
+                    color: activeTab === "journey" ? `white` : `black`,
+                  }}
+                >
+                  Journey
+                </button>
+              </div>
+              {userInfo?.passion && activeTab === "questions" && (
+                <div className="question_zone">
+                  <div
+                    className={addCard ? `question_add` : `question`}
                     style={{
-                      color: "white",
-                      fontFamily: "Helvetica",
-                      marginBottom: "20px",
-                      textAlign: "center",
+                      display: (showYear || startYearJourney) && "none",
                     }}
                   >
-                    Upload your yearwise journey in {userInfo?.passion}
-                  </p>
-                  {addPartner ? (
-                    <div className="add_partner_div">
-                      <div className="search_bar">
-                        <SearchOutlinedIcon className="searchIcon" />
+                    <p className="question_question">
+                      Why did you choose {userInfo?.passion}?
+                    </p>
+                    {image && !openEmojis && (
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt=""
+                        style={{
+                          width: "300px",
+                          height: "200px",
+                          marginLeft: "8px",
+                          marginRight: "auto",
+                          marginTop: "10px",
+                          borderRadius: "10px",
+                        }}
+                      />
+                    )}
+                    <textarea
+                      name=""
+                      id=""
+                      cols="30"
+                      rows="10"
+                      placeholder="Type here"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      maxLength={300}
+                    ></textarea>
+                    {openEmojis === true && (
+                      <Picker onEmojiClick={onEmojiClick} />
+                    )}
+                    <div className="question_footer">
+                      <div className="footer_icons">
+                        <InsertEmoticonIcon
+                          className="icon"
+                          onClick={(e) => setOpenEmojis(!openEmojis)}
+                        />
+                        <label htmlFor="image">
+                          <ImageIcon className="icon" />
+                        </label>
                         <input
-                          type="text"
-                          placeholder="Search by name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          type="file"
+                          id={"image"}
+                          style={{ display: "none" }}
+                          onChange={selectImage}
+                          accept="image/git , image/jpeg , image/png"
                         />
                       </div>
-                      <div className="names">
-                        {name &&
-                          users &&
-                          users
-                            .filter((item) => {
-                              return item?.data?.name
-                                .toLowerCase()
-                                .includes(name.toLowerCase());
-                            })
-                            .map((data) => (
-                              <PartnerName
-                                data={data}
-                                setAddPartner={setAddPartner}
-                              />
-                            ))}
-                        {name && (
-                          <PartnerName
-                            name={name}
-                            setAddPartner={setAddPartner}
-                          />
-                        )}
-                      </div>
+                      <button onClick={nextQuestion}>Next</button>
                     </div>
-                  ) : (
-                    <div className="upload_Journey">
-                      <div className="upload_journey_header">
-                        <p
-                          style={{
-                            marginTop: 0,
-                            marginBottom: 0,
-                            width: "60%",
-                            textAlign: "center",
-                            fontSize: "18px",
-                            fontFamily: "Helvetica Neue",
-                          }}
-                          className="year"
-                        >
-                          {currentYear === 1 && `1st year`}
-                          {currentYear === 2 && `2nd year`}
-                          {currentYear === 3 && `3rd year`}
-                          {currentYear > 3 && `${currentYear}th year`}
-                        </p>
-                        <button
-                          className="year_button next_card_button"
-                          onClick={add_card}
-                        >
-                          Add Card in {currentYear === 1 && `1st year`}
-                          {currentYear === 2 && `2nd year`}
-                          {currentYear === 3 && `3rd year`}
-                          {currentYear > 3 && `${currentYear}th year`}
-                        </button>
-                      </div>
-                      {image && !openEmojis &&  (
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt=""
-                          style={{
-                            width: "300px",
-                            height: "200px",
-                            marginLeft: "8px",
-                            marginRight: "auto",
-                            marginTop: "10px",
-                            borderRadius: "10px",
-                          }}
-                        />
-                      )}
+                  </div>
+                  <div
+                    className={showYear && `question_year`}
+                    style={{
+                      display: (!showYear || startYearJourney) && "none",
+                    }}
+                  >
+                    <p className="question_question">
+                      In which year you started learning about{" "}
+                      {userInfo?.passion}?
+                    </p>
+                    <div className="year_options">
                       <button
-                        className="add_partners_button"
                         onClick={() => {
-                          setAddPartner(true);
-                          console.log("SET");
+                          db.collection("journeys").doc(user?.uid).update({
+                            yearOfStart: "1st year",
+                            currentYear: 1,
+                          });
                         }}
                       >
-                        Add Partner
+                        1st year
                       </button>
+                      <button
+                        onClick={() => {
+                          db.collection("journeys").doc(user?.uid).update({
+                            yearOfStart: "2nd year",
+                            currentYear: 2,
+                          });
+                        }}
+                      >
+                        2nd year
+                      </button>
+                      <button
+                        onClick={() => {
+                          db.collection("journeys").doc(user?.uid).update({
+                            yearOfStart: "3rd year",
+                            currentYear: 3,
+                          });
+                        }}
+                      >
+                        3rd year
+                      </button>
+                      <button
+                        onClick={() => {
+                          db.collection("journeys").doc(user?.uid).update({
+                            yearOfStart: "4th year",
+                            currentYear: 4,
+                          });
+                        }}
+                      >
+                        4th year
+                      </button>
+                    </div>
+                  </div>
+                  {startYearJourney && (
+                    <div
+                      className={
+                        addCard ? `startYearJourney_add` : `startYearJourney`
+                      }
+                    >
+                      <p
+                        style={{
+                          color: "white",
+                          fontFamily: "Helvetica",
+                          marginBottom: "20px",
+                          textAlign: "center",
+                        }}
+                      >
+                        Upload your yearwise journey in {userInfo?.passion}
+                      </p>
+                      {addPartner ? (
+                        <div className="add_partner_div">
+                          <div className="search_bar">
+                            <SearchOutlinedIcon className="searchIcon" />
+                            <input
+                              type="text"
+                              placeholder="Search by name"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                            />
+                          </div>
+                          <div className="names">
+                            {name &&
+                              users &&
+                              users
+                                .filter((item) => {
+                                  return item?.data?.name
+                                    .toLowerCase()
+                                    .includes(name.toLowerCase());
+                                })
+                                .map((data) => (
+                                  <PartnerName
+                                    data={data}
+                                    setAddPartner={setAddPartner}
+                                  />
+                                ))}
+                            {name && (
+                              <PartnerName
+                                name={name}
+                                setAddPartner={setAddPartner}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="upload_Journey">
+                          <div className="upload_journey_header">
+                            <p
+                              style={{
+                                marginTop: 0,
+                                marginBottom: 0,
+                                width: "60%",
+                                textAlign: "center",
+                                fontSize: "18px",
+                                fontFamily: "Helvetica Neue",
+                              }}
+                              className="year"
+                            >
+                              {currentYear === 1 && `1st year`}
+                              {currentYear === 2 && `2nd year`}
+                              {currentYear === 3 && `3rd year`}
+                              {currentYear > 3 && `${currentYear}th year`}
+                            </p>
+                            <button
+                              className="year_button next_card_button"
+                              onClick={add_card}
+                            >
+                              Add Card in {currentYear === 1 && `1st year`}
+                              {currentYear === 2 && `2nd year`}
+                              {currentYear === 3 && `3rd year`}
+                              {currentYear > 3 && `${currentYear}th year`}
+                            </button>
+                          </div>
+                          {image && !openEmojis && (
+                            <img
+                              src={URL.createObjectURL(image)}
+                              alt=""
+                              style={{
+                                width: "300px",
+                                height: "200px",
+                                marginLeft: "8px",
+                                marginRight: "auto",
+                                marginTop: "10px",
+                                borderRadius: "10px",
+                              }}
+                            />
+                          )}
+                          <button
+                            className="add_partners_button"
+                            onClick={() => {
+                              setAddPartner(true);
+                              console.log("SET");
+                            }}
+                          >
+                            Add Partner
+                          </button>
 
-                      {addPartnerInfo?.length > 0 && (
-                        <div className="added_partners">
-                          {addPartnerInfo.map((partnerInfo) => (
-                            <div className="added_partner_info">
-                              {partnerInfo?.data?.profilePhotoUrl && (
-                                <Avatar
-                                  src={partnerInfo?.data?.profilePhotoUrl}
-                                  style={{
-                                    width: "21px",
-                                    height: "21px",
-                                  }}
-                                />
-                              )}
-                              <p>{partnerInfo?.data?.name}</p>
-                              <CancelIcon
-                                className="cancel_icon"
-                                onClick={() => {
-                                  dispatch({
-                                    type: actionTypes.REMOVE_PARTNER_INFO,
-                                    data: partnerInfo?.data,
-                                  });
-                                }}
+                          {addPartnerInfo?.length > 0 && (
+                            <div className="added_partners">
+                              {addPartnerInfo.map((partnerInfo) => (
+                                <div className="added_partner_info">
+                                  {partnerInfo?.data?.profilePhotoUrl && (
+                                    <Avatar
+                                      src={partnerInfo?.data?.profilePhotoUrl}
+                                      style={{
+                                        width: "21px",
+                                        height: "21px",
+                                      }}
+                                    />
+                                  )}
+                                  <p>{partnerInfo?.data?.name}</p>
+                                  <CancelIcon
+                                    className="cancel_icon"
+                                    onClick={() => {
+                                      dispatch({
+                                        type: actionTypes.REMOVE_PARTNER_INFO,
+                                        data: partnerInfo?.data,
+                                      });
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <textarea
+                            name=""
+                            id=""
+                            cols="30"
+                            rows="10"
+                            placeholder={`Post your learning , experience or achievement in ${userInfo?.passion}`}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            maxLength={300}
+                          ></textarea>
+                          {openEmojis === true && (
+                            <Picker onEmojiClick={onEmojiClick} />
+                          )}
+                          <div className="question_footer">
+                            <div className="footer_icons">
+                              <InsertEmoticonIcon
+                                className="icon"
+                                onClick={(e) => setOpenEmojis(!openEmojis)}
+                              />
+                              <label htmlFor="image">
+                                <ImageIcon className="icon" />
+                              </label>
+                              <input
+                                type="file"
+                                id={"image"}
+                                style={{ display: "none" }}
+                                onChange={selectImage}
+                                accept="image/git , image/jpeg , image/png"
                               />
                             </div>
-                          ))}
+                            <button onClick={nextYear}>Next Year</button>
+                          </div>
                         </div>
                       )}
-
-                      <textarea
-                        name=""
-                        id=""
-                        cols="30"
-                        rows="10"
-                        placeholder={`Post your learning , experience or achievement in ${userInfo?.passion}`}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        maxLength={300}
-                      ></textarea>
-                      {openEmojis === true && (
-                        <Picker onEmojiClick={onEmojiClick} />
-                      )}
-                      <div className="question_footer">
-                        <div className="footer_icons">
-                          <InsertEmoticonIcon
-                            className="icon"
-                            onClick={(e) => setOpenEmojis(!openEmojis)}
-                          />
-                          <label htmlFor="image">
-                            <ImageIcon className="icon" />
-                          </label>
-                          <input
-                            type="file"
-                            id={"image"}
-                            style={{ display: "none" }}
-                            onChange={selectImage}
-                            accept="image/git , image/jpeg , image/png"
-                          />
-                        </div>
-                        <button onClick={nextYear}>Next Year</button>
-                      </div>
                     </div>
                   )}
                 </div>
               )}
-            </div>
-          )}
-          {activeTab === "cards" && (
-            <div className="all_cards">
-              {cardsInfo.map((cardInfo) => (
-                <>
-                  {showPartners === cardInfo ? (
-                    <div className="showPartners">
-                      <div
-                        className="showPartners_header"
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <CancelIcon
-                          className="cancel_icon"
-                          style={{
-                            color: "white",
-                          }}
-                          onClick={() => {
-                            setShowPartners([]);
-                          }}
-                        />
-                      </div>
-                      <div className="showPartners_partners">
-                        {cardInfo?.partners.map((partnerInfo) => (
-                          <div className="added_partner_info">
-                            {
-                              <Avatar
-                                src={partnerInfo?.data?.profilePhotoUrl}
-                                style={{
-                                  width: "17px",
-                                  height: "17px",
-                                }}
-                              />
-                            }
-                            <p>{partnerInfo?.data?.name}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
+              {activeTab === "cards" && (
+                <div className="all_cards">
+                  {cardsInfo.map((cardInfo) => (
                     <>
-                      {cardInfo?.imageUrl ? (
-                        <div
-                          className="cards_card"
-                          style={{
-                            backgroundImage: `url(${cardInfo?.imageUrl})`,
-                          }}
-                        >
-                          <div className="partners_button">
-                            <div className="year_info">
-                              <p
-                                style={{
-                                  marginTop: 0,
-                                  marginBottom: 0,
-                                  color: "white",
-                                  fontSize: "12px",
-                                }}
-                              >
-                                {cardInfo?.year === 1 && `1st year`}
-                                {cardInfo?.year === 2 && `2nd year`}
-                                {cardInfo?.year === 3 && `3rd year`}
-                                {cardInfo?.year > 3 &&
-                                  `${cardInfo?.year}th year`}
-                              </p>
-                            </div>
-                            {cardInfo?.partners?.length > 0 && (
-                              <button
-                                onClick={() => {
-                                  setShowPartners(cardInfo);
-                                }}
-                              >
-                                Partners
-                              </button>
-                            )}
-                          </div>
-                          <div className="cards_caption">
-                            <p>{cardInfo?.caption}</p>
-                          </div>
-                          <div className="remove_button">
-                            <button
-                              onClick={() => {
-                                let y;
-                                for (let i = 0; i < cardsInfo?.length; i++) {
-                                  if (
-                                    cardsInfo[i].imageUrl === cardInfo.imageUrl
-                                  ) {
-                                    y = i;
-                                    console.log("Spliced");
-                                    cardsInfo.splice(y, 1);
-
-                                    db.collection("journeys")
-                                      .doc(user?.uid)
-                                      .update({
-                                        imagesInfo: cardsInfo,
-                                      });
-
-                                    if (cardInfo?.imageId) {
-                                      storage
-                                        .ref(
-                                          `JourneyImages/${cardInfo?.imageId}`
-                                        )
-                                        .delete();
-                                    }
-                                  }
-                                }
+                      {showPartners === cardInfo ? (
+                        <div className="showPartners">
+                          <div
+                            className="showPartners_header"
+                            style={{
+                              display: "flex",
+                              justifyContent: "flex-end",
+                            }}
+                          >
+                            <CancelIcon
+                              className="cancel_icon"
+                              style={{
+                                color: "white",
                               }}
-                            >
-                              Remove
-                            </button>
+                              onClick={() => {
+                                setShowPartners([]);
+                              }}
+                            />
+                          </div>
+                          <div className="showPartners_partners">
+                            {cardInfo?.partners.map((partnerInfo) => (
+                              <div className="added_partner_info">
+                                {
+                                  <Avatar
+                                    src={partnerInfo?.data?.profilePhotoUrl}
+                                    style={{
+                                      width: "17px",
+                                      height: "17px",
+                                    }}
+                                  />
+                                }
+                                <p>{partnerInfo?.data?.name}</p>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       ) : (
-                        <div
-                          className="cards_card"
-                          style={{
-                            backgroundColor: "#0000004c",
-                          }}
-                        >
-                          <div className="partners_button">
-                            <div className="year_info">
-                              <p
-                                style={{
-                                  marginTop: 0,
-                                  marginBottom: 0,
-                                  color: "white",
-                                  fontSize: "12px",
-                                }}
-                              >
-                                {cardInfo?.year === 1 && `1st year`}
-                                {cardInfo?.year === 2 && `2nd year`}
-                                {cardInfo?.year === 3 && `3rd year`}
-                                {cardInfo?.year > 3 &&
-                                  `${cardInfo?.year}th year`}
-                              </p>
-                            </div>
-                            {cardInfo?.partners?.length > 0 && (
-                              <button
-                                onClick={() => {
-                                  setShowPartners(cardInfo);
-                                }}
-                              >
-                                Partners
-                              </button>
-                            )}
-                          </div>
-                          <div className="cards_caption">
-                            <p>{cardInfo?.caption}</p>
-                          </div>
-                          <div className="remove_button">
-                            <button
-                              onClick={() => {
-                                let y;
-                                for (let i = 0; i < cardsInfo?.length; i++) {
-                                  if (
-                                    cardsInfo[i].caption === cardInfo.caption
-                                  ) {
-                                    y = i;
-                                    cardsInfo.splice(y, 1);
-
-                                    db.collection("journeys")
-                                      .doc(user?.uid)
-                                      .update({
-                                        imagesInfo: cardsInfo,
-                                      });
-                                  }
-                                }
+                        <>
+                          {cardInfo?.imageUrl ? (
+                            <div
+                              className="cards_card"
+                              style={{
+                                backgroundImage: `url(${cardInfo?.imageUrl})`,
                               }}
                             >
-                              Remove
-                            </button>
-                          </div>
-                        </div>
+                              <div className="partners_button">
+                                {cardInfo?.year && (
+                                  <div className="year_info">
+                                    <p
+                                      style={{
+                                        marginTop: 0,
+                                        marginBottom: 0,
+                                        color: "white",
+                                        fontSize: "12px",
+                                      }}
+                                    >
+                                      {cardInfo?.year === 1 && `1st year`}
+                                      {cardInfo?.year === 2 && `2nd year`}
+                                      {cardInfo?.year === 3 && `3rd year`}
+                                      {cardInfo?.year > 3 &&
+                                        `${cardInfo?.year}th year`}
+                                    </p>
+                                  </div>
+                                )}
+                                {cardInfo?.partners?.length > 0 && (
+                                  <button
+                                    onClick={() => {
+                                      setShowPartners(cardInfo);
+                                    }}
+                                  >
+                                    Partners
+                                  </button>
+                                )}
+                              </div>
+                              <div className="cards_caption">
+                                <p>{cardInfo?.caption}</p>
+                              </div>
+                              <div className="remove_button">
+                                <button
+                                  onClick={() => {
+                                    let y;
+                                    for (
+                                      let i = 0;
+                                      i < cardsInfo?.length;
+                                      i++
+                                    ) {
+                                      if (
+                                        cardsInfo[i].imageUrl ===
+                                        cardInfo.imageUrl
+                                      ) {
+                                        y = i;
+                                        console.log("Spliced");
+                                        cardsInfo.splice(y, 1);
+
+                                        db.collection("journeys")
+                                          .doc(user?.uid)
+                                          .update({
+                                            imagesInfo: cardsInfo,
+                                          });
+
+                                        if (cardInfo?.imageId) {
+                                          storage
+                                            .ref(
+                                              `JourneyImages/${cardInfo?.imageId}`
+                                            )
+                                            .delete();
+                                        }
+                                      }
+                                    }
+                                  }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div
+                              className="cards_card"
+                              style={{
+                                backgroundColor: "#0000004c",
+                              }}
+                            >
+                              <div className="partners_button">
+                                {cardInfo?.year && (
+                                  <div className="year_info">
+                                    <p
+                                      style={{
+                                        marginTop: 0,
+                                        marginBottom: 0,
+                                        color: "white",
+                                        fontSize: "12px",
+                                      }}
+                                    >
+                                      {cardInfo?.year === 1 && `1st year`}
+                                      {cardInfo?.year === 2 && `2nd year`}
+                                      {cardInfo?.year === 3 && `3rd year`}
+                                      {cardInfo?.year > 3 &&
+                                        `${cardInfo?.year}th year`}
+                                    </p>
+                                  </div>
+                                )}
+                                {cardInfo?.partners?.length > 0 && (
+                                  <button
+                                    onClick={() => {
+                                      setShowPartners(cardInfo);
+                                    }}
+                                  >
+                                    Partners
+                                  </button>
+                                )}
+                              </div>
+                              <div className="cards_caption">
+                                <p>{cardInfo?.caption}</p>
+                              </div>
+                              <div className="remove_button">
+                                <button
+                                  onClick={() => {
+                                    let y;
+                                    for (
+                                      let i = 0;
+                                      i < cardsInfo?.length;
+                                      i++
+                                    ) {
+                                      if (
+                                        cardsInfo[i].caption ===
+                                        cardInfo.caption
+                                      ) {
+                                        y = i;
+                                        cardsInfo.splice(y, 1);
+
+                                        db.collection("journeys")
+                                          .doc(user?.uid)
+                                          .update({
+                                            imagesInfo: cardsInfo,
+                                          });
+                                      }
+                                    }
+                                  }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     </>
-                  )}
-                </>
-              ))}
-              <div className="remove_all">
-                {cardsInfo?.length > 0 && (
-                  <button
-                    onClick={() => {
-                      setOpenRemovePopup(true);
-                      console.log("TURNED TRUE");
-                    }}
-                  >
-                    Remove All Cards
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "journey" && (
-            <div className="journey_cards">
-              <div className="cardsContainer">
-                {console.log("JOURNEY")}
-                {cardsInfo.map((cardInfo, index) => (
-                  <>
-                    <TinderCard
-                      className="swipe"
-                      // key={part.caption}
-                      preventSwipe={["up", "down"]}
-                      //  onCardLeftScreen = {() => outOfFrame(person.name)}
-                      onSwipe={() => {
-                        if (index === 0) {
-                          const newCardsInfo = cardsInfo;
-                          setCardsInfo([]);
-                          setCardsInfo(newCardsInfo);
-                        }
-                      }}
-                    >
-                      <div
-                        className="card"
-                        style={{
-                          backgroundImage: `url(${cardInfo?.imageUrl})`,
+                  ))}
+                  <div className="remove_all">
+                    {cardsInfo?.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setOpenRemovePopup(true);
+                          console.log("TURNED TRUE");
                         }}
                       >
-                        {cardInfo?.caption && (
+                        Remove All Cards
+                      </button>
+                    )}
+                  </div>
+                  <div className="upload_journey">
+                    {cardsInfo?.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setUploadJourney(true);
+                        }}
+                      >
+                        <p>Upload Journey</p>
+                        <span>🎬</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "journey" && (
+                <div className="journey_cards">
+                  <div className="cardsContainer">
+                    {console.log("JOURNEY")}
+                    {cardsInfo.map((cardInfo, index) => (
+                      <>
+                        <TinderCard
+                          className="swipe"
+                          // key={part.caption}
+                          preventSwipe={["up", "down"]}
+                          //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                          onSwipe={() => {
+                            if (index === 0) {
+                              const newCardsInfo = cardsInfo;
+                              setCardsInfo([]);
+                              setCardsInfo(newCardsInfo);
+                            }
+                          }}
+                        >
                           <div
-                            className="image_caption"
+                            className="card"
                             style={{
-                              justifyContent: cardInfo?.imageUrl
-                                ? "flex-end"
-                                : "flex-start",
+                              backgroundImage: `url(${cardInfo?.imageUrl})`,
                             }}
                           >
-                            <p>{cardInfo?.caption}</p>
+                            {cardInfo?.caption && (
+                              <div
+                                className="image_caption"
+                                style={{
+                                  justifyContent: cardInfo?.imageUrl
+                                    ? "flex-end"
+                                    : "flex-start",
+                                }}
+                              >
+                                <p>{cardInfo?.caption}</p>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </TinderCard>
-                  </>
-                ))}
-              </div>
+                        </TinderCard>
+                      </>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {openRemovePopup && (
+                <RemoveAllCardsPopup setOpenRemovePopup={setOpenRemovePopup} />
+              )}
             </div>
           )}
-        </div>
+          {journeyMode === "video" && (
+            <div className="video_upload">
+              {addPartner ? (
+                <div
+                  className="add_partner_div"
+                  style={{
+                    width: "450px",
+                  }}
+                >
+                  <div className="search_bar">
+                    <SearchOutlinedIcon className="searchIcon" />
+                    <input
+                      type="text"
+                      placeholder="Search by name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  <div className="names">
+                    {name &&
+                      users &&
+                      users
+                        .filter((item) => {
+                          return item?.data?.name
+                            .toLowerCase()
+                            .includes(name.toLowerCase());
+                        })
+                        .map((data) => (
+                          <PartnerName
+                            data={data}
+                            setAddPartner={setAddPartner}
+                          />
+                        ))}
+                    {name && (
+                      <PartnerName name={name} setAddPartner={setAddPartner} />
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="video_upload_header">
+                  <input
+                    type="file"
+                    id={"video"}
+                    style={{ display: "none" }}
+                    onChange={selectVideo}
+                    accept="video/mp4"
+                  />
+                  <label htmlFor="video">
+                    <p>Select video</p>
+                  </label>
+
+                  {video && (
+                    <button
+                      className="add_partners_button"
+                      onClick={() => {
+                        setAddPartner(true);
+                        console.log("SET");
+                      }}
+                      style={{
+                        marginLeft: "20px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Add Partner
+                    </button>
+                  )}
+
+                  {addPartnerInfo?.length > 0 && (
+                    <div
+                      className="added_partners"
+                      style={{
+                        marginLeft: "20px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      {addPartnerInfo.map((partnerInfo) => (
+                        <div className="added_partner_info">
+                          {partnerInfo?.data?.profilePhotoUrl && (
+                            <Avatar
+                              src={partnerInfo?.data?.profilePhotoUrl}
+                              style={{
+                                width: "21px",
+                                height: "21px",
+                              }}
+                            />
+                          )}
+                          <p>{partnerInfo?.data?.name}</p>
+                          <CancelIcon
+                            className="cancel_icon"
+                            onClick={() => {
+                              dispatch({
+                                type: actionTypes.REMOVE_PARTNER_INFO,
+                                data: partnerInfo?.data,
+                              });
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {video && !openEmojis && (
+                    <div
+                      className="video_player"
+                      style={{
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <VideoPlayer videoUrl={URL.createObjectURL(video)} />
+                    </div>
+                  )}
+
+                  <textarea
+                    name=""
+                    id=""
+                    cols="30"
+                    rows="10"
+                    className="video_textarea"
+                    placeholder="Write about your experiences in your journey"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                  ></textarea>
+                  {openEmojis === true && (
+                    <Picker onEmojiClick={onEmojiClick} />
+                  )}
+                  <div
+                    className="question_footer"
+                    style={{
+                      paddingLeft: "10px",
+                      paddingRight: "10px",
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    <div className="footer_icons">
+                      <InsertEmoticonIcon
+                        className="icon"
+                        onClick={(e) => setOpenEmojis(!openEmojis)}
+                      />
+                    </div>
+                    <button
+                      onClick={uploadVideo}
+                      className="upload_video_journey"
+                      style={{
+                        display: "flex",
+                        width: "fit-content",
+                      }}
+                    >
+                      Upload Journey
+                      <span>🎬</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </Container>
       )}
-      {openRemovePopup && (
-        <RemoveAllCardsPopup setOpenRemovePopup={setOpenRemovePopup} />
+      {uploadJourney && (
+        <UploadJourneyPopup setUploadJourney={setUploadJourney} journeyCards = {imagesInfo} />
       )}
-    </Container>
+    </>
   );
 }
 
@@ -914,6 +1185,10 @@ const Container = styled.div`
     height: fit-content;
     min-height: 300px;
     box-shadow: 0 19px 39px rgba(0, 0, 0, 0.12);
+
+    @media (max-width: 500px) {
+      width: 85vw;
+    }
   }
 
   textarea {
@@ -1044,9 +1319,35 @@ const Container = styled.div`
     ::-webkit-scrollbar {
       display: none;
     }
+
+    @media (max-width: 500px) {
+      flex-direction: column;
+      height: fit-content;
+    }
   }
 
   .remove_all {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-bottom: 20px;
+    padding-left: 20px;
+
+    button {
+      padding: 10px;
+      border-radius: 20px;
+      background-color: #6868fa;
+      color: white;
+      border: 0;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #9090fc;
+      }
+    }
+  }
+
+  .upload_journey {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -1059,6 +1360,21 @@ const Container = styled.div`
       background-color: #6868fa;
       color: white;
       border: 0;
+      display: flex;
+
+      img {
+        height: 20px;
+        width: 20px;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      span {
+        margin-left: 5px;
+      }
 
       &:hover {
         cursor: pointer;
@@ -1081,6 +1397,10 @@ const Container = styled.div`
     flex-direction: column;
     margin-right: 20px;
     margin-bottom: 20px;
+
+    @media (max-width: 500px) {
+      width: 90%;
+    }
   }
 
   .showPartners {
@@ -1207,9 +1527,13 @@ const Container = styled.div`
   .cardsContainer {
     display: flex;
     margin-top: 150px;
-
     justify-content: center;
     width: 90%;
+
+    @media (max-width: 500px) {
+      justify-content: flex-start;
+      margin-left: 50px;
+    }
   }
 
   .question_year {
@@ -1390,6 +1714,65 @@ const Container = styled.div`
   .showPartners_partners {
     display: flex;
     flex-wrap: wrap;
+  }
+
+  .video_upload {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 19px 39px rgba(0, 0, 0, 0.12);
+  }
+
+  .video_upload {
+    margin: auto;
+    width: 500px;
+
+    label {
+      p {
+        color: #006eff;
+        text-align: center;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .video_textarea {
+    flex: auto;
+    padding: 0;
+    width: 90%;
+    margin-left: 20px;
+    height: 100px;
+  }
+
+  .upload_video_journey {
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #6868fa;
+    color: white;
+    border: 0;
+    display: flex;
+
+    img {
+      height: 20px;
+      width: 20px;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    span {
+      margin-left: 5px;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: #9090fc;
+    }
   }
 `;
 

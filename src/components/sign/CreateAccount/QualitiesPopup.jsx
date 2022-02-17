@@ -43,9 +43,6 @@ function QualitiesPopup() {
             <div className="qualitiesPopup_header">
               <CloseIcon className="close_icon" onClick={closePopup} />
             </div>
-            {selectedQualities?.length > 0 && (
-              <p className="your_qualities">Your qualities:</p>
-            )}
             <div className="qualities_selected">
               {console.log("Selected Qualities are", selectedQualities)}
               {selectedQualities.map((quality) => (
@@ -53,11 +50,11 @@ function QualitiesPopup() {
               ))}
             </div>
             <p className="select_qualities">
-              Select Qualities that describe yourself
+              Select 3 qualities that describe you the best
             </p>
             <div className="total_qualites">
               {qualities.map((quality) => (
-                  <Quality quality = {quality?.data?.name} />
+                  <Quality quality = {quality} />
               ))}
             </div>
             <div className="done_button">
@@ -111,16 +108,17 @@ const Container = styled.div`
 
   .qualities_selected {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap : wrap;
   }
 
   .select_qualities {
-    margin-bottom: 7px;
+    margin-bottom: 15px;
+    margin-left : 3px;
   }
 
   .total_qualites {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
   }
 
   .your_qualities {
@@ -135,14 +133,15 @@ const Container = styled.div`
 
       button{
           border-radius : 20px;
-          border : 0;
-          width : 60px;
+          width : 100px;
           padding : 10px;
-          background-color: #00c3ff;
+          background-color: #e3e9eb;
+          border : 1px solid gray;
 
           &:hover {
               cursor: pointer;
-              background-color : #55d5fc;
+              background-color : #bdc1c2;
+
           }
       }
   }

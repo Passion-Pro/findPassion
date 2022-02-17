@@ -43,72 +43,59 @@ function Story({ journey }) {
     });
   };
 
+  const goToProfilePage = (e) => {
+    e.preventDefault();
+    history.push(`/viewProfile/${journey?.id}`);
+  };
+
   return (
     <Container>
-      <div onClick={open_story_popup} className = "for_laptop">
-      <div
-        className="current_status"
-        style={{
-          backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
-        }}
-      ></div>
-      <div className="user_info">
-        <Avatar className="user_info_avatar" src={profilePhotoUrl} />
-        <p>{journey?.data?.uploaderInfo?.name}</p>
-      </div>
-      <div className="journey_period">
+      <div onClick={open_story_popup} className="for_laptop">
+        <div
+          className="current_status"
+          style={{
+            backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+          }}
+        ></div>
+        <div className="user_info">
+          <div className="info">
+            <Avatar className="user_info_avatar" src={profilePhotoUrl} />
+            <p onClick={goToProfilePage}>{journey?.data?.uploaderInfo?.name}</p>
+          </div>
+          <div>
+            <span className="fire_symbol">
+              {journey?.data?.fires?.length}🔥
+            </span>
+          </div>
+        </div>
+        {/* <div className="journey_period">
         <p>
           <span>{journey?.data?.journeyPeriod} </span>
           of journey in {userInfo?.passion}
         </p>
-      </div>
-      <div className="fires">
-        <div>
-          <span className="fire_symbol">🔥</span>
-          <span className="number_of_fires">110 views</span>
-        </div>
-        {/* <div className="view_button">
-          <button onClick={open_story_popup} className="for_laptop">
-            View
-          </button>
-          <button onClick={(e) => history.push(`/journey/${journey?.id}`)} className="for_mobile">
-            View
-          </button>
-        </div> */}
-      </div>
+      </div> */}
       </div>
 
-      <div onClick={(e) => history.push(`/journey/${journey?.id}`)} className = "div_for_mobile">
       <div
-        className="current_status"
-        style={{
-          backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
-        }}
-      ></div>
-      <div className="user_info">
-        <Avatar className="user_info_avatar" src={profilePhotoUrl} />
-        <p>{journey?.data?.uploaderInfo?.name}</p>
-      </div>
-      <div className="journey_period">
+        onClick={(e) => history.push(`/journey/${journey?.id}`)}
+        className="div_for_mobile"
+      >
+        <div
+          className="current_status"
+          style={{
+            backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+          }}
+        ></div>
+        <div className="user_info">
+          <Avatar className="user_info_avatar" src={profilePhotoUrl} />
+          <p>{journey?.data?.uploaderInfo?.name}</p>
+        </div> 
+        {/* <div className="journey_period">
         <p>
           <span>{journey?.data?.journeyPeriod} </span>
           of journey in {userInfo?.passion}
         </p>
-      </div>
-      <div className="fires">
-        <div>
-          <span className="fire_symbol">🔥</span>
-          <span className="number_of_fires">110 views</span>
-        </div>
-        {/* <div className="view_button">
-          <button onClick={open_story_popup} className="for_laptop">
-            View
-          </button>
-          <button onClick={(e) => history.push(`/journey/${journey?.id}`)} className="for_mobile">
-            View
-          </button>
-        </div> */}
-      </div>
+      </div> */}
       </div>
     </Container>
   );
@@ -129,23 +116,22 @@ const Container = styled.div`
   &:hover {
     cursor: pointer;
   }
-  
 
   .for_laptop {
-      display : flex;
-      flex-direction : column;
-      @media (max-width: 500px) {
-        display: none;
-      }
-    }
-
-    .div_for_mobile{
+    display: flex;
+    flex-direction: column;
+    @media (max-width: 500px) {
       display: none;
-      @media (max-width: 500px) {
-        display: flex;
-        flex-direction: column;
-      }
     }
+  }
+
+  .div_for_mobile {
+    display: none;
+    @media (max-width: 500px) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
 
   @media (max-width: 500px) {
     width: 95vw;
@@ -169,6 +155,11 @@ const Container = styled.div`
     padding: 10px;
 
     display: flex;
+    justify-content: space-between;
+
+    &:hover {
+      cursor: pointer;
+    }
 
     .user_info_avatar {
       width: 27px;
@@ -180,6 +171,10 @@ const Container = styled.div`
       margin-bottom: auto;
       margin-left: 5px;
       font-size: 15px;
+
+      &:hover {
+        color: #1b7ae7;
+      }
     }
   }
 
@@ -207,9 +202,11 @@ const Container = styled.div`
 
   .fires {
     padding: 10px;
+    padding-top: 0;
     display: flex;
     justify-content: space-between;
     margin-top: 3px;
+    justify-content: flex-end;
 
     span {
       padding: 0;
@@ -235,6 +232,10 @@ const Container = styled.div`
         background-color: #2e66ff;
       }
     }
+  }
+
+  .info {
+    display: flex;
   }
 `;
 

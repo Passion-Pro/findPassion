@@ -33,9 +33,11 @@ export const initialState = {
   showgroupMoreRight:true,
   openAddLearntPopup: false,
   chatId: null,
-  addPartnerInfo : []
+  addPartnerInfo : [],
   // for loading
   loading:false,
+  openRemoveMemberPopup : false,
+  learner : {},
 };
 
 export const actionTypes = {
@@ -79,7 +81,10 @@ export const actionTypes = {
   SET_CHAT_ID: "SEt_CHAT_ID",
   ADD_PARTNER_INFO : "ADD_PARTNER_INFO",
   REMOVE_PARTNER_INFO : "REMOVE_PARTNER_INFO",
-  SET_ADD_PARTNER_INFO : "SET_ADD_PARTNER_INFO"
+  SET_ADD_PARTNER_INFO : "SET_ADD_PARTNER_INFO",
+  OPEN_REMOVE_MEMBER_POPUP : "OPEN_REMOVE_MEMBER_POPUP",
+  SET_LEARNER : "SET_LEARNER",
+  
 };
 
 const reducer = (state, action) => {
@@ -327,6 +332,17 @@ const reducer = (state, action) => {
         return {
           type : actionTypes.SET_ADD_PARTNER_INFO,
           addPartnerInfo: action.addPartnerInfo
+        }
+      case actionTypes.OPEN_REMOVE_MEMBER_POPUP:
+        return {
+          type : actionTypes.OPEN_REMOVE_MEMBER_POPUP,
+          openRemoveMemberPopup : action.openRemoveMemberPopup
+        }
+        
+      case actionTypes.SET_LEARNER:
+        return {
+          type : actionTypes.SET_LEARNER,
+          learner : action.learner
         }
     default:
       return state;

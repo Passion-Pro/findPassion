@@ -12,7 +12,7 @@ import Message from "./Message";
 import AttachPopup from "./AttachPopup";
 import db from "../../firebase";
 import firebase from "firebase";
-import { useParams } from "react-router-dom";
+import { useParams , useHistory } from "react-router-dom";
 import Picker from "emoji-picker-react";
 
 
@@ -26,6 +26,7 @@ function Chat() {
   const { chatId } = useParams();
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [openEmojis, setOpenEmojis] = useState(false);
+  const history = useHistory();
 
   const onEmojiClick = (event, emojiObject) => {
     setChosenEmoji(emojiObject);
@@ -235,6 +236,27 @@ function Chat() {
       setInput("");
     }
   };
+
+  const goToProfilePage = (e) => {
+    e.preventDefault();
+
+    db.collection("users")
+            .where("email", "==", chatInfo?.email)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                
+                history.push(`/viewProfile/${doc.id}`)
+              
+
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+  }
   return (
     <div>
       <Container>
@@ -252,7 +274,9 @@ function Chat() {
             <div className="chat_section_name">
               <Avatar className="avatar" src={chatInfo?.profilePhotoUrl} />
               <div className="chat_section_name_info">
-                <p>{chatInfo?.name}</p>
+                <p
+                 onClick = {goToProfilePage}
+                >{chatInfo?.name}</p>
               </div>
             </div>
             <div className="chat_section_messages">
@@ -367,9 +391,14 @@ const Container = styled.div`
       margin-top: 0;
       margin-bottom: 0;
       margin-left: 10px;
+
+      &:hover {
+        cursor: pointer;
+        color : #1b7ae7;
+      }
     }
   }
-
+  
   .chat_section_messages {
     flex: 1;
     background-color: #0099ff;
@@ -451,6 +480,10 @@ const Container = styled.div`
    display : flex;
    justify-content : center; 
    align-items : center;
+
+   @media(max-width: 500px){
+     display : none;
+   }
    
    .click_box{
       background-color: white;

@@ -1,9 +1,9 @@
-import React from "react";
+import React , {useEffect, useState} from "react";
 import styled from "styled-components";
 import db from "../../firebase";
 import { useStateValue } from "../../StateProvider";
 
-function LearntStuff({ learntStuff , from }) {
+function LearntStuff({ learntStuff , from}) {
   const [{ user, userInfo }, dispatch] = useStateValue();
 
   const delete_learnt_stuff = (e) => {
@@ -15,7 +15,7 @@ function LearntStuff({ learntStuff , from }) {
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
-
+   
           db.collection("users")
             .doc(user?.uid)
             .collection("learntStuff")
@@ -29,7 +29,11 @@ function LearntStuff({ learntStuff , from }) {
   };
 
   return (
-    <Container>
+    <Container
+     style = {{
+       width : from === "viewProfile" &&  '90%'
+     }}
+    >
       {learntStuff?.data?.platform !== "others" && (
         <div className="icon">
           <img src={learntStuff?.data?.iconUrl} alt="" />
@@ -37,13 +41,48 @@ function LearntStuff({ learntStuff , from }) {
         </div>
       )}
       <div className="learning">
-        <p>{learntStuff?.data?.learning}</p>
+        <div className = "tags"
+         style = {{
+           marginTop : from === "viewProfile" && '20px'
+         }}
+        >
+        {learntStuff?.data?.tags?.map((tag) => (
+          <p
+           style = {{
+             fontSize : "12px",
+             borderRadius : "20px",
+             padding : "7px",
+             border : "1px solid lightgray",
+             width : "fit-content",
+             color : "white",
+             backgroundColor : "blue",
+             marginRight : "7px",
+             marginBottom : "7px",
+             marginTop : 0
+           }}
+          >{tag?.name}</p>
+        ))}
+        </div>
+        <p style = {{
+          display: "flex"
+        }}
+        className = "channel_learnt_info"
+        >{learntStuff?.data?.learning}{' '}
+         {learntStuff?.data?.platform === "youtube" && (<p className="channelName"
+          style={{
+            marginTop : 0,
+            marginLeft : '5px'
+          }}
+         >
+           from <span>{learntStuff?.data?.channelName}</span>
+         </p>)}
+        </p>
       </div>
       {learntStuff?.data?.platform === "youtube" && (
         <>
-          <p className="channelName">
+          {/* <p className="channelName">
             Learnt from <span>{learntStuff?.data?.channelName}</span>
-          </p>
+          </p> */}
           <a href={learntStuff?.data?.videoLink} className="videoLink">
             Click here to view video
           </a>
@@ -97,7 +136,9 @@ const Container = styled.div`
     }
   }
 
-  .learning {
+  .learning { 
+    display : flex;
+    flex-direction : column;
     p {
       margin-bottom: 5px;
       margin-top: 10px;
@@ -107,6 +148,10 @@ const Container = styled.div`
   .channelName {
     margin-top: 0;
     margin-bottom: 5px;
+
+    @media(max-width: 500px){
+     margin-left : 0 !important;
+  }
 
     span {
       font-style: italic;
@@ -123,6 +168,17 @@ const Container = styled.div`
       color: #349cfd;
     }
   }
+
+  .tags{
+    display : flex;
+    flex-wrap : wrap;
+  }
+
+.channel_learnt_info{
+  @media(max-width: 500px){
+    flex-direction : column;
+  }
+}
 `;
 
 export default LearntStuff;

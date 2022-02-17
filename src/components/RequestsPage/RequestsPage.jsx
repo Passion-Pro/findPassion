@@ -11,6 +11,7 @@ function RequestsPage() {
   const history = useHistory();
   const [requests, setRequests] = useState([]);
   const [{ user }, dispatch] = useStateValue();
+  const[learnings , setLearnings] = useState([]);
 
   useEffect(() => {
     if (user?.uid) {
@@ -25,6 +26,15 @@ function RequestsPage() {
             }))
           )
         );
+
+        db.collection('learnings').onSnapshot((snapshot) => 
+          setLearnings(
+            snapshot.docs.map((doc) => ({
+              id : doc.id,
+              data : doc.data(),
+            }))
+          )
+        )
     }
   }, [user?.uid]);
 
@@ -44,7 +54,7 @@ function RequestsPage() {
             {requests.map((request) => (
                 <>
                  {request?.data?.status === "pending" && (
-                   <Request request = {request}/>
+                   <Request request = {request} learnings = {learnings}/>
                  )}
                 </>
             ))}

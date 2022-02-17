@@ -1,6 +1,9 @@
 import React from 'react';
 import './SearchName.css';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import { Avatar } from '@material-ui/core';
+
+
 
 function SearchName({ data }) {
     const learned='Reactjs, HTML, CSS, Javascript, C++'
@@ -9,22 +12,11 @@ function SearchName({ data }) {
         <div className="searchName">
             <div className="searchNamefirstdiv">
                 <div className="searchNamefirstdiv__photo">
-                    <AccountCircleRoundedIcon style={{ color: "gray", fontSize: 60 }} />
+                    <Avatar style={{ width : '50px' , height : '50px' }} src =  {data?.data?.profilePhotoUrl}/>
                 </div>
                 <div className="searchNamefirstdiv__rightInfo">
                     <span className='searchName__SpanName'>{data?.data?.name}</span>
-                    <div className='searchName__SpanDiv'>
-                        <span className='searchName__SpanStatus'>Learning :- </span>
-                        <span className='searchName__SpanStatus_text'>
-                         {learning.length>20 ? learning.slice(0,20)+'...': learning}
-                        </span>
-                    </div>
-                    <div className='searchName__SpanDiv'>  
-                    <span className='searchName__SpanStatus'>Learned :- </span>
-                        <span className='searchName__SpanStatus_text'>
-                        {learned.length>20 ? learned.slice(0,20)+'...': learned}
-                        </span>  
-                </div>
+                     {data?.data?.passion!== "others" && (<p className = "user_passion">{data?.data?.passion}</p>)}
                 </div>
             </div>
         </div>

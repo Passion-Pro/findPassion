@@ -2,18 +2,67 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
+import db from "../../../firebase";
+import {useHistory} from "react-router-dom"
 
-function PartnerCard() {
+
+function PartnerCard({partner}) {
   const [{ openStoryPopup, startJourney, journey, userInfo, user }, dispatch] =
     useStateValue();
+    const[profilePhotoUrl, setProfilePhotoUrl] = useState()
+    const history = useHistory();
+
+    useEffect(() => {
+        if(partner?.data?.email){
+          db.collection("users")
+            .where("email", "==", partner?.data?.email)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                setProfilePhotoUrl(doc.data().profilePhotoUrl);
+
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+        }
+    } , [partner?.data?.email]);
+
+    const goToProfilePage = (e) => {
+      e.preventDefault();
+  
+      db.collection("users")
+              .where("email", "==", partner?.data?.email)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+                  
+                  history.push(`/viewProfile/${doc.id}`)
+                
+  
+                });
+              })
+              .catch((error) => {
+                console.log("Error getting documents: ", error);
+              });
+    }
+
+
   return (
-    <Container>
+    <Container
+     onClick={goToProfilePage}
+    >
       <div className="partner_info"
        style = {{
-        backgroundImage: `url(${userInfo?.profilePhotoUrl})`, 
+        backgroundImage: `url(${profilePhotoUrl})`, 
        }}
       >
-        <p>Ronak</p>
+        <p>{partner?.data?.name}</p>
       </div>
     </Container>
   );

@@ -14,6 +14,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import db from "../../../firebase";
 import Typical from "react-typical";
 import PartnerCard from "./PartnerCard";
+import { useHistory } from "react-router-dom";
 
 function StoryPopup() {
   const [{ openStoryPopup, startJourney, journey, userInfo, user }, dispatch] =
@@ -32,11 +33,22 @@ function StoryPopup() {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState();
   const [showGif, setShowGif] = useState(false);
   const [nextCaption, setNextCaption] = useState();
-  const[nextPart , setNextPart] = useState();
-  const[showPartners, setShowPartners] = useState(false);
+  const [nextPart, setNextPart] = useState();
+  const [showPartners, setShowPartners] = useState(false);
+  const history = useHistory();
+  const [partners, setPartners] = useState([]);
+   
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.OPEN_STORY_POPUP,
+      openStoryPopup: false,
+    });
+  }, []);
 
   useEffect(() => {
     setShowGif(false);
+    setNextCaption();
 
     dispatch({
       type: actionTypes.START_JOURNEY,
@@ -82,7 +94,8 @@ function StoryPopup() {
 
   useEffect(() => {
     if (images.length > 0 && startJourney) {
-      setNextCaption(images[images?.length - 1]?.imageCaption);
+      setNextCaption(images[images?.length - 1]?.caption);
+      setPartners(images[images?.length - 1]?.partners);
     }
   }, [images?.length, startJourney]);
 
@@ -302,7 +315,13 @@ function StoryPopup() {
             <div className="storyPopup_header">
               <div className="user_info">
                 <Avatar className="user_info_avatar" src={profilePhotoUrl} />
-                <p>{journey?.data?.uploaderInfo?.name}</p>
+                <p
+                  onClick={() => {
+                    history.push(`/viewProfile/${journey?.id}`);
+                  }}
+                >
+                  {journey?.data?.uploaderInfo?.name}
+                </p>
                 {/* {likes?.length > 0 && (
                   <div className="total_likes">
                     <span>{likes?.length}</span>
@@ -315,7 +334,7 @@ function StoryPopup() {
               </div>
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
-            {startJourney === false  && showPartners === false ? (
+            {startJourney === false && showPartners === false ? (
               <>
                 {showGif === false ? (
                   <div
@@ -325,18 +344,19 @@ function StoryPopup() {
                     }}
                   ></div>
                 ) : (
-                  <div className="journey"
-                   style = {{
-                     display : 'flex',
-                     justifyContent : 'center',
-                     alignItems : 'center',
-                   }}
+                  <div
+                    className="journey"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
                   >
                     <p
                       style={{
                         color: "white",
-                        fontSize : "20px",
-                        fontFamily : "Helvetica Neue",
+                        fontSize: "20px",
+                        fontFamily: "Helvetica Neue",
                       }}
                     >
                       <Typical
@@ -352,51 +372,135 @@ function StoryPopup() {
               </>
             ) : (
               <>
-                {journey?.data?.journeyThrough === "photos" && !showPartners  && (
-                  <div className="journey_cards">
-                    <div className="journey_partners">
-                       <div className="first_two">
-                       <div className="partner">
-                         <Avatar src={userInfo?.profilePhotoUrl} 
-                          style = {{
-                            width : '21px',
-                            height : '21px'
-                          }}
-                         />
-                          <p>Ronak</p>
-                       </div>
-                       <div className="partner">
-                         <Avatar src={userInfo?.profilePhotoUrl} 
-                          style = {{
-                            width : '21px',
-                            height : '21px'
-                          }}
-                         />
-                          <p>Ronak</p>
-                       </div>
-                       </div>
-                       <div className="others" onClick = {() => {
-                         setShowPartners(true);
-                         console.log(showPartners);
-                       }}>
-                         <p>+8 others</p>
-                       </div>
-                      
-                    </div>
+                {journey?.data?.journeyThrough === "photos" && (
+                  <div
+                    className="journey_cards"
+                    style={{
+                      display: showPartners && "none",
+                    }}
+                  >
                     <div className="tinderCards_cardContainer">
                       {images?.length > 0 && (
                         <>
                           {images.map((image, index) => (
                             <>
+                              {partners?.length > 0 && (
+                                <div
+                                  className="journey_partners"
+                                  style={{
+                                    position: "absolute",
+                                  }}
+                                >
+                                  {console.log("Partners are", image?.partners)}
+                                  <div className="first_two">
+                                    <div
+                                      className="partner"
+                                      onClick={() => {
+                                        if (partners[0]?.data?.email) {
+                                          db.collection("users")
+                                            .where(
+                                              "email",
+                                              "==",
+                                              partners[0]?.data?.email
+                                            )
+                                            .get()
+                                            .then((querySnapshot) => {
+                                              querySnapshot.forEach((doc) => {
+                                                // doc.data() is never undefined for query doc snapshots
+                                                console.log(
+                                                  doc.id,
+                                                  " => ",
+                                                  doc.data()
+                                                );
+
+                                                history.push(
+                                                  `/viewProfile/${doc.id}`
+                                                );
+                                              });
+                                            })
+                                            .catch((error) => {
+                                              console.log(
+                                                "Error getting documents: ",
+                                                error
+                                              );
+                                            });
+                                        }
+                                      }}
+                                    >
+                                      {/* <Avatar
+                                      src={userInfo?.profilePhotoUrl}
+                                      style={{
+                                        width: "21px",
+                                        height: "21px",
+                                      }}
+                                    /> */}
+                                      <p>{partners[0]?.data?.name}</p>
+                                    </div>
+                                    <div
+                                      className="partner"
+                                      onClick={() => {
+                                        if (partners[0]?.data?.email) {
+                                          db.collection("users")
+                                            .where(
+                                              "email",
+                                              "==",
+                                              partners[0]?.data?.email
+                                            )
+                                            .get()
+                                            .then((querySnapshot) => {
+                                              querySnapshot.forEach((doc) => {
+                                                // doc.data() is never undefined for query doc snapshots
+                                                console.log(
+                                                  doc.id,
+                                                  " => ",
+                                                  doc.data()
+                                                );
+
+                                                history.push(
+                                                  `/viewProfile/${doc.id}`
+                                                );
+                                              });
+                                            })
+                                            .catch((error) => {
+                                              console.log(
+                                                "Error getting documents: ",
+                                                error
+                                              );
+                                            });
+                                        }
+                                      }}
+                                    >
+                                      {/* <Avatar
+                                      src={userInfo?.profilePhotoUrl}
+                                      style={{
+                                        width: "21px",
+                                        height: "21px",
+                                      }}
+                                    /> */}
+                                      <p>{partners[1]?.data?.name}</p>
+                                    </div>
+                                  </div>
+
+                                  {partners.length > 2 && (
+                                    <div
+                                      className="others"
+                                      onClick={() => {
+                                        setShowPartners(true);
+                                        console.log(showPartners);
+                                      }}
+                                    >
+                                      <p>+{partners?.length - 2} others</p>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                               <TinderCard
                                 className="swipe"
                                 // key={part.caption}
                                 // preventSwipe={["up", "down"]}
                                 onCardLeftScreen={() => {
                                   setNextCaption();
-                                  setNextCaption(
-                                    images[index - 1]?.imageCaption
-                                  );
+                                  setNextCaption(images[index - 1]?.caption);
                                 }}
                                 onSwipe={() => {
                                   if (index === 0) {
@@ -404,8 +508,10 @@ function StoryPopup() {
                                       type: actionTypes.START_JOURNEY,
                                       startJourney: false,
                                     });
-                                    setShowGif(false)
+                                    setShowGif(false);
                                   }
+                                  setPartners([]);
+                                  setPartners(images[index - 1]?.partners);
                                 }}
                               >
                                 {console.log("images ", images)}
@@ -416,6 +522,26 @@ function StoryPopup() {
                                     backgroundImage: `url(${image.imageUrl})`,
                                   }}
                                 >
+                                   {console.log("Year is ", image?.year)}
+                                  {image?.year && (
+                                    <div className="year_info">
+                                      <p
+                                        style={{
+                                          marginTop: 0,
+                                          marginBottom: 0,
+                                          color: "white",
+                                          fontSize: "12px",
+                                        }}
+                                      >
+                                        {image?.year === 1 && `1st year`}
+                                        {image?.year === 2 && `2nd year`}
+                                        {image?.year === 3 && `3rd year`}
+                                        {image?.year > 3 &&
+                                          `${image?.year}th year`}
+                                      </p>
+                                    </div>
+                                  )}
+
                                   {nextCaption && (
                                     <div className="image_caption">
                                       <p>
@@ -457,9 +583,7 @@ function StoryPopup() {
                                   // key={part.caption}
                                   onCardLeftScreen={() => {
                                     setNextPart();
-                                    setNextPart(
-                                      storyParts[index - 1]
-                                    );
+                                    setNextPart(storyParts[index - 1]);
                                   }}
                                   onSwipe={() => {
                                     setP(0);
@@ -469,20 +593,20 @@ function StoryPopup() {
                                         type: actionTypes.START_JOURNEY,
                                         startJourney: false,
                                       });
-                                      setShowGif(false)
+                                      setShowGif(false);
                                     }
                                   }}
                                 >
-                                  
-                                    {nextPart && (<div className="card text_card">
-                                    <p>
-                                    <Typical
+                                  {nextPart && (
+                                    <div className="card text_card">
+                                      <p>
+                                        <Typical
                                           steps={[`${nextPart}`, 1]}
                                           wrapper="b"
                                         />
-                                    </p>
-                                  </div>)}
-                                  
+                                      </p>
+                                    </div>
+                                  )}
                                 </TinderCard>
                               </>
                             ))}
@@ -496,20 +620,19 @@ function StoryPopup() {
                 {showPartners && (
                   <div className="partners_component">
                     <div className="partners_header">
-                      <p>8 friends</p>
-                      <button onClick ={() => {
-                        setShowPartners(false);
-                      }}>Journey</button>
+                      <p>{partners?.length} partners</p>
+                      <button
+                        onClick={() => {
+                          setShowPartners(false);
+                        }}
+                      >
+                        Journey
+                      </button>
                     </div>
                     <div className="partner_partners">
-                       <PartnerCard/>
-                       <PartnerCard/>
-                       <PartnerCard/>
-                       <PartnerCard/>
-                       <PartnerCard/>
-                       <PartnerCard/>
-                       <PartnerCard/>
-                       <PartnerCard/>
+                      {partners.map((partner) => (
+                        <PartnerCard partner={partner} />
+                      ))}
                     </div>
                   </div>
                 )}
@@ -518,9 +641,11 @@ function StoryPopup() {
             <div className="start_button">
               {startJourney === false ? (
                 <>
-                  {showPartners === false && (<button onClick={start_journey} className="start">
-                    Start Journey
-                  </button>)}
+                  {showPartners === false && (
+                    <button onClick={start_journey} className="start">
+                      Start Journey
+                    </button>
+                  )}
                   <div className="icons">
                     {/* {liked === false ? (
                       <ThumbUpAltOutlinedIcon
@@ -548,23 +673,26 @@ function StoryPopup() {
                 </>
               ) : (
                 <>
-                  {showPartners === false && (<button
-                    className={
-                      journey?.data?.journeyThrough === "video"
-                        ? `start`
-                        : `started`
-                    }
-                    onClick={stop_journey}
-                  >
-                    Stop
-                  </button>)}
+                  {showPartners === false && (
+                    <button
+                      className={
+                        journey?.data?.journeyThrough === "video"
+                          ? `start`
+                          : `started`
+                      }
+                      onClick={stop_journey}
+                    >
+                      Stop
+                    </button>
+                  )}
                   <div
                     className="icons"
                     style={{
                       marginTop: `${
-                        journey?.data?.journeyThrough === "video" || showPartners
+                        journey?.data?.journeyThrough === "video" ||
+                        showPartners
                           ? "0"
-                          : "440px"
+                          : "520px"
                       }`,
                     }}
                   >
@@ -662,6 +790,11 @@ const Container = styled.div`
       margin-left: 5px;
       font-size: 17px;
       color: white;
+
+      &:hover {
+        cursor: pointer;
+        color: #c4c4c4;
+      }
     }
   }
 
@@ -722,7 +855,7 @@ const Container = styled.div`
       border-radius: 20px;
       background-color: #0099ff;
       color: white;
-      margin-top: 440px;
+      margin-top: 520px;
 
       &:hover {
         cursor: pointer;
@@ -769,7 +902,7 @@ const Container = styled.div`
     border-radius: 20px;
     background-size: cover;
     background-position: center;
-    background-color: white;
+    background-color: #f2f0f0;
     width: 300px;
     padding: 20px;
     padding-bottom: 0px;
@@ -805,6 +938,7 @@ const Container = styled.div`
 
   .swipe {
     position: absolute;
+    margin-top: 80px;
   }
 
   .card > h3 {
@@ -906,15 +1040,15 @@ const Container = styled.div`
   .text_card {
     padding: 10px;
     background-color: #fffefe;
-    border : 1px solid lightgray;
+    border: 1px solid lightgray;
 
     p {
       margin-top: 0;
       margin-bottom: 0;
       background-color: #00000034;
-      color : #333b3d;
-      padding : 5px;
-      border-radius : 10px;
+      color: #333b3d;
+      padding: 5px;
+      border-radius: 10px;
     }
   }
 
@@ -941,6 +1075,7 @@ const Container = styled.div`
       background-color: #00000076;
       padding: 10px;
       border-radius: 10px;
+      margin-bottom: 40px;
     }
   }
 
@@ -949,65 +1084,63 @@ const Container = styled.div`
     width: 330px;
     margin-left: auto;
     margin-right: auto;
-    margin-top : 10px;
-    justify-content : space-between;
+    margin-top: 10px;
+    justify-content: space-between;
 
-    .partner{
-      display : flex;
-      background-color : #2b2a2a;
-      border : 1px solid gray;
-      padding : 5px;
-      border-radius : 20px;
-      padding-left : 10px;
-      margin-right : 10px;
-
-      &:hover {
-        background-color : #474747;
-        cursor : pointer;
-      }
-
-      p{
-        color : white;
-        margin-top : 0;
-        margin-bottom : 0;
-        margin-left : 5px;
-        font-size : 13px;
-        margin-right : 5px;
-        padding-right : 5px;
-      }
-
-    }
-
-    .first_two{
-      display : flex;
-    }
-
-    .others{
-      display : flex;
-      background-color : #2b2a2a;
-      border : 1px solid gray;
-      padding : 5px;
-      border-radius : 20px;
-      padding-left : 15px;
-      margin-right : 15px;
+    .partner {
+      display: flex;
+      background-color: #2b2a2a;
+      border: 1px solid gray;
+      padding: 5px;
+      border-radius: 20px;
+      padding-left: 10px;
+      margin-right: 10px;
 
       &:hover {
-        background-color : #6d6b6b;
-        cursor : pointer;
+        background-color: #474747;
+        cursor: pointer;
       }
 
-      p{
-        color : white;
-        margin-top : 0;
-        margin-bottom : 0;
-        margin-left : 5px;
-        font-size : 13px;
-        margin-right : 5px;
-        padding-right : 5px;
+      p {
+        color: white;
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 5px;
+        font-size: 13px;
+        margin-right: 5px;
+        padding-right: 5px;
+      }
+    }
+
+    .first_two {
+      display: flex;
+    }
+
+    .others {
+      display: flex;
+      background-color: #2b2a2a;
+      border: 1px solid gray;
+      padding: 5px;
+      border-radius: 20px;
+      padding-left: 15px;
+      margin-right: 15px;
+
+      &:hover {
+        background-color: #6d6b6b;
+        cursor: pointer;
+      }
+
+      p {
+        color: white;
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 5px;
+        font-size: 13px;
+        margin-right: 5px;
+        padding-right: 5px;
       }
     }
   }
-
 
   .image_caption {
     color: white;
@@ -1026,52 +1159,61 @@ const Container = styled.div`
     }
   }
 
-  .partners_component{
-    display : flex;
-    flex-direction : column;
-    padding-left : 10px;
-    padding-right : 10px;
+  .partners_component {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
 
-    .partners_header{
-      display : flex;
-      justify-content : space-between;
-      margin-top : 20px;
-      margin-bottom : 10px;
+    .partners_header {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      margin-bottom: 10px;
 
-
-      p{
-        color : white;
-        margin-top : 0;
-        margin-bottom : 0;
+      p {
+        color: white;
+        margin-top: 0;
+        margin-bottom: 0;
       }
 
-      button{
-       width: 100px;
-      padding: 10px;
-      border: 0;
-      border-radius: 20px;
-      background-color: #0099ff;
-      color: white;
+      button {
+        width: 100px;
+        padding: 10px;
+        border: 0;
+        border-radius: 20px;
+        background-color: #0099ff;
+        color: white;
 
-      &:hover {
-        cursor: pointer;
-        background-color: #60bffd;
-      }
+        &:hover {
+          cursor: pointer;
+          background-color: #60bffd;
+        }
       }
     }
   }
 
-  .partner_partners{
-    display : flex;
-    flex-direction : row;
-    flex-wrap : wrap;
-    justify-content : center;
-    overflow-y : scroll;
-    max-height : 344px;
+  .partner_partners {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-y: scroll;
+    max-height: 344px;
   }
 
   .partner_partners::-webkit-scrollbar {
-    display : none;
+    display: none;
+  }
+
+  .year_info {
+    background-color: #00000073;
+    border-radius: 20px;
+    padding: 5px;
+    border: 1px solid gray;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: fit-content;
   }
 `;
 

@@ -48,6 +48,7 @@ import Header from "./components/header/Header";
 import GroupTasklist from "./components/group/GroupTasklist";
 import ShowTask from "./components/group/ShowTask";
 import { CircularProgress } from '@mui/material';
+import PostsPage from "./components/world/Posts/PostsPage";
 
 function App() {
 
@@ -141,7 +142,9 @@ function App() {
         {window.location.pathname !== "/withoutlogin" &&
           window.location.pathname !== "/addJourney/photos" &&
           window.location.pathname !== "/addJourney/words" &&
-          window.location.pathname !== "/addJourney/video" && <Header />}
+          window.location.pathname !== "/addJourney/video" &&
+          window.location.pathname !== "/viewProfile" &&
+          <Header />}
         <Switch>
           <Route path="/searchPage">
             <SearchPage />
@@ -212,7 +215,7 @@ function App() {
           <Route path="/chat">
             <Chat />
           </Route>
-          <Route path="/messages">
+          <Route path="/messages/:myChatId/:viewerId">
             <ChatPage />
           </Route>
           <Route path="/world">
@@ -227,7 +230,7 @@ function App() {
           <Route path="/learning/:learningId">
             <LearningGroup />
           </Route>
-          <Route path="/learners">
+          <Route path= "/learners/:learningId">
             <LearnersPage />
           </Route>
           <Route path="/profile">
@@ -248,13 +251,16 @@ function App() {
           <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
             <ViewPdf />
           </Route>
+          <Route path="/posts">
+            <PostsPage/>
+          </Route>
           <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
             <ViewPdf />
           </Route>
           <Route path="/userProfile">
             <UserProfile />
           </Route>
-          <Route path="/">{user?.email && <Home />}</Route>
+          <Route path="/">{user?.email && <WorldPage/>}</Route>
         </Switch>
       </Router>
     </div>
