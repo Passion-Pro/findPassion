@@ -72,7 +72,8 @@ function CreateAccount() {
   const [input, setInput] = useState("");
   const [year, setYear] = useState();
   const [branch, setBranch] = useState();
-  const[coverImage ,setCoverImage] = useState();
+  const [coverImage, setCoverImage] = useState();
+
 
   useEffect(() => {
     if (year === 1) {
@@ -82,7 +83,7 @@ function CreateAccount() {
       });
     }
 
-    console.log("User is " , user)
+    console.log("User is ", user)
   }, [year]);
 
   const openQaulitiesPopup = () => {
@@ -129,89 +130,99 @@ function CreateAccount() {
     ) {
       console.log(experience);
       if (
-        (passion !== "Don't know" && experience) ||
-        passion === "Don't know"
+        (passion !== "Other" && experience) ||
+        passion === "Other"
       ) {
-              if (passion === "Don't know") {
-                db.collection("users").doc(user.uid).set({
-                  name: name,
-                  email: user?.email,
-                  qualities: selectedQualities,
-                  passion: passion,
-                  subInterest: input,
-                  branch: branch,
-                  year: year,
-                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        if (passion === "Don't know") {
+          db.collection("users").doc(user.uid).set({
+            name: name,
+            email: user?.email,
+            qualities: selectedQualities,
+            passion: passion,
+            subInterest: input,
+            branch: branch,
+            year: year,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+        } else {
+          db.collection("users").doc(user.uid).set({
+            name: name,
+            email: user?.email,
+            qualities: selectedQualities,
+            passion: passion,
+            experience: experience,
+            subInterest: input,
+            branch: branch,
+            year: year,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          });
+        }
+        const id = uuid();
+
+        if (image) {
+          const upload = storage.ref(`images/${id}`).put(image);
+
+          upload.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+              console.log(`Progress : ${progress}%`);
+              if (snapshot.state === "RUNNING") {
+                console.log(`Progress : ${progress}%`);
+              }
+            },
+            (error) => console.log(error.code),
+            async () => {
+              const url = await upload.snapshot.ref.getDownloadURL();
+              if (url) {
+                db.collection("users").doc(user.uid).update({
+                  profilePhotoUrl: url,
                 });
-              } else {
-                db.collection("users").doc(user.uid).set({
-                  name: name,
-                  email: user?.email,
-                  qualities: selectedQualities,
-                  passion: passion,
-                  experience: experience,
-                  subInterest: input,
-                  branch: branch,
-                  year: year,
-                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              }
+            }
+          );
+        }
+
+        if (coverImage) {
+          const upload = storage.ref(`images/${id}`).put(coverImage);
+
+          upload.on(
+            "state_changed",
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+              console.log(`Progress : ${progress}%`);
+              if (snapshot.state === "RUNNING") {
+                console.log(`Progress : ${progress}%`);
+              }
+            },
+            (error) => console.log(error.code),
+            async () => {
+              const url = await upload.snapshot.ref.getDownloadURL();
+              if (url) {
+                db.collection("users").doc(user.uid).update({
+                  coverImageUrl: url,
                 });
               }
-              const id = uuid();
+            }
+          );
+        }
 
-              if (image) {
-                const upload = storage.ref(`images/${id}`).put(image);
+        db.collection('users').doc(user.uid).collection('pageViews').doc('learningsPage').set({
+          views: 0
+        });
+        db.collection('users').doc(user.uid).collection('pageViews').doc('journeysPage').set({
+          views: 0
+        });
+        db.collection('users').doc(user.uid).collection('pageViews').doc('postsPage').set({
+          views: 0
+        });
 
-                upload.on(
-                  "state_changed",
-                  (snapshot) => {
-                    const progress =
-                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        history.push("/world");
 
-                    console.log(`Progress : ${progress}%`);
-                    if (snapshot.state === "RUNNING") {
-                      console.log(`Progress : ${progress}%`);
-                    }
-                  },
-                  (error) => console.log(error.code),
-                  async () => {
-                    const url = await upload.snapshot.ref.getDownloadURL();
-                    if (url) {
-                      db.collection("users").doc(user.uid).update({
-                        profilePhotoUrl: url,
-                      });
-                    }
-                  }
-                );
-              }
-
-              if(coverImage){
-                const upload = storage.ref(`images/${id}`).put(coverImage);
-
-                upload.on(
-                  "state_changed",
-                  (snapshot) => {
-                    const progress =
-                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
-                    console.log(`Progress : ${progress}%`);
-                    if (snapshot.state === "RUNNING") {
-                      console.log(`Progress : ${progress}%`);
-                    }
-                  },
-                  (error) => console.log(error.code),
-                  async () => {
-                    const url = await upload.snapshot.ref.getDownloadURL();
-                    if (url) {
-                      db.collection("users").doc(user.uid).update({
-                        coverImageUrl: url,
-                      });
-                    }
-                  }
-                );
-              }
-
-              history.push("/world");
-            
       } else {
         alert("Please fill all the details");
       }
@@ -231,9 +242,9 @@ function CreateAccount() {
     <Container>
       <div className="createIn">
         <div className="up"
-         style = {{
-          backgroundImage: coverImage && `url(${URL.createObjectURL(coverImage)})`
-        }}
+          style={{
+            backgroundImage: coverImage && `url(${URL.createObjectURL(coverImage)})`
+          }}
         >
           {image ? (
             <div className="photo"
@@ -242,7 +253,7 @@ function CreateAccount() {
                 overlap="circular"
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 badgeContent={
-                  <label htmlFor="photo" className = "camera_label">
+                  <label htmlFor="photo" className="camera_label">
                     <PhotoCamera className="camera_icon" />
                   </label>
                 }
@@ -257,7 +268,7 @@ function CreateAccount() {
                 overlap="circular"
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 badgeContent={
-                  <label htmlFor="photo" className = "camera_label">
+                  <label htmlFor="photo" className="camera_label">
                     <PhotoCamera className="camera_icon" />
                   </label>
                 }
@@ -277,17 +288,17 @@ function CreateAccount() {
           />
           <div className="cover_photo">
             <label htmlFor="photo_background">
-            <p>Add background image</p>
+              <p>Add background image</p>
             </label>
             <input
-            type="file"
-            style={{
-              display: "none",
-            }}
-            id="photo_background"
-            onChange={add_background_image}
-            accept="image/git , image/jpeg , image/png"
-          />
+              type="file"
+              style={{
+                display: "none",
+              }}
+              id="photo_background"
+              onChange={add_background_image}
+              accept="image/git , image/jpeg , image/png"
+            />
           </div>
         </div>
         <div className="down">
@@ -341,14 +352,14 @@ function CreateAccount() {
               {!passion && (<button onClick={open_passion_popup} className="let_us">
                 Select your passion , interest
               </button>)}
-             {passion && ( <p>{passion}</p>)}
+              {passion && (<p>{passion}</p>)}
             </div>
             {passion && passion !== "Don't know" && (
               <>
                 <div className="subfield">
-                  {passion === 'Research'?(
+                  {passion === 'Research' ? (
                     <p>Mention your topic of Research</p>
-                  ):(<p>Mention subInterest in your passion:</p>)}
+                  ) : (<p>Mention subInterest in your passion:</p>)}
                   <input
                     type="text"
                     placeholder=""

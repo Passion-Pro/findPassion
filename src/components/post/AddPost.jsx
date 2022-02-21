@@ -145,19 +145,19 @@ export default function AddPost() {
                                     setPostText('');
                                     setLoading(false);
                                     setCroppedImage(null);
-                                    history.push('/');
+                                    history.push('/posts');
                                 });
                         });
                 } else {
                     alert('Try with another method.');
                     setLoading(false);
-                    history.push('/');
+                    history.push('/posts');
                 }
             });
         } else {
             alert('Select photo')
             setLoading(false);
-            history.push('/');
+            history.push('/posts');
         }
     }
 

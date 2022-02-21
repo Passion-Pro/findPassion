@@ -54,6 +54,8 @@ function NewLearningPopup({tags}) {
   const start_learning = (e) => {
     e.preventDefault();
     console.log("Image URl is ", imageUrl);
+    var today = new Date();
+    var date = today.toLocaleString();
     if (learnings?.length < 5) {
       setLaunch(true);
       if (image) {
@@ -93,7 +95,8 @@ function NewLearningPopup({tags}) {
                   learnersLength: 1,
                   fires: [],
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                  tags : suggestedTags
+                  tags : suggestedTags,
+                  date : date
                 })
                 .then(() => {
                   console.log("THen Step is arrived");
@@ -135,7 +138,8 @@ function NewLearningPopup({tags}) {
           learnersLength: 1,
           fires: [],
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          tags : suggestedTags
+          tags : suggestedTags,
+          date : date
         });
       }
       setTimeout(() => {
@@ -192,7 +196,7 @@ function NewLearningPopup({tags}) {
                 />
                 <div className="selected_tags">
                   {suggestedTags.map((tag , index) => (
-                    <div className="selected_tag">
+                    <div className="selected_tag_popup">
                       <p>{tag?.name}</p>
                       <CloseIcon className="tag_close_icon" onClick = {() => {
                          suggestedTags.splice(index,1); 
@@ -498,7 +502,7 @@ const Container = styled.div`
 
   }
 
-  .selected_tag{
+  .selected_tag_popup{
     display : flex; 
     background-color : #f1f0f0;
     padding : 7px;
@@ -507,6 +511,7 @@ const Container = styled.div`
     margin-top : 5px;
     margin-bottom : 5px;
     border : 1px solid lightgray;
+    width : fit-content !important;
     
     p{
       margin-top : 0;
@@ -535,6 +540,8 @@ const Container = styled.div`
     margin-left : 30px;
     margin-top : 10px;
   }
+
+
 
   
 `;

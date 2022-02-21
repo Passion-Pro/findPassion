@@ -16,6 +16,7 @@ function Learning({ learning, type, learnings }) {
   const [fired, setFired] = useState(false);
   const [joinedId, setJoinedId] = useState();
   const [profilePhotoUrl, setProfilePhotoUrl] = useState();
+  const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     if (user?.uid && learning?.data?.started_by?.email && userInfo) {
@@ -32,24 +33,32 @@ function Learning({ learning, type, learnings }) {
             db.collection("users")
               .doc(doc.id)
               .collection("learnRequests")
-              .where("requestFrom", "==", userInfo)
-              .get()
-              .then((querySnapshot) => {
-                //  if(querySnapshot.empty === true) {
-                //    alert("Empty")
-                //  }
-                querySnapshot.forEach((doc) => {
-                  // doc.data() is never undefined for query doc snapshots
-                  console.log(doc.id, " => ", doc.data());
+              .onSnapshot((snapshot) =>
+                setRequests(
+                  snapshot.docs.map((doc) => ({
+                    data: doc.data(),
+                    id: doc.id
+                  }))
+                )
+              )
+            // .where("requestFrom", "==", userInfo)
+            // .get()
+            // .then((querySnapshot) => {
+            //   //  if(querySnapshot.empty === true) {
+            //   //    alert("Empty")
+            //   //  }
+            //   querySnapshot.forEach((doc) => {
+            //     // doc.data() is never undefined for query doc snapshots
+            //     console.log(doc.id, " => ", doc.data());
 
-                  if (doc.data().status === "pending") {
-                    setRequestSent(true);
-                  }
-                });
-              })
-              .catch((error) => {
-                console.log("Error getting documents: ", error);
-              });
+            //     if (doc.data().status === "pending") {
+            //       setRequestSent(true);
+            //     }
+            //   });
+            // })
+            // .catch((error) => {
+            //   console.log("Error getting documents: ", error);
+            // });
           });
         })
         .catch((error) => {
@@ -57,6 +66,19 @@ function Learning({ learning, type, learnings }) {
         });
     }
   }, [user?.uid, learning, userInfo]);
+
+  useEffect(() => {
+    if (requests.length > 0 && userInfo?.email) {
+      console.log("Requests are " , requests);
+      for (let i = 0; i < requests?.length; i++) {
+        if (requests[i]?.data?.requestEmail === userInfo?.email) {
+          if (requests[i].data.status === "pending") {
+            setRequestSent(true)
+          }
+        }
+      }
+    }
+  }, [requests.length, userInfo?.email])
 
   useEffect(() => {
     if (learning?.id) {
@@ -75,10 +97,10 @@ function Learning({ learning, type, learnings }) {
         if (
           learnings[i].data.learning === learning?.data?.learning &&
           learnings[i].data.started_by?.email ===
-            learning?.data?.started_by?.email
+          learning?.data?.started_by?.email
         ) {
-            console.log("YES");
-            setJoinedId(learning?.id);
+          console.log("YES");
+          setJoinedId(learning?.id);
         }
       }
     }
@@ -118,8 +140,8 @@ function Learning({ learning, type, learnings }) {
             .doc(doc.id)
             .collection("learnRequests")
             .add({
-              requestEmail : user?.email,
-              requestName : userInfo?.name,
+              requestEmail: user?.email,
+              requestName: userInfo?.name,
               learning: learning,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               status: "pending",
@@ -177,21 +199,21 @@ function Learning({ learning, type, learnings }) {
     e.preventDefault();
 
     db.collection("users")
-            .where("email", "==", learning?.data?.started_by?.email)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-                
-                history.push(`/viewProfile/${doc.id}`)
-              
+      .where("email", "==", learning?.data?.started_by?.email)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
 
-              });
-            })
-            .catch((error) => {
-              console.log("Error getting documents: ", error);
-            });
+          history.push(`/viewProfile/${doc.id}`)
+
+
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
   }
 
   return (
@@ -203,10 +225,10 @@ function Learning({ learning, type, learnings }) {
               display: "flex",
             }}
             className="learning_uploader"
-            >
+          >
             <Avatar src={profilePhotoUrl} className="avatar" />
             <p className="learning_name"
-            onClick={goToProfilePage}
+              onClick={goToProfilePage}
             >
               {type === `my`
                 ? userInfo?.name
@@ -231,7 +253,7 @@ function Learning({ learning, type, learnings }) {
           <p>{learning?.data?.learning}</p>
         </div>
         <div className="started_date">
-          <p>Started on 8th November 2021</p>
+          <p>Started on {learning?.data?.date}</p>
         </div>
         {learning?.data?.learnersLength > 1 && (
           <div className="number_of_students">
@@ -261,7 +283,7 @@ function Learning({ learning, type, learnings }) {
               ) : (
                 <button
                   onClick={() => {
-                    alert("Join Request Sent!");
+                    alert("Join Request Sent!....!");
                   }}
                 >
                   Join
@@ -304,8 +326,9 @@ const Container = styled.div`
     justify-content: space-between;
 
     .avatar {
-      width: 25px;
-      height: 25px;
+      width: 25px !important;
+      height: 25px !important;
+      margin-top : 0 !important;
     }
 
     p {

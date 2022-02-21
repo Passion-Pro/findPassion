@@ -18,7 +18,6 @@ import AttachPopup from "../chat/AttachPopup"
 
 function RightSidebarGroupChat() {
   const history = useHistory();
-  const[{} , dispatch] = useStateValue();
   const [
     {
       userInfo,
@@ -27,7 +26,7 @@ function RightSidebarGroupChat() {
       groupDetails,
       groupDetailsmain,
       groupMemberDetails,
-    },
+    },dispatch
   ] = useStateValue();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -91,7 +90,6 @@ function RightSidebarGroupChat() {
       alert("Something went wrong");
     }
   };
-  console.log(user, groupDetails);
 
   useEffect(() => {
     if (groupDetails) {
@@ -176,7 +174,7 @@ function RightSidebarGroupChat() {
         </div>
         {openEmojis === true && <Picker onEmojiClick={onEmojiClick} />}
       </div>
-      <AttachPopup from="chat"/>
+      <AttachPopup from="othergroup" groupDetails={groupDetails} groupDetailsmain={groupDetailsmain} groupMemberDetails={groupMemberDetails}/>
     </div>
   );
 }

@@ -15,8 +15,7 @@ import { useHistory } from "react-router-dom";
 import Loading from "../../Loading";
 import Picker from "emoji-picker-react";
 
-
-function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
+function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDetails, groupMemberDetails, groupDetailsmain }) {
   const [{ openAttachPopup, user, userInfo }, dispatch] = useStateValue();
   const [image, setImage] = useState();
   const [video, setVideo] = useState();
@@ -25,7 +24,6 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
   const [loading, setLoading] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [openEmojis, setOpenEmojis] = useState(false);
-
 
   useEffect(() => {
     setImage();
@@ -59,12 +57,15 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
       setVideo(e.target.files[0]);
     }
   };
-
+  var today = new Date();
+  var date = today.toLocaleString();
   const post = (e) => {
     e.preventDefault();
     if (image) {
       const id = uuid();
-      const upload = storage.ref(`LearningImages/${id}`).put(image);
+      const upload = storage.ref(
+        from == "group" ? `Group/${id}` : from == "othergroup" ? `Group/${id}` : `LearningImages/${id}`
+      ).put(image);
 
       upload.on(
         "state_changed",
@@ -158,12 +159,12 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                             .collection("messages")
                             .add({
                               name: userInfo?.name,
-                              caption: input,
+                              caption: input ? input : '',
                               timestamp:
                                 firebase.firestore.FieldValue.serverTimestamp(),
                               type: "image",
                               imageUrl: url,
-                              status : "unseen"
+                              status: "unseen"
                             });
                         });
                       })
@@ -224,7 +225,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "image",
                           imageUrl: url,
-                          status : "unseen"
+                          status: "unseen"
                         });
                     });
                   })
@@ -237,6 +238,79 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                 type: actionTypes.OPEN_ATTACH_POPUP,
                 openAttachPopup: false,
               });
+            }
+            else if (from === "group") {
+
+              db.collection("Groups")
+                .doc("KRpTP7NQ8QfN2cEH3352")
+                .collection(user.email)
+                .doc(user.uid + "groupchat")
+                .collection("GroupChat")
+                .add({
+                  name: userInfo?.name,
+                  caption: input ? input : '',
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  type: "image",
+                  imageUrl: url,
+                  message: url,
+                  date: date,
+                  sendby: user.email,
+                }).then(() => {
+                  db.collection("Groups")
+                    .doc("KRpTP7NQ8QfN2cEH3352")
+                    .collection(user?.email)
+                    .doc(user?.uid + "Details")
+                    .update({
+                      totalmessage: groupDetails?.totalmessage + 1,
+                      totalmessageAdmin: groupDetails?.totalmessageAdmin + 1,
+                    });
+                }).then(() => {
+                  dispatch({
+                    type: actionTypes.OPEN_ATTACH_POPUP,
+                    openAttachPopup: false,
+                  });
+                  setLoading(false);
+                });
+            }
+            else if (from === "othergroup") {
+              db.collection("Groups")
+                .doc("KRpTP7NQ8QfN2cEH3352")
+                .collection(groupDetails?.startedby)
+                .doc(groupDetails?.GroupId + "groupchat")
+                .collection("GroupChat")
+                .add({
+                  name: userInfo?.name,
+                  caption: input ? input : '',
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  type: "image",
+                  imageUrl: url,
+                  message: url,
+                  date: date,
+                  sendby: user.email,
+                }).then(() => {
+                  db.collection("Groups")
+                    .doc("KRpTP7NQ8QfN2cEH3352")
+                    .collection(user?.email)
+                    .doc(user?.uid + "Details")
+                    .update({
+                      totalmessage: groupDetailsmain?.totalmessage + 1,
+                    });
+                  db.collection("Groups")
+                    .doc("KRpTP7NQ8QfN2cEH3352")
+                    .collection(groupDetails?.startedby)
+                    .doc(groupDetails?.GroupId + "groupmember")
+                    .collection("GroupMember")
+                    .doc(groupDetails?.GroupId + user?.email)
+                    .update({
+                      totalmessage: groupMemberDetails?.totalmessage + 1,
+                    });
+                }).then(() => {
+                  dispatch({
+                    type: actionTypes.OPEN_ATTACH_POPUP,
+                    openAttachPopup: false,
+                  });
+                  setLoading(false);
+                });
             }
           }
         }
@@ -293,7 +367,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                   .then((querySnapshot) => {
                     querySnapshot.forEach((doc) => {
                       // doc.data() is never undefined for query doc snapshots
-                      console.log(doc.id, " => ", doc.data());
+                      // console.log(doc.id, " => ", doc.data());
 
                       db.collection("users")
                         .doc(user?.uid)
@@ -344,7 +418,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                                 firebase.firestore.FieldValue.serverTimestamp(),
                               type: "video",
                               videoUrl: url,
-                              status : "unseen"
+                              status: "unseen"
                             });
                         });
                       })
@@ -405,7 +479,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "video",
                           videoUrl: url,
-                          status : "unseen"
+                          status: "unseen"
                         });
                     });
                   })
@@ -418,6 +492,78 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                 type: actionTypes.OPEN_ATTACH_POPUP,
                 openAttachPopup: false,
               });
+            } else if (from === "group") {
+
+              db.collection("Groups")
+                .doc("KRpTP7NQ8QfN2cEH3352")
+                .collection(user.email)
+                .doc(user.uid + "groupchat")
+                .collection("GroupChat")
+                .add({
+                  name: userInfo?.name,
+                  caption: input ? input : '',
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  type: "video",
+                  videoUrl: url,
+                  message: url,
+                  sendby: user.email,
+                  date: date,
+                }).then(() => {
+                  db.collection("Groups")
+                    .doc("KRpTP7NQ8QfN2cEH3352")
+                    .collection(user?.email)
+                    .doc(user?.uid + "Details")
+                    .update({
+                      totalmessage: groupDetails?.totalmessage + 1,
+                      totalmessageAdmin: groupDetails?.totalmessageAdmin + 1,
+                    });
+                }).then(() => {
+                  dispatch({
+                    type: actionTypes.OPEN_ATTACH_POPUP,
+                    openAttachPopup: false,
+                  });
+                  setLoading(false);
+                });
+            }
+            else if (from === "othergroup") {
+              db.collection("Groups")
+                .doc("KRpTP7NQ8QfN2cEH3352")
+                .collection(groupDetails?.startedby)
+                .doc(groupDetails?.GroupId + "groupchat")
+                .collection("GroupChat")
+                .add({
+                  name: userInfo?.name,
+                  sendby: user.email,
+                  caption: input ? input : '',
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  type: "video",
+                  videoUrl: url,
+                  message: url,
+                  date: date,
+                }).then(() => {
+                  db.collection("Groups")
+                    .doc("KRpTP7NQ8QfN2cEH3352")
+                    .collection(user?.email)
+                    .doc(user?.uid + "Details")
+                    .update({
+                      totalmessage: groupDetailsmain?.totalmessage + 1,
+                    });
+                  db.collection("Groups")
+                    .doc("KRpTP7NQ8QfN2cEH3352")
+                    .collection(groupDetails?.startedby)
+                    .doc(groupDetails?.GroupId + "groupmember")
+                    .collection("GroupMember")
+                    .doc(groupDetails?.GroupId + user?.email)
+                    .update({
+                      totalmessage: groupMemberDetails?.totalmessage + 1,
+                    });
+                }).then(() => {
+                  dispatch({
+                    type: actionTypes.OPEN_ATTACH_POPUP,
+                    openAttachPopup: false,
+                  });
+                  setLoading(false);
+                });
             }
           }
         }
@@ -427,12 +573,37 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
 
   const open_pdf_page = (e) => {
     e.preventDefault();
+    
+    console.log("User1 is" , user)
+
+
+    dispatch({
+      type : actionTypes.OPEN_PDF,
+      openPdf : true
+    })
+    
+    dispatch({
+      type : actionTypes.SET_USER,
+      user : user
+    })
+
+    dispatch({
+      type : actionTypes.SET_USER_INFO,
+      userInfo : userInfo
+    })
+
+    console.log("User2 is" , user)
+
 
     if (from === "chat") {
       history.push(`/messagesUploadPdf/${chatId}/${chatInfo?.email}`);
     } else if (from === "learningGroup") {
       history.push(`/learningsUploadPdf/${learningId}`);
+    }else if(from === "group"){
+      history.push("/groupUploadPdf");
     }
+
+
   };
 
   return (
@@ -496,7 +667,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo }) {
                 </div>
               )}
               <div className="caption">
-                <InsertEmoticonIcon className="emoji_icon"  onClick={(e) => setOpenEmojis(!openEmojis)} />
+                <InsertEmoticonIcon className="emoji_icon" onClick={(e) => setOpenEmojis(!openEmojis)} />
                 <input
                   type="text"
                   value={input}

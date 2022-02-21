@@ -12,6 +12,69 @@
     flex-direction: column;
     justify-content: center;
 }
+
+.photo {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .camera_label{
+    background-color: white;
+    padding: 5px;
+    padding-bottom: 2px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .cover_photo{
+      margin-bottom : 10px;
+      display : flex;
+      justify-content : flex-end;
+      width : 100%;
+  }
+
+  .cover_photo>label>p{
+        margin-right : 10px;
+        padding : 7px;
+        border-radius : 5px;
+        background-color : white;
+        border : 1px solid lightgray;
+        font-size : 14px;
+        margin-top : 0;
+        margin-bottom : 0;
+      
+
+  }
+
+.up {
+    padding-top: 150px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 20px;
+    background-color: #e9e6e6;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width : 70%;
+    margin-left : auto;
+    margin-right : auto;
+  }
+
+  .user_avatar {
+    width: 150px !important;
+    height: 150px !important;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+    border: 2px solid white;
+  }
+
+
 .userProfile__headerMobile{
     display: none; 
     position: sticky;
@@ -41,7 +104,11 @@
     height: 4vh;
     font-weight: 600;
     position: sticky;
-    top: 6vh;
+    top: 8vh;
+    width : 70%;
+    margin-left: auto;
+    margin-right : auto;
+    z-index: 999;
 }
 .Userprofile__Second_Option{
     color: rgb(53, 50, 50);
@@ -118,4 +185,62 @@
     .Userprofile__first{
         height: 23vh;
     }
+}
+
+.Userprofile__Third__learntstuff{
+    width : 70%;
+    margin-left : auto;
+    margin-right: auto;
+    padding-top : 10px;
+}
+
+.add_learnt_stuff>button{
+    padding : 10px;
+    background-color: rgb(28, 146, 241);
+    border-radius : 20px;
+    border : 0;
+    color : white;
+    margin-bottom : 10px;
+}
+
+.add_learnt_stuff>button:hover{
+    cursor : pointer;
+    background-color: rgb(80, 171, 245);
+}
+
+.my_posts{
+    width : 72%;
+    margin-left : auto;
+    margin-right : auto;
+}
+
+@media(max-width:500px){
+    .up{
+        width : 100%;
+        padding-top : 120px;
+        border-radius: 0;
+    }
+
+    .Userprofile__Second{
+        width : 95% !important;
+    }
+
+    .cover_photo>label>p{
+      margin-right : 10px;
+      padding : 7px;
+      border-radius : 5px;
+      background-color : white;
+      border : 1px solid lightgray;
+      font-size : 14px;
+      margin-top : 10px;
+      margin-bottom : 0;
+}    
+   .Userprofile__Third__learntstuff{
+       width : 95%;
+   }
+
+   .my_posts{
+       width : 95%;
+   }
+  
 }

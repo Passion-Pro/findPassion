@@ -11,6 +11,12 @@
     background-color:white;
     border-radius:8px;
 }
+
+@media(max-width : 500px){
+   .PostCardStarted{
+    border-radius : 0
+   }
+}
 .PostCard__lower__head{
     display: flex;
     padding-top: 8px;
@@ -37,7 +43,6 @@
 .PostCard__lower__In{
     display: flex;
     flex-direction: column;
-    min-width: 800px;
     max-width: 800px;
     justify-content: center;
 }
@@ -100,6 +105,24 @@
     color: rgb(38, 70, 212);
     padding-left: 4px;
 }
+
+.delete_post{
+    flex : 1;
+    display: flex;
+    justify-content:  flex-end;
+}
+
+.delete_icon{
+    margin-top : 3px;
+    margin-right : 4px;
+}
+
+.delete_icon:hover{
+    cursor : pointer;
+    color : rgb(75, 74, 74);
+}
+
+
 
 @media(max-width:800px){
     .PostCardStarted{

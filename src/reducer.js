@@ -17,41 +17,47 @@ export const initialState = {
   journey: [],
   courseDiv: false,
   showDiv: false,
-  showLeftSidebarGroup:true,
-  showExpandGroup:false,
-  groupDetails:null,
-  groupDetailsmain:null,
-  groupMember:null,
-  groupMemberDetails:null,
-  mygroupDetail:null,
-  searchInput:'',
-  showMoreoption:false,
-  showTop:false,
-  editGroup:false,
+  showLeftSidebarGroup: true,
+  showExpandGroup: false,
+  groupDetails: null,
+  groupDetailsmain: null,
+  groupMember: null,
+  groupMemberDetails: null,
+  mygroupDetail: null,
+  searchInput: '',
+  showMoreoption: false,
+  showTop: false,
+  editGroup: false,
   // for backgroundimage and profile image
-  groupsOtherDetails:null,
-  showgroupMoreRight:false,
+  groupsOtherDetails: null,
+  showgroupMoreRight: false,
   openAddLearntPopup: false,
   chatId: null,
-  addPartnerInfo : [],
+  addPartnerInfo: [],
   // for loading
-  loading:false,
-  openRemoveMemberPopup : false,
-  learner : {},
-  showgroupAdd:false,
-  EditUserProfile:false,
+  loading: false,
+  openRemoveMemberPopup: false,
+  learner: {},
+  showgroupAdd: false,
+  EditUserProfile: false,
+  openPdf: false,
+  openDeletePostPopup: false,
+  postId: '',
+  TEST: '',
+  newUser : false,
 };
 
 export const actionTypes = {
-  SET_SHOW_GROUP_ADD:"SET_SHOW_GROUP_ADD",
-  SET_LOADING:'SET_LOADING',
-  SET_EDIT_GROUP:'SET_EDIT_GROUP',
-  SET_EDIT_USER_PROFILE:'SET_EDIT_USER_PROFILE',
-  SET_SHOW_TOP:"SET_SHOW_TOP",
-  SET_SEARCH_INPUT:'SET_SEARCH_INPUT',
-  SET_SHOW_MORE_OPTION:'SET_MORE_OPTION',
-  SET_SHOWSTORY:'SET_SHOWSTORY',
-  SET_SHOWSTORY_CAPTION:'SET_SHOWSTORY_CAPTION',
+  TEST: "TEST",
+  SET_SHOW_GROUP_ADD: "SET_SHOW_GROUP_ADD",
+  SET_LOADING: 'SET_LOADING',
+  SET_EDIT_GROUP: 'SET_EDIT_GROUP',
+  SET_EDIT_USER_PROFILE: 'SET_EDIT_USER_PROFILE',
+  SET_SHOW_TOP: "SET_SHOW_TOP",
+  SET_SEARCH_INPUT: 'SET_SEARCH_INPUT',
+  SET_SHOW_MORE_OPTION: 'SET_MORE_OPTION',
+  SET_SHOWSTORY: 'SET_SHOWSTORY',
+  SET_SHOWSTORY_CAPTION: 'SET_SHOWSTORY_CAPTION',
   SET_COURSEDIV: "SET_COURSEDIV",
   OPEN_QUALITIES_POPUP: "OPEN_QUALITIES_POPUP",
   ADD_QUALITY: "ADD_QUALITY",
@@ -68,9 +74,9 @@ export const actionTypes = {
   START_JOURNEY: "START_JOURNEY",
   SET_JOURNEY_UPLOAD: "SET_JOURNEY_UPLOAD",
   OPEN_NEW_LEARNING_POPUP: "OPEN_NEW_LEARNING_POPUP",
-  SET_MY_GROUP_OTHER_DETAILS:"SET_MY_GROUP_OTHER_DETAILS",
+  SET_MY_GROUP_OTHER_DETAILS: "SET_MY_GROUP_OTHER_DETAILS",
   // showgroupMoreRight
-  SET_SHOW_GROUP_MORE_RIGHT:"SET_SHOW_GROUP_MORE_RIGHT",
+  SET_SHOW_GROUP_MORE_RIGHT: "SET_SHOW_GROUP_MORE_RIGHT",
   SET_USER_INFO: "SET_USER_INFO",
   SET_JOURNEY: "SET_JOURNEY",
   SET_SHOW_DIV: "SET_SHOW_DIV",
@@ -83,17 +89,41 @@ export const actionTypes = {
   SET_MY_GROUP_DETAILS: "SET_MY_GROUP_DETAILS",
   SET_MY_GROUP_DETAILS_MAIN: "SET_MY_GROUP_DETAILS_MAIN",
   SET_CHAT_ID: "SEt_CHAT_ID",
-  ADD_PARTNER_INFO : "ADD_PARTNER_INFO",
-  REMOVE_PARTNER_INFO : "REMOVE_PARTNER_INFO",
-  SET_ADD_PARTNER_INFO : "SET_ADD_PARTNER_INFO",
-  OPEN_REMOVE_MEMBER_POPUP : "OPEN_REMOVE_MEMBER_POPUP",
-  SET_LEARNER : "SET_LEARNER",
-  
+  ADD_PARTNER_INFO: "ADD_PARTNER_INFO",
+  REMOVE_PARTNER_INFO: "REMOVE_PARTNER_INFO",
+  SET_ADD_PARTNER_INFO: "SET_ADD_PARTNER_INFO",
+  OPEN_REMOVE_MEMBER_POPUP: "OPEN_REMOVE_MEMBER_POPUP",
+  SET_LEARNER: "SET_LEARNER",
+  OPEN_PDF: "OPEN_PDF",
+  OPEN_DELETE_POST_POPUP: "OPEN_DELETE_POST_POPUP",
+  SET_POST_ID: "SET_POST_ID",
+  SET_NEW_USER : "SET_NEW_USER"
+
 };
 
 const reducer = (state, action) => {
-  console.log(action ,state);
+  console.log(action, state);
   switch (action.type) {
+    // case actionTypes.OPEN_DELETE_POST_POPUP:
+    //   return {
+    //     type: actionTypes.OPEN_DELETE_POST_POPUP,
+    //     openDeletePostPopup: action.openDeletePostPopup
+    //   }
+    // case actionTypes.SET_POST_ID:
+    //   return {
+    //     type: actionTypes.SET_POST_ID,
+    //     postId: action.postId
+    //   }
+    case actionTypes.OPEN_DELETE_POST_POPUP:
+      return {
+        ...state,
+        openDeletePostPopup: action.openDeletePostPopup,
+      };
+    case actionTypes.SET_POST_ID:
+      return {
+        ...state,
+        postId: action.postId,
+      };
     case actionTypes.SET_EDIT_USER_PROFILE:
       return {
         ...state,
@@ -328,7 +358,7 @@ const reducer = (state, action) => {
         (partnerInfo) => partnerInfo?.data === action.data
       );
       let newaddPartnerInfo = [...state.addPartnerInfo];
-    
+
       if (index3 >= 0) {
         newaddPartnerInfo.splice(index3, 1);
       } else {
@@ -342,22 +372,28 @@ const reducer = (state, action) => {
         addPartnerInfo: newaddPartnerInfo,
       };
 
-      case actionTypes.SET_ADD_PARTNER_INFO:
-        return {
-          type : actionTypes.SET_ADD_PARTNER_INFO,
-          addPartnerInfo: action.addPartnerInfo
-        }
-      case actionTypes.OPEN_REMOVE_MEMBER_POPUP:
-        return {
-          type : actionTypes.OPEN_REMOVE_MEMBER_POPUP,
-          openRemoveMemberPopup : action.openRemoveMemberPopup
-        }
-        
-      case actionTypes.SET_LEARNER:
-        return {
-          type : actionTypes.SET_LEARNER,
-          learner : action.learner
-        }
+    case actionTypes.SET_ADD_PARTNER_INFO:
+      return {
+        ...state,
+        addPartnerInfo: action.addPartnerInfo
+      }
+    case actionTypes.OPEN_REMOVE_MEMBER_POPUP:
+      return {
+        ...state,
+        openRemoveMemberPopup: action.openRemoveMemberPopup
+      }
+
+    case actionTypes.SET_LEARNER:
+      return {
+        ...state,
+        learner: action.learner
+      }
+    case actionTypes.OPEN_PDF:
+      return {
+        ...state,
+        openPdf: action.openPdf
+      }
+    
     default:
       return state;
   }
