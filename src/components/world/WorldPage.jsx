@@ -6,6 +6,8 @@ import Learning from "./Learnings/Learning";
 import { useHistory } from "react-router-dom";
 import NewLearningPopup from "./Learnings/NewLearningPopup";
 import db from "../../firebase";
+import StartLearningPopup from "./Learnings/StartLearningPopup";
+import firebase from "firebase"
 
 function WorldPage() {
   const history = useHistory();
@@ -29,17 +31,56 @@ function WorldPage() {
   const [learnings13, setLearnings13] = useState([]);
   const [newLearnings, setNewLearnings] = useState([]);
   const [x, setX] = useState(0);
-  const[jlLength , setJlLength] = useState();
-  const[tags, setTags] = useState([]);
-  const[passions ,setPassions] = useState([]);
-  // let newLearnings = allLearnings
-  
+  const [jlLength, setJlLength] = useState();
+  const [tags, setTags] = useState([]);
+  const [passions, setPassions] = useState([]);
+  const [myLearningsLength, setMyLearningsLength] = useState([]);
+  const [startNewPopup, setStartNewPopup] = useState(false);
+  const[views ,setViews] = useState(null);
+  // let newLearnings = allLearnin
+
+
   useEffect(() => {
     setLearnings([]);
     setAllLearnings([]);
     setNewLearnings([]);
     setJoinedLearnings([]);
+
+
+  }, []);
+
+  useEffect(() => {
+    console.log("USER UID IS " , user?.uid)
+   if(user?.uid){
+    db.collection('users').doc(user?.uid).collection('pageViews').doc('learningsPage').onSnapshot((snapshot) => {
+      console.log("Views are " , snapshot.data().views)
+      setViews(snapshot.data().views)
+    });
+
+   }
+  } , [user?.uid])
+
+
+  useEffect(() => {
+    if(views === 0){
+      console.log("YES " , 0);
+      setTimeout(function () {
+        setStartNewPopup(true)
+      }, 5000);
+    }
+  } , [views]);
+
+  useEffect(() => {
+    setTimeout(function () {
+      db.collection('users').doc(user?.uid).collection('pageViews').doc('learningsPage').update({
+        views : firebase.firestore.FieldValue.increment(1)
+      })
+    }, 10000);
   } , [])
+
+
+
+
 
   useEffect(() => {
     db.collection("learnings").onSnapshot((snapshot) =>
@@ -72,20 +113,27 @@ function WorldPage() {
           });
         });
 
-        db.collection("passions").onSnapshot((snapshot) => {
-          setPassions(
-            snapshot.docs.map((doc) => ({
-              id : doc.id,
-              data : doc.data(),
-            }))
-          )
-        })
+
+      db.collection('users').doc(user?.uid).collection('myLearnings').onSnapshot((snapshot) => {
+        setMyLearningsLength(snapshot.docs.length)
+      })
+
+
+
+      db.collection("passions").onSnapshot((snapshot) => {
+        setPassions(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        )
+      })
 
       db.collection("users")
         .doc(user?.uid)
         .collection("myJoinedLearnings")
-        .onSnapshot((snapshot) =>{
-          console.log("Joined Learnings are" , snapshot.docs?.length);
+        .onSnapshot((snapshot) => {
+          console.log("Joined Learnings are", snapshot.docs?.length);
           setJlLength(snapshot.docs?.length)
           setJoinedLearnings(
             snapshot.docs.map((doc) => ({
@@ -101,21 +149,21 @@ function WorldPage() {
   }, [user?.uid]);
 
   useEffect(() => {
-    if(passions?.length > 0) {
-       
-        for(let i = 0; i < passions?.length; i++){
-          db.collection("passions").doc(passions[i].id).collection("learningTags").onSnapshot((snapshot) => (
-            
-               snapshot.docs.map((doc) => {
-                 tags.push(doc.data())
-               }) 
-            
-          ))
-        }
-     }
-  } , [passions, user]);
+    if (passions?.length > 0) {
 
-  
+      for (let i = 0; i < passions?.length; i++) {
+        db.collection("passions").doc(passions[i].id).collection("learningTags").onSnapshot((snapshot) => (
+
+          snapshot.docs.map((doc) => {
+            tags.push(doc.data())
+          })
+
+        ))
+      }
+    }
+  }, [passions, user]);
+
+
 
   useEffect(() => {
     if (allLearnings?.length > 0 && joinedLearnings?.length > 0) {
@@ -125,7 +173,7 @@ function WorldPage() {
             newLearnings[i]?.data?.learning ===
             joinedLearnings[j]?.data?.learning?.data?.learning
           ) {
-            newLearnings.splice(i , 1);
+            newLearnings.splice(i, 1);
             console.log("Spliced", newLearnings);
           }
         }
@@ -139,10 +187,10 @@ function WorldPage() {
   ]);
 
   useEffect(() => {
-   if(jlLength === 0 && user?.uid && allLearnings?.length) {
+    if (jlLength === 0 && user?.uid && allLearnings?.length) {
       setLearnings(allLearnings)
-   }
-  } , [jlLength, user?.uid  , allLearnings?.length])
+    }
+  }, [jlLength, user?.uid, allLearnings?.length])
 
   useEffect(() => {
     if (
@@ -150,11 +198,11 @@ function WorldPage() {
       newLearnings?.length > 0 &&
       allLearnings?.length > 0 &&
       joinedLearnings?.length > 0
-      ) {
+    ) {
       console.log("STEP 2 Achieved");
-      console.log("NL is " , newLearnings?.length);
-      console.log("AL is " , allLearnings?.length);
-      console.log("JL is " , joinedLearnings?.length);
+      console.log("NL is ", newLearnings?.length);
+      console.log("AL is ", allLearnings?.length);
+      console.log("JL is ", joinedLearnings?.length);
       if (
         newLearnings?.length ===
         allLearnings?.length - joinedLearnings?.length
@@ -162,7 +210,7 @@ function WorldPage() {
         setLearnings(newLearnings);
       }
     }
-  }, [newLearnings?.length, joinedLearnings?.length, allLearnings?.length , jlLength]);
+  }, [newLearnings?.length, joinedLearnings?.length, allLearnings?.length, jlLength]);
 
   useEffect(() => {
     // console.log("All Learnings Length is ", allLearnings?.length);
@@ -170,11 +218,11 @@ function WorldPage() {
     // console.log("Learnings Length is", learnings?.length);
     if (
       (learnings?.length > 0 &&
-      userInfo?.passion &&
-      userInfo?.experience &&
-      newLearnings?.length > 0 &&
-      jlLength > 0
-      ) ||( 
+        userInfo?.passion &&
+        userInfo?.experience &&
+        newLearnings?.length > 0 &&
+        jlLength > 0
+      ) || (
         learnings?.length > 0 &&
         userInfo?.passion &&
         userInfo?.experience && jlLength === 0)
@@ -247,6 +295,10 @@ function WorldPage() {
     });
   };
 
+  useEffect(() => {
+    console.log("History is ", history);
+  }, [])
+
   return (
     <Container>
       <div className="passion_logo">
@@ -267,8 +319,8 @@ function WorldPage() {
             Journeys
           </button>
           <button className="stories_button"
-            style = {{
-              marginLeft : '20px'
+            style={{
+              marginLeft: '20px'
             }}
             onClick={(e) => history.push("/posts")}
           >
@@ -276,13 +328,13 @@ function WorldPage() {
           </button>
         </div>
 
-          <div className="add_learning_button">
-            <button onClick={add_learning}>Start learning together 🚀</button>
-          </div>
+        <div className="add_learning_button">
+          <button onClick={add_learning}>Start learning together 🚀</button>
+        </div>
       </div>
       {x === 1 && learnings?.length > 0 && (
         <div className="my_learnings">
-          <p className = "my_learnings_title">My Learnings</p>
+          {myLearningsLength > 0 && (<p className="my_learnings_title">My Learnings</p>)}
           <div className="my_learnings_learnings">
             {learnings.map((learning) => (
               <>
@@ -292,7 +344,7 @@ function WorldPage() {
               </>
             ))}
             {joinedLearnings.map((learning) => (
-              <Learning learning={learning?.data?.learning} type="joined" learnings = {allLearnings} />
+              <Learning learning={learning?.data?.learning} type="joined" learnings={allLearnings} />
             ))}
           </div>
         </div>
@@ -349,7 +401,8 @@ function WorldPage() {
           ))}
         </div>
       )}
-      <NewLearningPopup  tags = {tags}/>
+      <NewLearningPopup tags={tags} />
+      {startNewPopup && (<StartLearningPopup setStartNewPopup={setStartNewPopup} />)}
     </Container>
   );
 }

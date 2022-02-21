@@ -114,6 +114,12 @@ const Container = styled.div`
   border-radius: 5px;
   margin-bottom : 20px;
 
+  @media(max-width : 500px){
+     width : 95%;
+     margin-left : auto;
+     margin-right : auto;
+  }
+
   .icon {
     display: flex;
     justify-content: space-between;

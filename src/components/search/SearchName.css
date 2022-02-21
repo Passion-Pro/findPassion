@@ -70,3 +70,10 @@
         color: rgb(34, 27, 27);
     }
 } */
+
+@media(max-width : 500px){
+    .searchName{
+        width : 98%;
+    }
+}
+

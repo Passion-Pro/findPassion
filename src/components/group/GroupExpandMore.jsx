@@ -141,7 +141,7 @@ function GroupExpandMore() {
             showExpandGroup: true,
           })
         }} className='Button__groupExpand' title="More option">
-          More
+          Groups
         </button>
 
 

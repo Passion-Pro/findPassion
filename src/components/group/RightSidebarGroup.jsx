@@ -7,7 +7,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 
 function RightSidebarGroup() {
     const history = useHistory();
-    const [{ groupDetails,showTop }, dispatch] = useStateValue();
+    const [{ groupDetails,showTop , user }, dispatch] = useStateValue();
     return (
         <div className='RightSidebarGroup'>
             <div className={showTop ? 'rightSidebarGroup__headerShow':"rightSidebarGroup__header"}>
