@@ -13,10 +13,15 @@ import PostPopup from "../../post/PostPopup";
 
 function PostsPage() {
   const history = useHistory();
-  const [{ userInfo, user }] = useStateValue();
+  const [{ userInfo, user },dispatch] = useStateValue();
   const [posts, setPosts] = useState([]);
   const[openPopup , setOpenPopup] = useState(false);
-
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/posts",
+    });
+  }, []);
   useEffect(() => {
     if (userInfo?.name) {
       db.collection(userInfo?.passion)

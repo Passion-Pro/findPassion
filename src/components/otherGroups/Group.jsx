@@ -9,6 +9,12 @@ import { actionTypes } from '../../reducer';
 
 function Group() {
   const [{ showLeftSidebarGroup, showTop, groupDetails }, dispatch] = useStateValue();
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/groupother",
+    });
+  }, []);
 
   useEffect(() => {
     if (groupDetails?.email){

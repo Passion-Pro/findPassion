@@ -91,6 +91,15 @@ function UserProfile() {
       ))
     }
   }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/userProfile",
+    });
+  }, []);
+
+  
   console.log(post);  
 
 

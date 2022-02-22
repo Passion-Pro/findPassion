@@ -32,7 +32,12 @@ function Chat() {
     setChosenEmoji(emojiObject);
     setInput(input + emojiObject?.emoji);
   };
-
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/chat",
+    });
+  }, []);
   useEffect(() => {
     if (user?.uid) {
       db.collection("users")
@@ -259,6 +264,7 @@ function Chat() {
   }
   return (
     <div>
+      {chats?.length > 0 ?(<>
       <Container>
         {/* <Header /> */}
         <div className="chat">
@@ -314,6 +320,14 @@ function Chat() {
         chatInfo={chatInfo}
         chatId={chatId}
       />
+      </>):(
+        <div className="no_chats">
+          <p style = {{
+            textAlign: 'center',
+            fontSize : '20px',
+          }}>No chats</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -401,10 +415,13 @@ const Container = styled.div`
   
   .chat_section_messages {
     flex: 1;
-    background-color: #0099ff;
     display: flex;
     flex-direction: column-reverse;
     overflow-y: scroll;
+    background-image: url("https://i.pinimg.com/736x/2a/68/b4/2a68b4d59d9b4b25c32a3cb4738c6cdc.jpg");
+    background-position: center;
+    background-size : 20%;
+    background-repeat: repeat;
   }
 
   .chat_section_messages::-webkit-scrollbar {

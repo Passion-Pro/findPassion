@@ -62,7 +62,7 @@ function RightSidebarGroupEnvolvement() {
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                    {groupDetails?.GroupName} Evolvement
+                    Involvement
                 </div>
                 <div></div>
             </div>

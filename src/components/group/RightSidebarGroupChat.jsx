@@ -98,7 +98,7 @@ function RightSidebarGroupChat() {
           />
         </div>
         <div className="rightSidebarGroup__headName">
-          {groupDetails?.GroupName} Chat
+          Chat
         </div>
         <div></div>
       </div>

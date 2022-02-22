@@ -13,10 +13,11 @@ import { useStateValue } from '../../StateProvider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { useHistory } from 'react-router-dom';
+import { actionTypes } from '../../reducer';
 
 export default function AddPost() {
     const history = useHistory();
-    const [{ userInfo, user }] = useStateValue();
+    const [{ userInfo, user },dispatch] = useStateValue();
     const [loading, setLoading] = useState(false);
     const [postHead, setPostHead] = useState('');
     const [postText, setPostText] = useState('');
@@ -32,11 +33,17 @@ export default function AddPost() {
     var today = new Date();
     var datetime = today.toLocaleString();
 
+    useEffect(() => {
+        dispatch({
+          type: actionTypes.SET_PATHNAMEF,
+          pathnamef: "/post",
+        });
+      }, []);
+
     function generateDownload(canvas, crop) {
         if (!crop || !canvas) {
             return;
         }
-
         canvas.toBlob(
             (blob) => {
                 setCroppedImage(blob);

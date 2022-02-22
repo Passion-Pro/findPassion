@@ -28,6 +28,13 @@ function ShowStories() {
                 })
         }
     }, [id])
+
+    useEffect(()=>{
+        dispatch({
+            type: actionTypes.SET_PATHNAMEF,
+            pathnamef: "/viewstory",
+          })
+    },[])
  
     return (
         <>

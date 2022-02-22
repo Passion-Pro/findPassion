@@ -17,7 +17,8 @@ import Suggestion from "./Suggestion";
 import RemoveMemberPopup from "./RemoveMemberPopup";
 
 function LearningGroup() {
-  const [{ user, userInfo , openRemoveMemberPopup , learner }, dispatch] = useStateValue();
+  const [{ user, userInfo, openRemoveMemberPopup, learner }, dispatch] =
+    useStateValue();
   const history = useHistory();
   const { learningId } = useParams();
   const [learningData, setLearningData] = useState([]);
@@ -35,6 +36,7 @@ function LearningGroup() {
   const [a, setA] = useState([]);
   const [savedSuggestions, setSavedSuggestions] = useState([]);
 
+
   const onEmojiClick = (event, emojiObject) => {
     setChosenEmoji(emojiObject);
     setInput(input + emojiObject?.emoji);
@@ -50,7 +52,6 @@ function LearningGroup() {
       )
     );
   }, []);
-
 
   useEffect(() => {
     setSuggestions([]);
@@ -214,6 +215,13 @@ function LearningGroup() {
     setInput("");
   };
 
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/learning",
+    });
+  }, []);
+
   return (
     <div>
       <Container>
@@ -253,8 +261,10 @@ function LearningGroup() {
                 </p>
               </div>
               {learners.map((learner) => (
-                <Member learner={learner} learning = {learningData} 
-                 learningId = {learningId}
+                <Member
+                  learner={learner}
+                  learning={learningData}
+                  learningId={learningId}
                 />
               ))}
             </div>
@@ -264,14 +274,19 @@ function LearningGroup() {
               <div className="header_nonbutton">
                 <div className="group_chat_header_info">
                   <div className="mobile_upper_part">
-                  <p className="started_on">
-                    Started on{" "}
-                    {new Date(learningData?.timestamp?.toDate()).toUTCString()}{" "}
-                    by {learningData?.started_by?.name}
-                  </p>
-                  <button className="learners_button" onClick={(e) => history.push(`/learners/${learningId}`)}>
-                  Learners
-                </button>
+                    <p className="started_on">
+                      Started on{" "}
+                      {new Date(
+                        learningData?.timestamp?.toDate()
+                      ).toUTCString()}{" "}
+                      by {learningData?.started_by?.name}
+                    </p>
+                    <button
+                      className="learners_button"
+                      onClick={(e) => history.push(`/learners/${learningId}`)}
+                    >
+                      Learners
+                    </button>
                   </div>
 
                   <div className="buttons">
@@ -297,13 +312,12 @@ function LearningGroup() {
                         setActiveTab("suggestions");
                       }}
                     >
-                      Suggestions 
+                      Suggestions
                     </button>
                   </div>
                 </div>
               </div>
-              <div >
-              </div>
+              <div></div>
             </div>
             {activeTab === "chat" ? (
               <>
@@ -385,7 +399,7 @@ function LearningGroup() {
           </div>
         </div>
         <AttachPopup learningId={learningId} from="learningGroup" />
-        {openRemoveMemberPopup && (<RemoveMemberPopup learning = {learningData}/>)}
+        {openRemoveMemberPopup && <RemoveMemberPopup learning={learningData} />}
       </Container>
     </div>
   );
@@ -480,16 +494,16 @@ const Container = styled.div`
         display: flex;
 
         @media (min-width: 500px) {
-          justify-content: space-between
+          justify-content: space-between;
         }
 
-        .mobile_upper_part{
+        .mobile_upper_part {
           display: flex;
         }
 
         @media (max-width: 500px) {
           display: flex;
-          flex-direction : column
+          flex-direction: column;
         }
 
         .buttons {
@@ -515,31 +529,28 @@ const Container = styled.div`
         display: flex;
       }
 
-      
-        .learners_button{
-          margin-top: 5px;
-          background-color: #dddcdc;
-          padding: 5px;
-          border-radius: 20px;
-          padding-left: 12px;
-          padding-right: 12px;
-          border: 0;
+      .learners_button {
+        margin-top: 5px;
+        background-color: #dddcdc;
+        padding: 5px;
+        border-radius: 20px;
+        padding-left: 12px;
+        padding-right: 12px;
+        border: 0;
 
-          
         @media (min-width: 500px) {
           display: none;
         }
 
-          &:hover {
-            background-color: lightgray;
-          }
+        &:hover {
+          background-color: lightgray;
         }
-      
+      }
 
       .started_on {
         margin-bottom: 10px;
-        width : 70%;
-        margin-right : 20px;
+        width: 70%;
+        margin-right: 20px;
 
         @media (min-width: 500px) {
           margin-left: auto;

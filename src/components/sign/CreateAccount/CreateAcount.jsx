@@ -72,9 +72,13 @@ function CreateAccount() {
   const [input, setInput] = useState("");
   const [year, setYear] = useState();
   const [branch, setBranch] = useState();
-  const [coverImage, setCoverImage] = useState();
-
-
+  const[coverImage ,setCoverImage] = useState();
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/newAccount",
+    });
+  }, []);
   useEffect(() => {
     if (year === 1) {
       dispatch({

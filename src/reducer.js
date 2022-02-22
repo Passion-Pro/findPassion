@@ -129,6 +129,11 @@ const reducer = (state, action) => {
         ...state,
         EditUserProfile: action.EditUserProfile,
       };
+      case actionTypes.SET_PATHNAMEF:
+        return {
+          ...state,
+          pathnamef: action.pathnamef,
+        };
     case actionTypes.SET_SHOW_GROUP_ADD:
       return {
         ...state,

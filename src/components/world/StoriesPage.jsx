@@ -14,11 +14,16 @@ function StoriesPage() {
   const [journeys, setJourneys] = useState([]);
   const [openJourneyPopup, setOpenJourneyPopup] = useState(false);
   const [myJourney, setMyJourney] = useState([]);
-
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/stories",
+    });
+  }, []);
   useEffect(() => {
     if (user) {
       db.collection("journeys")
-        .orderBy("likesLength", "desc")
+        .orderBy("firesLength", "desc")
         .onSnapshot((snapshot) =>
           setJourneys(
             snapshot.docs.map((doc) => ({
@@ -33,6 +38,7 @@ function StoriesPage() {
         .onSnapshot((snapshot) => {
           setMyJourney({
             data: snapshot.data(),
+            id : user.uid,
           });
         });
     }
@@ -98,6 +104,12 @@ function StoriesPage() {
           <>
             {myJourney?.data?.uploaderInfo?.email && (
               <div className="my_journey">
+                 <p style = {{
+                   color : "white",
+                   marginBottom : "15px",
+                   marginLeft : "5px",
+                   marginTop: "15px"
+                 }}>My Journey</p>
                 <Story journey={myJourney} />
               </div>
             )}
@@ -105,7 +117,7 @@ function StoriesPage() {
               {journeys.map((journey) => (
                 <>
                   {journey.data?.uploaderInfo?.passion === userInfo?.passion &&
-                    journey.data?.upload === "yes" && (
+                    journey.data?.upload === "yes" && journey.data?.uploaderInfo?.email !== userInfo?.email && (
                       <Story journey={journey} />
                     )}
                 </>

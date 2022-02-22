@@ -113,7 +113,7 @@ function SidebarGroup() {
         >
           <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
 
-            Inventor
+            Started by
             {
               !showInventor ? <ArrowRightRoundedIcon /> : <ArrowDropDownRoundedIcon />
             }

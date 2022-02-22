@@ -30,7 +30,6 @@ function ShowAllTask() {
     useEffect(() => {
         if (id && user) {
             db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user?.uid + 'groupmember').collection('GroupMember').doc(id).onSnapshot((snapshot) => {
-                console.log("////;;;;//;;/;/; ",snapshot?.data());
             dispatch({
                 type: actionTypes.SET_GROUP_MEMBERDETAILS,
                 groupMemberDetails: snapshot.data(),
@@ -49,7 +48,7 @@ function ShowAllTask() {
                         }} />
                     </div>
                     <div className="rightSidebarGroup__headName">
-                        {groupMemberDetails?.name}'s all task
+                        {groupMemberDetails?.name}'s all Goal
                     </div>
                     <div></div>
                 </div>

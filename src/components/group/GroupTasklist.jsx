@@ -4,10 +4,18 @@ import GroupTopBody from './GroupTopBody';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroupTaskList from './RightSidebarGroupTaskList'
 import GroupExpandMore from './GroupExpandMore';
+import { actionTypes } from '../../reducer';
 
 function GroupTasklist() {
-  const [{ groupMember,showTop,groupDetails ,showLeftSidebarGroup}] = useStateValue();
-  console.log(groupMember);
+  const [{ showTop,showLeftSidebarGroup},dispatch] = useStateValue();
+ 
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/grouptasklist",
+    });
+  }, []);
+
   return (
     <>
       <div className='group'>

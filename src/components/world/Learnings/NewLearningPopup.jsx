@@ -36,6 +36,13 @@ function NewLearningPopup({tags}) {
     }
   }, [user]);
 
+  useEffect(() => {
+       setImage();
+       setInput();
+       setTagInput();
+       setSuggestedTags([]);
+  } , [openNewLearningPopup])
+
 
   useEffect(() => {
      console.log("tags are" , tags)
@@ -142,12 +149,23 @@ function NewLearningPopup({tags}) {
           date : date
         });
       }
-      setTimeout(() => {
-        dispatch({
-          type: actionTypes.OPEN_NEW_LEARNING_POPUP,
-          openNewLearningPopup: false,
-        });
-      } , 1000)
+      if(image){
+        setTimeout(() => {
+          dispatch({
+            type: actionTypes.OPEN_NEW_LEARNING_POPUP,
+            openNewLearningPopup: false,
+          });
+        } , 3000)
+      }else{
+        setTimeout(() => {
+          dispatch({
+            type: actionTypes.OPEN_NEW_LEARNING_POPUP,
+            openNewLearningPopup: false,
+          });
+        } , 1000)
+      }
+    }else{
+      alert("You can start maximum of 5 learnings")
     }
   };
 
@@ -161,7 +179,11 @@ function NewLearningPopup({tags}) {
     <>
       {openNewLearningPopup === true && (
         <Container>
-          <div className= {launch === false ? `addLearning` : `addLearning_launch`}>
+          <div className= {launch === false ? `addLearning` : `addLearning_launch`}
+            style = {{
+              animation : launch && (image? "fly 3s 0.005s ease-in-out" : "fly 1s 0.005s ease-in-out")
+            }}
+          >
             <div className="add_learning_header">
               <CloseIcon className="close_icon" onClick={close_popup} />
             </div>
@@ -419,6 +441,7 @@ const Container = styled.div`
       width: 100%;
       display: flex;
       justify-content: center;
+      flex-direction: column;
 
       input {
         margin-left: auto;

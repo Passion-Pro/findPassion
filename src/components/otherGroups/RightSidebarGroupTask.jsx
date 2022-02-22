@@ -41,7 +41,7 @@ function RightSidebarGroupTask() {
                         }} />
                     </div>
                     <div className="rightSidebarGroup__headName">
-                        Your task
+                        Your Goals
                     </div>
                     <div></div>
                 </div>
@@ -53,7 +53,7 @@ function RightSidebarGroupTask() {
         </div>
              :
                     <div style={{ display: 'flex', width: '100%', height: "100%", alignItems: 'center', justifyContent: "center" }}>
-                        No task given
+                        No goal given
                     </div>
                 }
             </div>}

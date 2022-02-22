@@ -49,15 +49,6 @@ function Header() {
                         <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                             <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
-                        {/* <div className="Loginheader__Icon__addIcon" onClick={() => {
-                            dispatch({
-                                type: actionTypes.SET_COURSEDIV,
-                                courseDiv: true,
-                            });
-                        }
-                        }>
-                            <AddIcon style={{ fontSize: 30, color: "white", cursor: "pointer" }} />
-                        </div> */}
                         <div className="Loginheader__Icon__search" onClick={() => history.push('/all_profile')}>
                             <LanguageRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
@@ -81,7 +72,8 @@ function Header() {
                 <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                     <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => history.push('/searchpage')}><SearchRoundedIcon style={{ fontSize: 30, color: "white" }} />
+                <div className="Loginheader__Icon__search" onClick={() => history.push('/searchPageForMobile')}>
+                    <SearchRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
                 <div className="Loginheader__Icon__search" onClick={() => {
                     dispatch({

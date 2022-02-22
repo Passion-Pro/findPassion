@@ -30,7 +30,7 @@ function Message({ message , learningId , chatEmail}) {
       )}
       {message?.data?.type === "image" && (
         <div className="message_image">
-          <p className="message_name_image">{message?.data?.name}</p>
+          <p className="message_name_image message_name">{message?.data?.name}</p>
           <div className="message_image_div">
             <img
               src={message?.data?.imageUrl}

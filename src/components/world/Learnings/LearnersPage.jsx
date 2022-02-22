@@ -16,7 +16,12 @@ function LearnersPage() {
     const [learningData, setLearningData] = useState([]);
     const[learners , setLearners] = useState([]);
     const[{user} , dispatch] = useStateValue();
-
+    useEffect(() => {
+      dispatch({
+        type: actionTypes.SET_PATHNAMEF,
+        pathnamef: "/learners",
+      });
+    }, []);
     useEffect(() => {
       if(learningId) {
 

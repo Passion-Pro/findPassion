@@ -94,6 +94,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                   type: "image",
                   imageUrl: url,
+                  imageId : id
                 })
                 .then(() => {
                   dispatch({
@@ -127,6 +128,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "image",
                           imageUrl: url,
+                          imageId : id
                         });
                     });
                   })
@@ -164,7 +166,8 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                                 firebase.firestore.FieldValue.serverTimestamp(),
                               type: "image",
                               imageUrl: url,
-                              status: "unseen"
+                              status : "unseen",
+                              imageId : id
                             });
                         });
                       })
@@ -196,6 +199,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "image",
                           imageUrl: url,
+                          imageId : id
                         });
                     });
                   })
@@ -225,7 +229,8 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "image",
                           imageUrl: url,
-                          status: "unseen"
+                          status : "unseen",
+                          imageId : id
                         });
                     });
                   })
@@ -348,6 +353,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                   type: "video",
                   videoUrl: url,
+                  videoId : id
                 })
                 .then(() => {
                   dispatch({
@@ -381,6 +387,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "video",
                           videoUrl: url,
+                          videoId : id
                         });
                     });
                   })
@@ -418,7 +425,8 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                                 firebase.firestore.FieldValue.serverTimestamp(),
                               type: "video",
                               videoUrl: url,
-                              status: "unseen"
+                              status : "unseen",
+                              videoId : id
                             });
                         });
                       })
@@ -450,6 +458,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "video",
                           videoUrl: url,
+                          videoId : id
                         });
                     });
                   })
@@ -479,7 +488,8 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                             firebase.firestore.FieldValue.serverTimestamp(),
                           type: "video",
                           videoUrl: url,
-                          status: "unseen"
+                          status : "unseen",
+                          videoId : id
                         });
                     });
                   })

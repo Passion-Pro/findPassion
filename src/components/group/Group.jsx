@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Group.css';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';
@@ -11,6 +11,13 @@ import { actionTypes } from '../../reducer';
 
 function Group() {
   const [{ loading, showLeftSidebarGroup, groupDetails, showTop }, dispatch] = useStateValue();
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/group",
+    });
+  }, []);
 
   return (
     <div className='group'>

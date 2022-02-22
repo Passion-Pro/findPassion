@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Group.css';
 import './GroupChat.css';
 import Header from '../header/Header';
@@ -9,11 +9,19 @@ import { useStateValue } from '../../StateProvider';
 import RightSidebarGroupChat from './RightSidebarGroupChat';
 import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
+import { actionTypes } from '../../reducer';
 
 function GroupChat() {
 
   const [{ userInfo, groupMember, showLeftSidebarGroup, groupDetails, showTop }, dispatch] = useStateValue();
-  console.log("member",groupMember);
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/groupchat",
+    });
+  }, []);
+  
   return (
     <div className='group'>
       {showTop &&

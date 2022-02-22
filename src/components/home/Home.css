@@ -17,6 +17,11 @@
     overflow-x: scroll;
     padding-left: 15px;
 }
+.recommendPeople2{
+    display: flex;
+    overflow-x: scroll;
+    padding-left: 15px;
+}
 .recommendPosts{
     display: flex;
     flex-direction: column;
@@ -46,6 +51,7 @@
 }  
 .header__ProfileName__Head{
     display: flex;
+    justify-content: space-between;
     padding: 12px;
     font-size: 18px;
     color: #0a2540;
@@ -74,6 +80,9 @@
     flex-direction: column;
     background-color: rgba(128, 128, 128, 0.226);
 }
+.ArrowDropDownRoundedIcon{
+    display:none;
+}
 @media(max-width:1300px){
     .Arrow__showrecommendProfile{ 
         padding-right: 5vw;
@@ -88,6 +97,20 @@
         padding-top: 1vh;
         overflow-x: hidden;
         padding-bottom: 10vh;
+        
+    }
+    .recommendPeople2{
+        display: flex;
+        flex-direction: column;
+        padding: 1vh;
+        padding-top: 1vh;
+        overflow-x: hidden;
+        padding-bottom: 10vh;
+        padding: 0 0 1vh 0;
+        margin-bottom:8vh;
+    }
+    .ArrowDropDownRoundedIcon{
+        display:flex;
     }
     .recommendPosts{
         display: flex;
@@ -103,4 +126,12 @@
 .other_students{
     display : flex;
     flex-wrap: wrap;
+    padding: 0 0 1vh 0;
+    margin-bottom:8vh;
+}
+
+@media(max-width:500px){
+    .other_students{
+        flex-direction: column;
+    }
 }

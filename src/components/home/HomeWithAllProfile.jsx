@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
 import ProfileCard from '../profilecard/ProfileCard';
-import CreateStory from '../stories/CreateStory';
-import HeaderSecond from '../header/HeaderSecond';
+import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import db from '../../firebase';
 import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
-import { useStateValue } from '../../StateProvider';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
+import {useStateValue} from "../../StateProvider"
+import { actionTypes } from '../../reducer';
 
 function HomeWithAllProfile() {
 
     const [data, setData] = useState([]);
-    const [{ userInfo }, dispatch] = useStateValue();
+    const [down,setDown]=useState(true);
+    const [down2,setDown2]=useState(true);
+
+    useEffect(() => {
+        dispatch({
+          type: actionTypes.SET_PATHNAMEF,
+          pathnamef: "/all_profile",
+        });
+      }, []);
 
     useEffect(() => {
         db.collection('users')
@@ -23,6 +31,8 @@ function HomeWithAllProfile() {
                     }))
                 );
             })
+
+            
     }, []);
 
     const funct = () => {
@@ -38,38 +48,45 @@ function HomeWithAllProfile() {
         <div className='home'>
             <HeaderSecond />
             <div className="homeBody">
-                <div className="stories">
-                    <div className="createStory" >
-                        <CreateStory />
-                    </div>
-                    <ShowStoriesSeries />
-                </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        Similiar Passion
+                       Find students in {userInfo?.passion}
+                       <div className='ArrowDropDownRoundedIcon' onClick={()=>{setDown(!down)}}>
+                        <ArrowDropDownRoundedIcon />
+                       </div>
                     </div>
-                    <div className="recommendPeople" id='box1'>
+
+                    {down && <div className="recommendPeople" id='box1'>
                         {data.map((data) => (
                             <ProfileCard data={data} />
                         ))}
                         <div className="Arrow__showrecommendProfile" onClick={funct1}>
                             <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />
                         </div>
-                    </div>
+                    </div>}
                 </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        Other Passion
+                        Other student
+                        <div className='ArrowDropDownRoundedIcon' onClick={()=>{setDown2(!down2)}}>
+                        <ArrowDropDownRoundedIcon />
+                       </div>
                     </div>
-                    <div className="recommendPeople" id='box'>
-                        {data.map((data) => (
-                            <ProfileCard data={data} />
+                   {down2 && <div className="recommendPeople2" id='box'>
+                    {data.map((data) => (
+                            <>
+                              {data?.data?.passion !== userInfo?.passion && (
+                                  <>
+                                 
+                                  <ProfileCard data={data} />
+                                  </>
+                              )}
+                            </>
                         ))}
                         <div className="Arrow__showrecommendProfile" onClick={funct}>
-                            <ArrowForwardRoundedIcon
-                                className='Arrow__showrecommendInProfile' />
+                            <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </div>
         </div>

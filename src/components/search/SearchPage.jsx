@@ -19,6 +19,10 @@ function SearchPage() {
             searchInput: input,
         })
     }
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/searchPage",
+    });
 }, [input]);
 
 

@@ -11,6 +11,13 @@ function Login() {
   const [{ user }, dispatch] = useStateValue();
   const history = useHistory();
 
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/signIn",
+    });
+  }, []);
+
   const sign_in = (e) => {
     e.preventDefault();
     auth

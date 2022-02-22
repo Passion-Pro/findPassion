@@ -45,7 +45,12 @@ function StoryPage() {
   const [showPartners, setShowPartners] = useState(false);
   const[partners, setPartners] = useState([])
 
-
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/journey",
+    });
+  }, []);
   const childRefs = useMemo(
     () =>
       Array(journeyData?.imagesInfo?.length)

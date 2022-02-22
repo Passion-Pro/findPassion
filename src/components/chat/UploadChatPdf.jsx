@@ -32,10 +32,15 @@ function UploadChatPdf() {
 
   // onchange event
   const fileType = ["application/pdf"];
-
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
   const[loading , setLoading] = useState(false);
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/messagesUploadPdf",
+    });
+  }, []);
 
   useEffect(() => {
     console.log(chatId);
