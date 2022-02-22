@@ -3,7 +3,7 @@ import './userProfile.css'
 import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
-import db, { storage } from "../../firebase";
+import db, { auth, storage } from "../../firebase";
 import { useStateValue } from "../../StateProvider";
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import PassionPopup from "../sign/CreateAccount/PassionPopup";
@@ -18,20 +18,79 @@ import LearntStuff from "./LearntStuff";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import PostCard from '../post/PostCard'
+import { styled as style } from "@mui/material/styles";
+
+
+import { PhotoCamera } from "@mui/icons-material";
+import Badge from "@mui/material/Badge";
+import firebase from "firebase"
+import DeletePostPopup from "../post/DeletePostPopup";
+
+const StyledBadge = style(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
+const SmallAvatar = style(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
 
 function UserProfile() {
-  const [{ passion, user, userInfo, EditUserProfile }, dispatch] = useStateValue();
+  const [{ passion, user, userInfo, EditUserProfile , openDeletePostPopup }, dispatch] = useStateValue();
   const [experience, setExperience] = useState();
   const [image, setImage] = useState();
   const history = useHistory();
-  const [post ,setPosts]=useState([]);
-
+  const [post, setPosts] = useState([]);
+  const [coverImage, setCoverImage] = useState();
 
   const [input, setInput] = useState("");
   const [learntStuff, setLearntStuff] = useState([]);
   const [involvement, setInvolvement] = useState("");
   const [description, setDescription] = useState("");
   const [achievement, setAchievement] = useState("");
+
+
+  const [tags, setTags] = useState([]);
+  const [passions, setPassions] = useState([]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      db.collection('users').doc(user?.uid).collection('Posts').onSnapshot((snapshot) => (
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            data: doc.data(),
+            id: doc.id,
+          }))
+        )
+      ))
+    }
+  }, []);
 
   useEffect(() => {
     dispatch({
@@ -40,19 +99,35 @@ function UserProfile() {
     });
   }, []);
 
-useEffect(()=>{
-if(user?.uid){
-  db.collection('users').doc(user?.uid).collection('Posts').onSnapshot((snapshot)=>(
-    setPosts(
-      snapshot.docs.map((doc) => ({
-        data: doc.data(),
-        id: doc.id,
-      }))
-    )
-  ))
-}
-},[]);
-console.log(post);
+  
+  console.log(post);  
+
+
+  useEffect(() => {
+    db.collection("passions").onSnapshot((snapshot) => {
+      setPassions(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      )
+    })
+  }, [])
+
+  useEffect(() => {
+    if (passions?.length > 0) {
+
+      for (let i = 0; i < passions?.length; i++) {
+        db.collection("passions").doc(passions[i].id).collection("learningTags").onSnapshot((snapshot) => (
+
+          snapshot.docs.map((doc) => {
+            tags.push(doc.data())
+          })
+
+        ))
+      }
+    }
+  }, [passions?.length]);
 
   useEffect(() => {
     if (user) {
@@ -92,6 +167,13 @@ console.log(post);
       setImage(e.target.files[0]);
     }
   };
+
+  const add_background_image = (e) => {
+    e.preventDefault();
+    if (e.target.files[0]) {
+      setCoverImage(e.target.files[0]);
+    }
+  }
 
   const update_account = (e) => {
     e.preventDefault();
@@ -176,11 +258,41 @@ console.log(post);
           </div>
           <div></div>
         </div>
-        <div className="Userprofile__first">
+        <div className="up"
+          style={{
+            backgroundImage: coverImage ? `url(${URL.createObjectURL(coverImage)})` : `url(${userInfo?.coverImageUrl})`
+          }}
+        >
           {image ? (
-            <Avatar src={URL.createObjectURL(image)} style={{ height: '12vh', width: '12vh' }} />
+            <div className="photo"
+            >
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  <label htmlFor="photo" className="camera_label">
+                    <PhotoCamera className="camera_icon" />
+                  </label>
+                }
+              >
+                <Avatar className="user_avatar" src={URL.createObjectURL(image)} />
+              </Badge>
+            </div>
           ) : (
-            <Avatar src={userInfo?.profilePhotoUrl} style={{ height: '12vh', width: '12vh' }} />
+            <div className="photo"
+            >
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  <label htmlFor="photo" className="camera_label">
+                    <PhotoCamera className="camera_icon" />
+                  </label>
+                }
+              >
+                <Avatar className="user_avatar" src={userInfo?.profilePhotoUrl} />
+              </Badge>
+            </div>
           )}
           <input
             type="file"
@@ -191,11 +303,20 @@ console.log(post);
             onChange={selectImage}
             accept="image/git , image/jpeg , image/png"
           />
-          <label htmlFor="photo">
-            {EditUserProfile ? <div className="changeImage">Change profile photo</div> : <div className="changeImage">Branch: {userInfo?.branch}</div>}
-          </label>
-          <div className="name">{userInfo?.name}</div>
-          <div className="profile__Branch" style={{ fontWeight: 800 }}>Passion  {userInfo?.passion ? userInfo?.passion : <div style={{ paddingLeft: '4px' }}>: --</div>}</div>
+          <div className="cover_photo">
+            <label htmlFor="photo_background">
+              <p>{userInfo?.coverImageUrl || coverImage ? 'Update' : 'Add'} background image</p>
+            </label>
+            <input
+              type="file"
+              style={{
+                display: "none",
+              }}
+              id="photo_background"
+              onChange={add_background_image}
+              accept="image/git , image/jpeg , image/png"
+            />
+          </div>
         </div>
         <div className="Userprofile__Second">
           <div className={window.location.pathname === '/userProfile' ? 'Userprofile__Second_Option_Active' : "Userprofile__Second_Option"} onClick={() => {
@@ -218,9 +339,11 @@ console.log(post);
 
         {/* post page */}
         {window.location.pathname === '/userProfilePost' && <div className="Userprofile__Third__post">
-          {post.map((data)=>(
-        <PostCard data={data}/>
+          <div className="my_posts">
+          {post.map((data) => (
+            <PostCard data={data}  type = "my"/>
           ))}
+          </div>
         </div>
         }
 
@@ -230,7 +353,7 @@ console.log(post);
             <button onClick={open_add_learnt_popup}>
               {learntStuff?.length > 0
                 ? `Add to your learnings`
-                : ` Show your learnt stuff`}
+                : ` Show what have you learnt in ${userInfo?.passion}`}
             </button>
           </div>
           <div className="leant_stuff">
@@ -344,7 +467,12 @@ console.log(post);
                       </FormControl>
                     </div>
                     <div className="subfield__userProfile">
-                      <Button style={{ width: '100%' }} variant="contained" onClick={update_account}>Save Changes</Button>
+                      <Button style={{ width: '100%', marginRight: '20px' }} variant="contained" onClick={update_account}>Save Changes</Button>
+                      <Button style={{ width: '100%' }} variant="contained" onClick={() => {
+                        firebase.auth().signOut().then(() => {
+                          history.push("/signIn")
+                        });
+                      }}>Logout</Button>
                     </div>
                   </div>
                   <PassionPopup />
@@ -445,13 +573,24 @@ console.log(post);
                         multiline
                       />
                     </div>
-                    <div className="subfield__userProfile">
-                      <Button style={{ width: '100%' }} variant="contained" onClick={() => {
+                    <div className="subfield__userProfile"
+                      style={{
+                        display: 'flex'
+                      }}
+                    >
+                      <Button style={{ width: '100%', marginRight: '20px' }} variant="contained" onClick={() => {
                         dispatch({
                           type: actionTypes.SET_EDIT_USER_PROFILE,
                           EditUserProfile: true,
                         })
                       }}>Update</Button>
+                      <Button style={{ width: '100%' }} variant="contained" onClick={() => {
+
+                        firebase.auth().signOut().then(() => {
+                          history.push("/signIn")
+                        });
+
+                      }}>Logout</Button>
                     </div>
                   </div>
                   <PassionPopup />
@@ -460,7 +599,7 @@ console.log(post);
           }
         </div>
         }
-        <AddLearntPopup />
+        <AddLearntPopup tags={tags} />
       </div>
     </div>
   );

@@ -8,11 +8,15 @@ import firebase from 'firebase';
 import db from '../../firebase';
 import { useStateValue } from '../../StateProvider';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
-import {Avatar} from '@mui/material';
+import { Avatar } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { actionTypes } from '../../reducer';
+import DeletePostPopup from './DeletePostPopup';
 
-function PostCard({ data }) {
-    const [{ user, userInfo }] = useStateValue();
-    const [postUserInfo,setPostUserInfo]=useState(null);
+function PostCard({ data , type }) {
+    const [{ user, userInfo , openDeletePostPopup }, dispatch] = useStateValue();
+    const [postUserInfo, setPostUserInfo] = useState(null);
+
 
     const handleLike = () => {
         const currentLikeStatus = !data.data.likedUser.includes(
@@ -27,7 +31,7 @@ function PostCard({ data }) {
                 ) : firebase.firestore.FieldValue.arrayRemove(
                     user?.email
                 ),
-                totalLike: currentLikeStatus ?data?.data?.totalLike+1:data?.data?.totalLike-1,
+                totalLike: currentLikeStatus ? data?.data?.totalLike + 1 : data?.data?.totalLike - 1,
             }).then(() => {
                 db.collection("users")
                     .doc(user.uid)
@@ -37,37 +41,57 @@ function PostCard({ data }) {
                         ) : firebase.firestore.FieldValue.arrayRemove(
                             user?.email
                         ),
-                        totalLike: currentLikeStatus ? data?.data?.totalLike+1:data?.data?.totalLike-1,
+                        totalLike: currentLikeStatus ? data?.data?.totalLike + 1 : data?.data?.totalLike - 1,
                     })
-                console.log("sucess", user.uid, data.id);
             }).catch(() => {
                 console.log("error");
             })
     }
 
-    useEffect(()=>{
-       if(data?.data?.userID){
-           db.collection('users').doc(data?.data?.userID).onSnapshot((snapshot) => {
-            setPostUserInfo(snapshot.data());
-            console.log("first",postUserInfo?.profilePhotoUrl);
-          })
-       }
-    },[])
-
+    useEffect(() => {
+        if (data?.data?.userID) {
+            db.collection('users').doc(data?.data?.userID).onSnapshot((snapshot) => {
+                setPostUserInfo(snapshot.data());
+            })
+        }
+    }, [])
+console.log("postid",data?.id)
     return (
         <>
             <div className='PostCard'>
                 <div className='PostCardStarted'>
                     <div className="PostCardStartedIn">
                         <div className="PeopleStartedSameIn__Accountname">
-                            {postUserInfo?.profilePhotoUrl ? 
-                                <Avatar src={postUserInfo?.profilePhotoUrl} alt="" style={{display:'flex',height:'50px',width:"50px"}} />
-                             : <AccountCircleRoundedIcon style={{ fontSize: 30 }} />}
+                            {type === "my"?(
+                                <Avatar src={userInfo?.profilePhotoUrl} alt="" style={{ display: 'flex', height: '50px', width: "50px" }} />
+                            ):(
+                                <>
+                                 {postUserInfo?.profilePhotoUrl ?
+                                <Avatar src={postUserInfo?.profilePhotoUrl} alt="" style={{ display: 'flex', height: '50px', width: "50px" }} />
+                                : <AccountCircleRoundedIcon style={{ fontSize: 30 }} />}
+                                </>
+                            )}
                             <div className="PeopleStartedSameIn__Accountname__name">
-                                {postUserInfo?.name}
+                                {type === "my" ? userInfo?.name : postUserInfo?.name}
                                 <br />
                                 <span>{data?.data?.date}</span>
                             </div>
+                            {type === "my"  && (<div className="delete_post" >
+                                <DeleteIcon className='delete_icon' 
+                                  onClick={() => {
+                                    dispatch({
+                                        type: actionTypes.SET_POST_ID,
+                                        postId: data?.id
+                                    })
+                                    dispatch({
+                                        type: actionTypes.OPEN_DELETE_POST_POPUP,
+                                        openDeletePostPopup: true
+                                    })
+                                }}
+                                />
+                            </div>)}
+
+
                         </div>
                         <Divider />
                         <div className="PostCard__lower">
@@ -99,6 +123,7 @@ function PostCard({ data }) {
                     </div>
                 </div>
             </div>
+            {openDeletePostPopup && ( <DeletePostPopup  postId = {data?.id} postData = {data?.data}/>)}
         </>
     )
 }

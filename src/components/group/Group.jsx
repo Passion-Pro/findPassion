@@ -47,12 +47,40 @@ function Group() {
           </div>
         </> </div> :
           <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
-            You haven't started any group. <Button color="secondary" onClick={() => {
+            <div className='start_group_box'>
+               <p
+                style = {{
+                  fontSize : '17px',
+                }}
+               >Start your group here and enjoy the benifits of</p>
+               <p
+                style = {{
+                  marginBottom : '5px',
+                  marginLeft : '3px',
+                  fontStyle : 'italic'
+                }}
+               > A task giving system to your teammates</p>
+               <p
+                style = {{
+                  marginTop : '5px',
+                  marginLeft : '3px',
+                  fontStyle : 'italic'
+                }}
+               >Checking involvement of every team member in the group</p>
+               <div style = {{
+                 display : 'flex',
+                 justifyContent : 'flex-end'
+               }}>
+               <Button color="secondary" onClick={() => {
               dispatch({
                 type: actionTypes.SET_SHOW_GROUP_ADD,
                 showgroupAdd: true,
               })
-            }}>Start now</Button> </div>
+            }}>Start now</Button>
+
+               </div>
+            </div>
+             </div>
       }
       <GroupExpandMore />
     </div>

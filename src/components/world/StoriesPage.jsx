@@ -276,6 +276,14 @@ const Container = styled.div`
   .my_journey {
     padding: 20px;
     padding-left: 30px;
+    
+    @media(max-width: 500px){
+      padding-left : 30px !important;
+      display : flex;
+      padding-right : 40px !important;
+
+    }
+    
   }
 `;
 

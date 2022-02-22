@@ -86,10 +86,17 @@ function Story({ journey }) {
             backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
           }}
         ></div>
-        <div className="user_info">
-          <Avatar className="user_info_avatar" src={profilePhotoUrl} />
-          <p>{journey?.data?.uploaderInfo?.name}</p>
-        </div> 
+       <div className="user_info">
+          <div className="info">
+            <Avatar className="user_info_avatar" src={profilePhotoUrl} />
+            <p onClick={goToProfilePage}>{journey?.data?.uploaderInfo?.name}</p>
+          </div>
+          <div>
+            <span className="fire_symbol">
+              {journey?.data?.fires?.length}🔥
+            </span>
+          </div>
+        </div>
         {/* <div className="journey_period">
         <p>
           <span>{journey?.data?.journeyPeriod} </span>
@@ -112,6 +119,10 @@ const Container = styled.div`
   margin-right: 30px;
   margin-bottom: 30px;
   background-color: #fff;
+
+  @media(max-width : 500px){
+    width : 80vw;
+  }
 
   &:hover {
     cursor: pointer;

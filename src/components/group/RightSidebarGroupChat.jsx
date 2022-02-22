@@ -143,7 +143,7 @@ function RightSidebarGroupChat() {
           />
         </div>
       </div>
-      <AttachPopup from="chat"/>
+      <AttachPopup from="group" groupDetails={groupDetails}/>
     </div>
   );
 }

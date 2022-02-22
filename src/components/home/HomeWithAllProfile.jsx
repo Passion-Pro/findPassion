@@ -9,7 +9,7 @@ import {useStateValue} from "../../StateProvider"
 import { actionTypes } from '../../reducer';
 
 function HomeWithAllProfile() {
-    const[{userInfo} , dispatch] = useStateValue();
+
     const [data, setData] = useState([]);
     const [down,setDown]=useState(true);
     const [down2,setDown2]=useState(true);
@@ -46,6 +46,7 @@ function HomeWithAllProfile() {
 
     return (
         <div className='home'>
+            <HeaderSecond />
             <div className="homeBody">
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
@@ -57,11 +58,7 @@ function HomeWithAllProfile() {
 
                     {down && <div className="recommendPeople" id='box1'>
                         {data.map((data) => (
-                            <>
-                              {data?.data?.passion === userInfo?.passion && (
-                                  <ProfileCard data={data} />
-                              )}
-                            </>
+                            <ProfileCard data={data} />
                         ))}
                         <div className="Arrow__showrecommendProfile" onClick={funct1}>
                             <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />

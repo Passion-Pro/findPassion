@@ -48,6 +48,7 @@ import ShowTask from "./components/group/ShowTask";
 import { CircularProgress } from "@mui/material";
 import PostsPage from "./components/world/Posts/PostsPage";
 import SearchMobile from "./components/SearchForMobile/SearchMobile";
+import UploadGroupPdf from "./components/group/UploadGroupPdf";
 
 function App() {
   const [
@@ -255,6 +256,9 @@ function App() {
           </Route>
           <Route path="/learners/:learningId">
             <LearnersPage />
+          </Route>
+          <Route path="/groupUploadPdf">
+            {user?.email ? <UploadGroupPdf/> : <Login />}
           </Route>
           <Route path="/profile">
             {user?.email ? <ProfilePage /> : <Login />}

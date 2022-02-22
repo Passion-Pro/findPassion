@@ -577,6 +577,7 @@ const Container = styled.div`
     margin-top : 5px;
     margin-bottom : 5px;
     border : 1px solid lightgray;
+    width : fit-content;
     
     p{
       margin-top : 0;

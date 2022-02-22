@@ -78,6 +78,19 @@ function Learning({ learning,learningL, type, learnings }) {
   }, []);
 
   useEffect(() => {
+    if (requests.length > 0 && userInfo?.email) {
+      console.log("Requests are " , requests);
+      for (let i = 0; i < requests?.length; i++) {
+        if (requests[i]?.data?.requestEmail === userInfo?.email) {
+          if (requests[i].data.status === "pending") {
+            setRequestSent(true)
+          }
+        }
+      }
+    }
+  }, [requests.length, userInfo?.email])
+
+  useEffect(() => {
     if (learning?.id) {
       db.collection("learnings")
         .doc(learning?.id)
@@ -230,7 +243,7 @@ function Learning({ learning,learningL, type, learnings }) {
           </p>
         </div>
         <div className="started_date">
-          <p>Started on 8th November 2021</p>
+          <p>Started on {learning?.data?.date}</p>
         </div>
         {/* {learning?.data?.learnersLength > 1 && (
           <div className="number_of_students">
@@ -260,7 +273,7 @@ function Learning({ learning,learningL, type, learnings }) {
               ) : (
                 <button
                   onClick={() => {
-                    alert("Join Request Sent!");
+                    alert("Join Request Sent!....!");
                   }}
                 >
                   Join
@@ -303,8 +316,9 @@ const Container = styled.div`
     justify-content: space-between;
 
     .avatar {
-      width: 25px;
-      height: 25px;
+      width: 25px !important;
+      height: 25px !important;
+      margin-top : 0 !important;
     }
 
     p {
