@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Group.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
@@ -9,12 +9,20 @@ import RightSidebarGroupTask from './RightSidebarGroupTask';
 import GroupExpandMore from './GroupExpandMore';
 import RightSidebarGroupEnvolvement from './RightSidebarGroupEnvolvement';
 import GroupTopBody from './GroupTopBody';
+import { actionTypes } from '../../reducer';
 
 function GroupEnvolvement() {
   const [{ userInfo,groupDetails, user, showLeftSidebarGroup, showTop }, dispatch] = useStateValue();
   const [showLeftdiv, setShowLeftdiv] = useState(true);
   const backgroundImage = "https://cdn.w600.comps.canstockphoto.com/find-your-passion-in-splashs-background-stock-illustrations_csp78297071.jpg";
   const image = 'https://mcdn.wallpapersafari.com/medium/46/34/648IOD.jpg';
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/groupevolvement",
+    });
+  }, []);
 
   return (
     <div className='group'>

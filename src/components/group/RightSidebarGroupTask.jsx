@@ -37,7 +37,7 @@ function RightSidebarGroupTask() {
                     }} />
                 </div>
                 <div className="rightSidebarGroup__headName">
-                    {groupDetails?.GroupName} Chat
+                     Chat
                 </div>
                 <div></div>
             </div>
@@ -53,7 +53,7 @@ function RightSidebarGroupTask() {
                         </div>
                             <div className="taskUpper">
                                 <div className="taskUpperHead">
-                                    Task
+                                    Goal
                                 </div>
                                 <p>
                                     {task?.data?.task}
@@ -63,7 +63,7 @@ function RightSidebarGroupTask() {
                                 </Stack>
                             </div></> :
                             <div>
-                                No task given
+                                No Goal given
                             </div>
                         }
                     </div>

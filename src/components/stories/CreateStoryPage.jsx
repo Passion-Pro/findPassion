@@ -14,10 +14,18 @@ import { useStateValue } from '../../StateProvider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import { useHistory } from 'react-router-dom';
+import { actionTypes } from '../../reducer';
 
 export default function CreateStoryPage() {
     const history = useHistory();
     const [{ userInfo, user }, dispatch] = useStateValue();
+    
+    useEffect(()=>{
+        dispatch({
+            type: actionTypes.SET_PATHNAMEF,
+            pathnamef: "/createStory",
+          })
+    },[])
 
     const [loading, setLoading] = useState(false);
     const [postText, setPostText] = useState('');

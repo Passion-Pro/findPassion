@@ -37,7 +37,7 @@ function RightSidebarGroupTaskEach({ task }) {
                 }
             }}>
                 <div style={{ display: 'flex', padding: '8px 0 0 15px', fontWeight: '600' }}>
-                    {groupMemberDetails?.timestamp < task?.data?.timestamp ? "Task No. " + task?.data?.totalTask : 'Old tasks'}
+                    {groupMemberDetails?.timestamp < task?.data?.timestamp ?  task?.data?.totalTask : 'Old tasks'}
                 </div>
                 <div className="taskUpper">
                     {!editDue && <div style={{ display: 'flex', fontSize: '15px', padding: '0 0 8px 0' }}>
@@ -68,7 +68,7 @@ function RightSidebarGroupTaskEach({ task }) {
                 </div>
                 <div className="taskUpper">
                     <div className="taskUpperHead">
-                        Task
+                        Goal
                     </div>
                     <p>
                         {task?.data?.task}

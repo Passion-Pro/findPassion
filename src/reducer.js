@@ -40,6 +40,7 @@ export const initialState = {
   learner : {},
   showgroupAdd:false,
   EditUserProfile:false,
+  pathnamef:''
 };
 
 export const actionTypes = {
@@ -88,7 +89,7 @@ export const actionTypes = {
   SET_ADD_PARTNER_INFO : "SET_ADD_PARTNER_INFO",
   OPEN_REMOVE_MEMBER_POPUP : "OPEN_REMOVE_MEMBER_POPUP",
   SET_LEARNER : "SET_LEARNER",
-  
+  SET_PATHNAMEF: "SET_PATHNAMEF",
 };
 
 const reducer = (state, action) => {
@@ -99,6 +100,11 @@ const reducer = (state, action) => {
         ...state,
         EditUserProfile: action.EditUserProfile,
       };
+      case actionTypes.SET_PATHNAMEF:
+        return {
+          ...state,
+          pathnamef: action.pathnamef,
+        };
     case actionTypes.SET_SHOW_GROUP_ADD:
       return {
         ...state,

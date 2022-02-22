@@ -21,6 +21,13 @@ function ProfilePage({ id }) {
   const[joinedLearnings , setJoinedLearnings] = useState([]);
 
   useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/profile",
+    });
+  }, []);
+  
+  useEffect(() => {
     if (user?.uid) {
       db.collection("users")
         .doc(user?.uid)

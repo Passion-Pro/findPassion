@@ -28,7 +28,12 @@ function ChatPage() {
     const[input , setInput] = useState("")
     const [openEmojis, setOpenEmojis] = useState(false);
     const [chosenEmoji, setChosenEmoji] = useState("");
-
+    useEffect(() => {
+      dispatch({
+        type: actionTypes.SET_PATHNAMEF,
+        pathnamef: "/messages",
+      });
+    }, []);
     useEffect(() => {
        if(myChatId && user?.uid){
         db.collection("users")
@@ -303,7 +308,10 @@ const Container  = styled.div`
 
   .chat_section_messages {
     flex: 1;
-    background-color: #0099ff;
+    background-image: url("https://i.pinimg.com/736x/2a/68/b4/2a68b4d59d9b4b25c32a3cb4738c6cdc.jpg");
+    background-position: center;
+    background-size : 20%;
+    background-repeat: repeat;
     display: flex;
     flex-direction: column-reverse;
     overflow-y : scroll;

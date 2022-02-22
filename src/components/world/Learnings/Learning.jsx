@@ -8,31 +8,50 @@ import db from "../../../firebase";
 import firebase from "firebase";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
-function Learning({ learning, type, learnings }) {
+function Learning({ learning,learningL, type, learnings }) {
   const history = useHistory();
   const [{ user, userInfo }, dispatch] = useStateValue();
   const [requestSent, setRequestSent] = useState(false);
   const [fires, setFires] = useState([]);
   const [fired, setFired] = useState(false);
   const [joinedId, setJoinedId] = useState();
-  const [profilePhotoUrl, setProfilePhotoUrl] = useState();
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
+  const [profileId,setProfileId]=useState('');
+  const [cardInfo, setCardInfo] = useState(null);
+  // useEffect(() => {
+  //   if(learning?.data?.learningId){
+
+  //   }
+  // })
+  const goToProfilePage = (e) => {
+    e.preventDefault();
+    if(profileId)
+          history.push(`/viewProfile/${profileId}`);
+  };
 
   useEffect(() => {
-    if (user?.uid && learning?.data?.started_by?.email && userInfo) {
+    if (user?.uid  && userInfo) {
+      if(type === 'joined'){
+        console.log("JOINED" , learning);
+      }
+      var CardEmail = type==='joined' 
+      ? learning?.data?.started_by
+      : learning?.data?.started_by?.email;
       db.collection("users")
-        .where("email", "==", learning?.data?.started_by?.email)
+        .where("email", "==", CardEmail)
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
-
+            setProfileId(doc?.id);
             setProfilePhotoUrl(doc.data().profilePhotoUrl);
 
             db.collection("users")
               .doc(doc.id)
               .collection("learnRequests")
-              .where("requestFrom", "==", userInfo)
+              .where("requestEmail", "==", user?.email)
+              .where("learningId" , "==" , learning?.id)
               .get()
               .then((querySnapshot) => {
                 //  if(querySnapshot.empty === true) {
@@ -56,7 +75,7 @@ function Learning({ learning, type, learnings }) {
           console.log("Error getting documents: ", error);
         });
     }
-  }, [user?.uid, learning, userInfo]);
+  }, []);
 
   useEffect(() => {
     if (learning?.id) {
@@ -68,31 +87,31 @@ function Learning({ learning, type, learnings }) {
     }
   }, [learning?.id]);
 
-  useEffect(() => {
-    if (type === "joined" && learnings) {
-      console.log(learnings);
-      for (let i = 0; i < learnings.length; i++) {
-        if (
-          learnings[i].data.learning === learning?.data?.learning &&
-          learnings[i].data.started_by?.email ===
-            learning?.data?.started_by?.email
-        ) {
-            console.log("YES");
-            setJoinedId(learning?.id);
-        }
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (type === "joined" && learnings) {
+  //     console.log(learnings);
+  //     for (let i = 0; i < learnings.length; i++) {
+  //       if (
+  //         learnings[i].data.learning === learning?.data?.learning &&
+  //         learnings[i].data.started_by?.email ===
+  //           learning?.data?.started_by?.email
+  //       ) {
+  //         console.log("YES");
+  //         setJoinedId(learning?.id);
+  //       }
+  //     }
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (type === "joined" && joinedId) {
-      db.collection("learnings")
-        .doc(joinedId)
-        .onSnapshot((snapshot) => {
-          setFires(snapshot.data().fires);
-        });
-    }
-  }, [joinedId]);
+  // useEffect(() => {
+  //   if (type === "joined" && joinedId) {
+  //     db.collection("learnings")
+  //       .doc(joinedId)
+  //       .onSnapshot((snapshot) => {
+  //         setFires(snapshot.data().fires);
+  //       });
+  //   }
+  // }, [joinedId]);
 
   useEffect(() => {
     if (fires?.length > 0) {
@@ -118,9 +137,11 @@ function Learning({ learning, type, learnings }) {
             .doc(doc.id)
             .collection("learnRequests")
             .add({
-              requestEmail : user?.email,
-              requestName : userInfo?.name,
-              learning: learning,
+              requestEmail: user?.email,
+              requestName: userInfo?.name,
+              learningId: learning?.id,
+              started_by:learning?.data?.started_by?.email,
+              learning: learning?.data?.learning,
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               status: "pending",
             })
@@ -173,27 +194,6 @@ function Learning({ learning, type, learnings }) {
     setFired(false);
   };
 
-  const goToProfilePage = (e) => {
-    e.preventDefault();
-
-    db.collection("users")
-            .where("email", "==", learning?.data?.started_by?.email)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                console.log(doc.id, " => ", doc.data());
-                
-                history.push(`/viewProfile/${doc.id}`)
-              
-
-              });
-            })
-            .catch((error) => {
-              console.log("Error getting documents: ", error);
-            });
-  }
-
   return (
     <>
       <Container>
@@ -203,17 +203,14 @@ function Learning({ learning, type, learnings }) {
               display: "flex",
             }}
             className="learning_uploader"
-            >
+          >
             <Avatar src={profilePhotoUrl} className="avatar" />
-            <p className="learning_name"
-            onClick={goToProfilePage}
-            >
-              {type === `my`
-                ? userInfo?.name
-                : learning?.data?.started_by?.name}
+            <p className="learning_name" onClick={goToProfilePage}>
+              {type === `my` ? userInfo?.name : type === `joined` ? learning?.data?.startedName : learning?.data?.started_by?.name}
+
             </p>
           </div>
-          <div className="fire_icon">
+          {/* <div className="fire_icon">
             {fired === false ? (
               <LocalFireDepartmentIcon
                 className="fire_icon"
@@ -225,19 +222,21 @@ function Learning({ learning, type, learnings }) {
                 onClick={removeFromFires}
               />
             )}
-          </div>
+          </div> */}
         </div>
         <div className="learning">
-          <p>{learning?.data?.learning}</p>
+          <p>
+            {learning?.data?.learning}
+          </p>
         </div>
         <div className="started_date">
           <p>Started on 8th November 2021</p>
         </div>
-        {learning?.data?.learnersLength > 1 && (
+        {/* {learning?.data?.learnersLength > 1 && (
           <div className="number_of_students">
             <p>🔥{learning?.data?.learnersLength} students</p>
           </div>
-        )}
+        )} */}
         <div className="join_button" style={{}}>
           {type === "my" || type === "joined" ? (
             <>
@@ -249,7 +248,7 @@ function Learning({ learning, type, learnings }) {
                 </button>
               )}
               {type === "joined" && (
-                <button onClick={(e) => history.push(`/learning/${joinedId}`)}>
+                <button onClick={(e) => history.push(`/learning/${learning?.data?.learningId}`)}>
                   View
                 </button>
               )}
@@ -391,13 +390,13 @@ const Container = styled.div`
     margin-top: 2px !important;
   }
 
-  .learning_uploader{
+  .learning_uploader {
     &:hover {
-      cursor : pointer;
+      cursor: pointer;
 
-      p{
+      p {
         &:hover {
-          color : #1b7ae7;
+          color: #1b7ae7;
         }
       }
     }

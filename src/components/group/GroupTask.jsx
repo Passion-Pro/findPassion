@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Group.css';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
@@ -8,9 +8,17 @@ import { useStateValue } from '../../StateProvider';
 import RightSidebarGroupTask from './RightSidebarGroupTask';
 import GroupExpandMore from './GroupExpandMore';
 import GroupTopBody from './GroupTopBody';
+import { actionTypes } from '../../reducer';
 
 function GroupTask() {
   const [{ userInfo, user, showLeftSidebarGroup,groupDetails,showTop }, dispatch] = useStateValue();
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/grouptask",
+    });
+  }, []);
 
   return (
     <div className='group'>

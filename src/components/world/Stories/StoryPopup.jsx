@@ -63,7 +63,7 @@ function StoryPopup() {
 
     setNewStoryParts(journey?.data?.storyParts);
 
-    if (journey?.id) {
+    if (journey?.id){ 
       db.collection("journeys")
         .doc(journey?.id)
         .onSnapshot((snapshot) => {
@@ -246,6 +246,8 @@ function StoryPopup() {
     });
 
     console.log(fires);
+
+    console.log("Journey Id is " , journey);
 
     db.collection("journeys")
       .doc(journey?.id)

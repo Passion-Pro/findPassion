@@ -14,6 +14,13 @@ function RequestsPage() {
   const[learnings , setLearnings] = useState([]);
 
   useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/requests",
+    });
+  }, []);
+  
+  useEffect(() => {
     if (user?.uid) {
       db.collection("users")
         .doc(user?.uid)

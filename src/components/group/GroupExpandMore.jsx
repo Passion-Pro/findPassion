@@ -137,65 +137,56 @@ function GroupExpandMore() {
 
         <button onClick={() => {
           dispatch({
+            type: actionTypes.SET_SHOW_TOP,
+            showTop: false,
+          })
+          dispatch({
+            type: actionTypes.SET_EDIT_GROUP,
+            editGroup: false,
+          })
+          dispatch({
             type: actionTypes.SET_SHOW_EXPANDGROUP,
             showExpandGroup: true,
           })
-        }} className='Button__groupExpand' title="More option">
+        }} className={!showTop && !editGroup && showExpandGroup ?'Button__groupExpand_Active':'Button__groupExpand'} title="More option">
           More
         </button>
-
 
         {mygroupDetail?.GroupName &&
           <>
             <button onClick={() => {
+               dispatch({
+                type: actionTypes.SET_SHOW_TOP,
+                showTop: true,
+              })
               dispatch({
                 type: actionTypes.SET_EDIT_GROUP,
-                editGroup: !editGroup,
+                editGroup: true,
+              })
+              dispatch({
+                type: actionTypes.SET_SHOW_EXPANDGROUP,
+                showExpandGroup: false,
               })
               console.log("Edit Group is ", editGroup)
-            }} className='Button__groupExpand' title='Edit group'>
+            }} className={showTop && editGroup && !showExpandGroup ?'Button__groupExpand_Active':'Button__groupExpand' } title='Edit group'>
               Edit
             </button>
 
-            <button style={{ display: "flex", padding: "4px", margin: "4px", border: 'none', outline: "none", alignItems: 'center', justifyContent: 'center', borderRadius: '16px', fontWeight: 'bold' }} className='Button__groupExpandHide' variant="contained">
-              {showTop ?
-                <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }} onClick={() => {
-                  dispatch({
-                    type: actionTypes.SET_SHOW_TOP,
-                    showTop: false,
-                  });
-                }} title='Hide group information' >
-                  <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }}>
-                    <p style={{
-                      marginTop: 'auto',
-                      marginBottom: 'auto',
-                    }} >
-                      Hide
-                    </p>
-                  </div>
-                  <ExpandMoreRoundedIcon style={{
-                    zIndex: 11, height: "100%"
-                  }} />
-                </div>
-                :
-                <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: '28px', cursor: 'pointer', }} onClick={() => {
-                  dispatch({
-                    type: actionTypes.SET_SHOW_TOP,
-                    showTop: true,
-                  });
-                }}  title='Show group information'>
-                  <div style={{ display: "flex", alignItem: 'center', justifyContent: 'center', height: "100%" }}>
-                    <p style={{
-                      marginTop: 'auto',
-                      marginBottom: 'auto',
-                    }}
-                    >Show</p>
-                  </div>
-                  <ChevronRightRoundedIcon style={{
-                    zIndex: 11, height: "100%"
-                  }} />
-                </div>
-              }
+            <button onClick={() => {
+              dispatch({
+                type: actionTypes.SET_SHOW_TOP,
+                showTop: true,
+              })
+              dispatch({
+                type: actionTypes.SET_EDIT_GROUP,
+                editGroup: false,
+              })
+              dispatch({
+                type: actionTypes.SET_SHOW_EXPANDGROUP,
+                showExpandGroup: false,
+              })
+            }} className={showTop && !showExpandGroup ?'':'Button__groupExpand' } title='Edit group'>
+              {showTop?"Hide":"Show"}
             </button>
           </>
         }

@@ -147,6 +147,21 @@
     color: black;
     border: 1px solid lightgray;
 }
+.Button__groupExpand_Active{
+    display: flex;
+    padding: 6px;
+    margin: 4px;
+    width: 60px;
+    border: none;
+    outline: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color:rgb(33, 136, 233);
+    color:white
+}
 .Button__groupExpand{
     display: flex;
     padding: 6px;
@@ -161,8 +176,8 @@
     cursor: pointer;
 }
 .Button__groupExpandHide{
-    font-size: small;
-    height: 28px;
+    /* font-size: small;
+    height: 28px; */
 }
 .AddAPhotoRoundedIcon{
     padding: 3px;
@@ -187,11 +202,11 @@
         padding: 3px;
         font-size:16px !important;
     }
-    .Button__groupExpandHide{
+    /* .Button__groupExpandHide{
         font-size: x-small;
         width: 60px;
         height: 25px;
-    }
+    } */
     .group__Icon{
         display: flex;
         position: absolute;

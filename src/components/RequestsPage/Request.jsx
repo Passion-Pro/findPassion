@@ -122,7 +122,19 @@ function Request({ request, learnings }) {
               .doc(doc.id)
               .collection("myJoinedLearnings")
               .add({
+              //   requestEmail : user?.email,
+              // requestName : userInfo?.name,
+              // learningId: learning?.id,
+              // learning:learning?.data()?.learning,
+              // timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              // status: "pending",
+              timestamp:request?.data?.timestamp,
+              name:request?.data?.requestName,
+                email:request?.data?.requestEmail,
+                started_by: user?.email,
+                startedName:userInfo?.name,
                 learning: request?.data?.learning,
+                learningId: request?.data?.learningId,
                 joined_on: firebase.firestore.FieldValue.serverTimestamp(),
               });
           });

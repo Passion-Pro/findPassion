@@ -24,9 +24,7 @@ function ProfileCard({ data }) {
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots
           console.log(doc.id, " => ", doc.data());
-
           db.collection("users")
             .doc(doc.id)
             .collection("myLearnings")
@@ -46,17 +44,6 @@ function ProfileCard({ data }) {
         console.log("Error getting documents: ", error);
       });
   }, []);
-
-  useEffect(() => {
-    console.log("learning is ", learning);
-  }, [learning]);
-
-  //   const checkLength=(lengthOfArray)=>{
-  // if(lengthOfArray>10){
-  //  break;
-  // }
-  // }
-
 
   return (
     <Card
@@ -79,11 +66,11 @@ function ProfileCard({ data }) {
         </div>
         <div className="card_down">
           <p className="user_name">{data?.data?.name}</p>
-          {console.log("Year is" , data?.data?.year)}
           {data?.data?.branch && data?.data?.year && (<p
             style  = {{
               marginTop : 0,
-              marginBottom : '10px'
+              marginBottom : '10px',
+              fontSize :"small"
             }}
            >
             {data?.data?.branch} , {' '}
@@ -94,7 +81,7 @@ function ProfileCard({ data }) {
           </p>)}
           {console.log("Learning is " , learning)}
           {data?.data?.passion !== userInfo?.passion && (<p className="user_passion">{data?.data?.passion}</p>)}
-          {learning[0] && (
+          {learning[0] && data?.data?.passion === userInfo?.passion &&  (
             <p className="learning">
               {learning[0]?.data?.learning?.length < 80 ? learning[0]?.data?.learning : `${learning[0]?.data?.learning.splice(0 , 80)} + "..." `}
             </p>
@@ -120,7 +107,7 @@ const Container = styled.div`
   }
 
   .card_up {
-    height: 50%;
+    height: 52%;
     background-color: #eeecec;
     display: flex;
     justify-content: flex-end;
@@ -145,18 +132,21 @@ const Container = styled.div`
 
   .user_name {
     font-size: 19px;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin:0;
+    padding:0;
     font-weight: 500;
+
   }
 
   .user_passion {
     margin-top: 0px;
     width: fit-content;
     padding: 5px !important;
-    border-radius: 20px;
+    border-radius: 5px;
     background-color: #8400ff;
     color: white;
+    font-size: 14px;
+    margin-bottom: 20px;
   }
 
   .qualities{

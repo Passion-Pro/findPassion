@@ -10,10 +10,19 @@ import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { Worker } from "@react-pdf-viewer/core";
 import db from "../../../firebase";
 import firebase from "firebase";
+import { actionTypes } from "../../../reducer";
 
 function ViewPdf() {
+
   const fileType = ["application/pdf"];
   const [{ user }, dispatch] = useStateValue();
+  
+useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/learnings",
+    });
+  }, []);
 
   const { learningId } = useParams();
   const { messageId } = useParams();

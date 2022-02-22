@@ -39,6 +39,13 @@ function UploadPdf() {
   const[loading ,setLoading] = useState(false);
 
   useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/learningsUploadPdf",
+    });
+  }, []);
+
+  useEffect(() => {
     console.log(chatId);
     if (user?.uid && chatEmail) {
       db.collection("users")

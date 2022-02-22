@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../header/Header';
 import SidebarGroup from './SidebarGroup';
 import RightSidebarGroup from './RightSidebarGroup';
@@ -7,10 +7,17 @@ import { useStateValue } from '../../StateProvider';
 import GroupExpandMore from './GroupExpandMore';
 import RightSidebarGroupEnvolvement from './RightSidebarGroupEnvolvement';
 import GroupTopBody from './GroupTopBody';
+import { actionTypes } from '../../reducer';
 
 function GroupEnvolvement() {
   const [{ userInfo, user, showTop, showLeftSidebarGroup }, dispatch] = useStateValue();
   const [showLeftdiv, setShowLeftdiv] = useState(true);
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/groupevolvementother",
+    });
+  }, []);
   return (
     <div className='group'>
       {showTop &&

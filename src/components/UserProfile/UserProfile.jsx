@@ -33,6 +33,13 @@ function UserProfile() {
   const [description, setDescription] = useState("");
   const [achievement, setAchievement] = useState("");
 
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/userProfile",
+    });
+  }, []);
+
 useEffect(()=>{
 if(user?.uid){
   db.collection('users').doc(user?.uid).collection('Posts').onSnapshot((snapshot)=>(

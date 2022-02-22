@@ -45,7 +45,7 @@ function ShowAllTaskEach({ task, serial }) {
                     </div>
                     <div className="group_photo">
                         <div className="learning_detail">
-                            Delete task <br/>
+                            Delete Goal <br/>
                            <b style={{padding:0}}>Status</b>{task?.data?.status != "pending" ? <>  {groupMemberDetails?.data?.name} {task?.data?.status != 'Done' && 'started '}{task?.data?.status} the task on {task?.data?.statusDateDone ? task?.data?.statusDateDone : task?.data?.statusDateDoing ? task?.data?.statusDateDoing : "You have't set yet"}</> : "Pending"}
                         </div>
                         <div className="start_button">
@@ -61,7 +61,7 @@ function ShowAllTaskEach({ task, serial }) {
             <div className='taskOuter' >
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 15px 0 15px', alignItems: 'center', fontWeight: '600' }}>
                     <div>
-                        {groupMemberDetails?.timestamp < task?.data?.timestamp ? "Task No. " + task?.data?.totalTask : 'Old tasks'}
+                        {groupMemberDetails?.timestamp < task?.data?.timestamp ? task?.data?.totalTask : 'Old tasks'}
                     </div>
                     <div title='Delete the assignment'>
                         <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => {
@@ -82,7 +82,7 @@ function ShowAllTaskEach({ task, serial }) {
                 </div>
                 <div className="taskUpper">
                     <div className="taskUpperHead">
-                        Task
+                        Goal
                     </div>
                     <p>
                         {task?.data?.task}

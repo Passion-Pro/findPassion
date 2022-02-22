@@ -39,25 +39,35 @@ import ShareExperience from "./components/ShareExperience/ShareExperience";
 import CreateStoryPage from "./components/stories/CreateStoryPage";
 import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import UploadChatPdf from "./components/chat/UploadChatPdf";
 import SearchPage from "./components/search/SearchPage";
 import Header from "./components/header/Header";
 import HeaderNot from "./components/withoutlogin/Header";
 import ShowTask from "./components/group/ShowTask";
-import { CircularProgress } from '@mui/material';
+import { CircularProgress } from "@mui/material";
 import PostsPage from "./components/world/Posts/PostsPage";
+import SearchMobile from "./components/SearchForMobile/SearchMobile";
 
 function App() {
-
-  const [{ user, courseDiv, showExpandGroup, showMoreoption, showgroupMoreRight }, dispatch] = useStateValue();
+  const [
+    {
+      user,
+      courseDiv,
+      showExpandGroup,
+      showMoreoption,
+      showgroupMoreRight,
+      pathnamef,
+    },
+    dispatch,
+  ] = useStateValue();
   const history = useHistory();
 
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_LOADING,
       loading: true,
-    })
+    });
     auth.onAuthStateChanged((auth) => {
       if (auth) {
         dispatch({
@@ -67,13 +77,13 @@ function App() {
         dispatch({
           type: actionTypes.SET_LOADING,
           loading: false,
-        })
+        });
       } else {
-        history.push('/withoutloginhome')
+        history.push("/withoutloginhome");
         dispatch({
           type: actionTypes.SET_LOADING,
           loading: false,
-        })
+        });
       }
     });
   }, []);
@@ -83,25 +93,24 @@ function App() {
       dispatch({
         type: actionTypes.SET_LOADING,
         loading: true,
-      })
+      });
       db.collection("users")
         .doc(user?.uid)
         .onSnapshot((snapshot) => {
           dispatch({
             type: actionTypes.SET_USER_INFO,
             userInfo: snapshot.data(),
-          })
+          });
           dispatch({
             type: actionTypes.SET_LOADING,
             loading: false,
-          })
-        }
-        );
+          });
+        });
     } else {
       dispatch({
         type: actionTypes.SET_LOADING,
         loading: false,
-      })
+      });
     }
   }, [user?.uid]);
 
@@ -135,34 +144,37 @@ function App() {
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-        {user?.email &&
+        {user?.email && (
           <div className="header__APPlaptop">
-            {window.location.pathname !== "/withoutlogin" &&
-              window.location.pathname !== "/addJourney/photos" &&
-              window.location.pathname !== "/addJourney/words" &&
-              window.location.pathname !== "/addJourney/video" && <Header />}
+            {pathnamef !== "/withoutlogin" &&
+              pathnamef !== "/addJourney/photos" &&
+              pathnamef !== "/addJourney/words" &&
+              pathnamef !== "/addJourney/video" &&
+              (pathnamef.toString().slice(0, 9) !== "/learning" ||
+                pathnamef !== "/learning") && <Header />}
           </div>
-        }
+        )}
         {/* phone */}
-        {user?.email &&
+        {user?.email && (
           <div className="header__APPphone">
-            {window.location.pathname !== "/withoutlogin" &&
-              window.location.pathname !== "/addJourney/photos" &&
-              window.location.pathname !== "/addJourney/words" &&
-              window.location.pathname !== "/addJourney/video" &&
-              window.location.pathname !== "/shareexperience" &&
-              window.location.pathname !== "/userProfile" &&
-              window.location.pathname !== "/userProfileLearnt" &&
-              window.location.pathname !== "/userProfilePost" &&
-              <Header />}
+            {pathnamef !== "/withoutlogin" &&
+              pathnamef !== "/addJourney/photos" &&
+              pathnamef !== "/addJourney/words" &&
+              pathnamef !== "/addJourney/video" &&
+              pathnamef !== "/shareexperience" &&
+              pathnamef !== "/userProfile" &&
+              pathnamef !== "/userProfileLearnt" &&
+              pathnamef !== "/userProfilePost" &&
+              pathnamef !== "/learning" && <Header />}
           </div>
-        }
-        {!user?.email &&
-        <HeaderNot/>
-        }
+        )}
+        {!user?.email && <HeaderNot />}
         <Switch>
           <Route path="/searchPage">
             {user?.email ? <SearchPage /> : <Login />}
+          </Route>
+          <Route path="/searchPageForMobile">
+            {user?.email ? <SearchMobile /> : <Login />}
           </Route>
           <Route path="/createStory">
             {user?.email ? <CreateStoryPage /> : <Login />}
@@ -203,9 +215,7 @@ function App() {
           <Route path="/groupevolvement">
             {user?.email ? <GroupEnvolvement /> : <Login />}
           </Route>
-          <Route path="/group">
-            {user?.email ? <Group /> : <Login />}
-          </Route>
+          <Route path="/group">{user?.email ? <Group /> : <Login />}</Route>
           <Route path="/groupother/:id">
             {user?.email ? <GroupOther /> : <Login />}
           </Route>
@@ -214,13 +224,12 @@ function App() {
           </Route>
           <Route path="/all_profile">
             {user?.email ? <HomeWithAllProfile /> : <Login />}
+
           </Route>
           <Route path="/landspacepost">
             {user?.email ? <LandspacePost /> : <Login />}
           </Route>
-          <Route path="/addpost">
-            {user?.email ? <AddPost /> : <Login />}
-          </Route>
+          <Route path="/addpost">{user?.email ? <AddPost /> : <Login />}</Route>
           <Route path="/portraitpost">
             {user?.email ? <PortraitPhotos /> : <Login />}
           </Route>
@@ -233,25 +242,18 @@ function App() {
           <Route path="/chat/:chatId">
             {user?.email ? <Chat /> : <Login />}
           </Route>
-          <Route path="/chat">
-            {user?.email ? <Chat /> : <Login />}
-          </Route>
+          <Route path="/chat">{user?.email ? <Chat /> : <Login />}</Route>
           <Route path="/messages/:myChatId/:viewerId">
             <ChatPage />
           </Route>
-          <Route path="/world">
-            {user?.email ? <WorldPage /> : <Login />}
-          </Route>
+          <Route path="/world">{user?.email ? <WorldPage /> : <Login />}</Route>
           <Route path="/journey/:journeyId">
             {user?.email ? <StoryPage /> : <Login />}
           </Route>
           <Route path="/stories">
             {user?.email ? <StoriesPage /> : <Login />}
           </Route>
-          <Route path="/learning/:learningId">
-            {user?.email ? <LearningGroup /> : <Login />}
-          </Route>
-          <Route path= "/learners/:learningId">
+          <Route path="/learners/:learningId">
             <LearnersPage />
           </Route>
           <Route path="/profile">
@@ -266,6 +268,9 @@ function App() {
           <Route path="/learningsUploadPdf/:learningId">
             {user?.email ? <UploadPdf /> : <Login />}
           </Route>
+          <Route path="/learning/:learningId">
+            {user?.email ? <LearningGroup /> : <Login />}
+          </Route>
           <Route path="/messagesUploadPdf/:chatId/:chatEmail">
             {user?.email ? <UploadChatPdf /> : <Login />}
           </Route>
@@ -273,7 +278,7 @@ function App() {
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
           <Route path="/posts">
-            <PostsPage/>
+            <PostsPage />
           </Route>
           <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
@@ -287,7 +292,7 @@ function App() {
           <Route path="/userProfileLearnt">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/">{user?.email && <WorldPage/>}</Route>
+          <Route path="/">{user?.email && <WorldPage />}</Route>
         </Switch>
       </Router>
     </div>

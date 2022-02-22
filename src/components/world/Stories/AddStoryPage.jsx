@@ -48,6 +48,13 @@ function AddStoryPage() {
   const [uploadJourney, setUploadJourney] = useState(false);
 
   useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/addJourney",
+    });
+  }, []);
+
+  useEffect(() => {
     if (user?.uid) {
       db.collection("journeys")
         .doc(user?.uid)
@@ -657,7 +664,6 @@ function AddStoryPage() {
                           >
                             Add Partner
                           </button>
-
                           {addPartnerInfo?.length > 0 && (
                             <div className="added_partners">
                               {addPartnerInfo.map((partnerInfo) => (
@@ -726,7 +732,7 @@ function AddStoryPage() {
               )}
               {activeTab === "cards" && (
                 <div className="all_cards">
-                  {cardsInfo.map((cardInfo) => (
+                  {cardsInfo?.length > 0 && cardsInfo.map((cardInfo) => (
                     <>
                       {showPartners === cardInfo ? (
                         <div className="showPartners">
@@ -947,43 +953,44 @@ function AddStoryPage() {
                 <div className="journey_cards">
                   <div className="cardsContainer">
                     {console.log("JOURNEY")}
-                    {cardsInfo.map((cardInfo, index) => (
-                      <>
-                        <TinderCard
-                          className="swipe"
-                          // key={part.caption}
-                          preventSwipe={["up", "down"]}
-                          //  onCardLeftScreen = {() => outOfFrame(person.name)}
-                          onSwipe={() => {
-                            if (index === 0) {
-                              const newCardsInfo = cardsInfo;
-                              setCardsInfo([]);
-                              setCardsInfo(newCardsInfo);
-                            }
-                          }}
-                        >
-                          <div
-                            className="card"
-                            style={{
-                              backgroundImage: `url(${cardInfo?.imageUrl})`,
+                    {cardsInfo?.length > 0  &&
+                      cardsInfo.map((cardInfo, index) => (
+                        <>
+                          <TinderCard
+                            className="swipe"
+                            // key={part.caption}
+                            preventSwipe={["up", "down"]}
+                            //  onCardLeftScreen = {() => outOfFrame(person.name)}
+                            onSwipe={() => {
+                              if (index === 0) {
+                                const newCardsInfo = cardsInfo;
+                                setCardsInfo([]);
+                                setCardsInfo(newCardsInfo);
+                              }
                             }}
                           >
-                            {cardInfo?.caption && (
-                              <div
-                                className="image_caption"
-                                style={{
-                                  justifyContent: cardInfo?.imageUrl
-                                    ? "flex-end"
-                                    : "flex-start",
-                                }}
-                              >
-                                <p>{cardInfo?.caption}</p>
-                              </div>
-                            )}
-                          </div>
-                        </TinderCard>
-                      </>
-                    ))}
+                            <div
+                              className="card"
+                              style={{
+                                backgroundImage: `url(${cardInfo?.imageUrl})`,
+                              }}
+                            >
+                              {cardInfo?.caption && (
+                                <div
+                                  className="image_caption"
+                                  style={{
+                                    justifyContent: cardInfo?.imageUrl
+                                      ? "flex-end"
+                                      : "flex-start",
+                                  }}
+                                >
+                                  <p>{cardInfo?.caption}</p>
+                                </div>
+                              )}
+                            </div>
+                          </TinderCard>
+                        </>
+                      ))}
                   </div>
                 </div>
               )}
@@ -1150,7 +1157,10 @@ function AddStoryPage() {
         </Container>
       )}
       {uploadJourney && (
-        <UploadJourneyPopup setUploadJourney={setUploadJourney} journeyCards = {imagesInfo} />
+        <UploadJourneyPopup
+          setUploadJourney={setUploadJourney}
+          journeyCards={imagesInfo}
+        />
       )}
     </>
   );
