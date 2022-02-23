@@ -3,8 +3,7 @@ import styled from "styled-components";
 import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
 import Learning from "./Learnings/Learning";
-import { useHistory } from "react-router-dom";
-import NewLearningPopup from "./Learnings/NewLearningPopup";
+import { useHistory } from "react-router-dom"; 
 import db from "../../firebase";
 
 function WorldPage() {
@@ -86,45 +85,45 @@ function WorldPage() {
         </div>
       </div>
       <div className="my_learnings">
-      <p className = "my_learnings_title">My learnings</p>
-       <div className="my_learnings_learnings">
-       {learning &&
-        learning
-          .filter((item) => {
-            console.log(item);
-            // return
-            return item?.data?.started_by.email.includes(user?.email);
-          })
-          .map((learning) => <Learning learning={learning} type="my" />)}
+        <p className="my_learnings_title">My learnings</p>
+        <div className="my_learnings_learnings">
+          {learning &&
+            learning
+              .filter((item) => {
+                console.log(item);
+                // return
+                return item?.data?.started_by.email.includes(user?.email);
+              })
+              .map((learning) => <Learning learning={learning} type="my" />)}
           {joinedLearnings.map((learning) => (
-        <>
-          <Learning learning={learning} type="joined" />
-        </>
-      ))}
-       </div>
+            <>
+              <Learning learning={learning} type="joined" />
+            </>
+          ))}
+        </div>
       </div>
       <div className="all_learnings"
-       style = {{
-         display : 'flex',
-         flexDirection : 'column',
-       }}
-      >
-       <p
-        style = {{
-          color : 'white',
-          marginTop : '0',
-          marginBottom : '20px'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
         }}
-       >See What your friends are learning</p>
-      <div style = {{
-        display : 'flex',
-        flexWrap : 'wrap',
-      }}>
-      {learning &&
-        learning?.data?.started_by.email != user?.email && 
-        learning.map((learning) =>  <Learning learning={learning} type="all" />
-        )}
-      </div>
+      >
+        <p
+          style={{
+            color: 'white',
+            marginTop: '0',
+            marginBottom: '20px'
+          }}
+        >See What your friends are learning</p>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+        }}>
+          {learning &&
+            learning?.data?.started_by.email != user?.email &&
+            learning.map((learning) => <Learning learning={learning} type="all" />
+            )}
+        </div>
       </div>
       {/* <h2>My learning</h2>
       {learning &&
