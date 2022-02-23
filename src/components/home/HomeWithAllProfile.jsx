@@ -9,7 +9,8 @@ import {useStateValue} from "../../StateProvider"
 import { actionTypes } from '../../reducer';
 
 function HomeWithAllProfile() {
-
+    const [{ user, userInfo }, dispatch] =
+    useStateValue();
     const [data, setData] = useState([]);
     const [down,setDown]=useState(true);
     const [down2,setDown2]=useState(true);
@@ -46,7 +47,7 @@ function HomeWithAllProfile() {
 
     return (
         <div className='home'>
-            <HeaderSecond />
+            {/* <HeaderSecond /> */}
             <div className="homeBody">
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>

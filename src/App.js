@@ -142,6 +142,13 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/",
+    });
+  }, []);
+
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>

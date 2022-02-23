@@ -42,7 +42,12 @@ function WorldPage() {
   }, [user]);
 
   const history = useHistory();
-
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/",
+    });
+  }, []);
   return (
     <Container>
       {/* <div className="passion_logo">
@@ -85,17 +90,16 @@ function WorldPage() {
         </div>
       </div>
       <div className="my_learnings">
-        <p className="my_learnings_title">My learnings</p>
+       <div style={{display:'flex',width:"100%",justifyContent:'space-between'}}>
+       <p className="my_learnings_title">My learnings</p>
+        <p className="my_learnings_title_L" onClick={()=>{history.push('/requests')}}>Requests</p>
+       </div>
         <div className="my_learnings_learnings">
           {learning &&
-            learning
-              .filter((item) => {
-                console.log(item);
-                // return
+            learning.filter((item) => {
                 return item?.data?.started_by.email.includes(user?.email);
-              })
-              .map((learning) => <Learning learning={learning} type="my" />)}
-          {joinedLearnings.map((learning) => (
+              }).map((learning) => <Learning learning={learning} type="my" />)}
+          {joinedLearnings.map((learning)=>(
             <>
               <Learning learning={learning} type="joined" />
             </>
@@ -260,6 +264,7 @@ const Container = styled.div`
     padding: 20px;
     padding-left: 30px;
     padding-right: 40px;
+
     @media (max-width: 500px) {
       padding-left: 10px;
       padding-right: 0px;
@@ -288,6 +293,13 @@ const Container = styled.div`
   .my_learnings_title {
     color: white;
     padding-left: 10px;
+  }
+  .my_learnings_title_L {
+    color: white;
+    padding: 0 10px;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+    font-weight: 600;
   }
 `;
 
