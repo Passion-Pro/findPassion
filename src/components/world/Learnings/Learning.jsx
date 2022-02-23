@@ -18,6 +18,9 @@ function Learning({ learning,learningL, type, learnings }) {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
   const [profileId,setProfileId]=useState('');
   const [cardInfo, setCardInfo] = useState(null);
+  const[requests , setRequests] = useState([]);
+
+
   // useEffect(() => {
   //   if(learning?.data?.learningId){
 
@@ -46,6 +49,9 @@ function Learning({ learning,learningL, type, learnings }) {
             console.log(doc.id, " => ", doc.data());
             setProfileId(doc?.id);
             setProfilePhotoUrl(doc.data().profilePhotoUrl);
+
+
+
 
             db.collection("users")
               .doc(doc.id)
@@ -77,18 +83,7 @@ function Learning({ learning,learningL, type, learnings }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (requests.length > 0 && userInfo?.email) {
-      console.log("Requests are " , requests);
-      for (let i = 0; i < requests?.length; i++) {
-        if (requests[i]?.data?.requestEmail === userInfo?.email) {
-          if (requests[i].data.status === "pending") {
-            setRequestSent(true)
-          }
-        }
-      }
-    }
-  }, [requests.length, userInfo?.email])
+
 
   useEffect(() => {
     if (learning?.id) {

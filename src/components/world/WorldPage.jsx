@@ -98,9 +98,7 @@ function WorldPage() {
           .map((learning) => <Learning learning={learning} type="my" />)}
           {joinedLearnings.map((learning) => (
         <>
-          {/* {learning.data.started_by.email === userInfo.email && ( */}
           <Learning learning={learning} type="joined" />
-          {/* )} */}
         </>
       ))}
        </div>
@@ -123,7 +121,7 @@ function WorldPage() {
         flexWrap : 'wrap',
       }}>
       {learning &&
-        learning?.data?.started_by.email != user?.email &&
+        learning?.data?.started_by.email != user?.email && 
         learning.map((learning) =>  <Learning learning={learning} type="all" />
         )}
       </div>
