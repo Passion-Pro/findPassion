@@ -157,11 +157,11 @@ function GroupExpandMore() {
             <button onClick={() => {
                dispatch({
                 type: actionTypes.SET_SHOW_TOP,
-                showTop: true,
+                showTop: !showTop,
               })
               dispatch({
                 type: actionTypes.SET_EDIT_GROUP,
-                editGroup: true,
+                editGroup: !editGroup,
               })
               dispatch({
                 type: actionTypes.SET_SHOW_EXPANDGROUP,
@@ -175,7 +175,7 @@ function GroupExpandMore() {
             <button onClick={() => {
               dispatch({
                 type: actionTypes.SET_SHOW_TOP,
-                showTop: true,
+                showTop: !showTop,
               })
               dispatch({
                 type: actionTypes.SET_EDIT_GROUP,
@@ -185,7 +185,7 @@ function GroupExpandMore() {
                 type: actionTypes.SET_SHOW_EXPANDGROUP,
                 showExpandGroup: false,
               })
-            }} className={showTop && !showExpandGroup ?'':'Button__groupExpand' } title='Edit group'>
+            }} className={showTop && !showExpandGroup ?'Button__groupExpand_Active':'Button__groupExpand' } title='Hide group'>
               {showTop?"Hide":"Show"}
             </button>
           </>
