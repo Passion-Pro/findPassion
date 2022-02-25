@@ -54,6 +54,7 @@ function App() {
   const [
     {
       user,
+      userInfo,
       courseDiv,
       showExpandGroup,
       showMoreoption,
@@ -179,7 +180,21 @@ function App() {
         )}
         {!user?.email && <HeaderNot />}
         <Switch>
-          <Route path="/searchPage">
+          <>
+          {user?.email ? (
+              !userInfo?.email ?
+                (<>
+                  <Route path="/signin">
+                    <Login />
+                  </Route>
+                  <Route path="/">
+                    <CreateAccount />
+                  </Route>
+                </>
+                )
+                :
+                <>
+                <Route path="/searchPage">
             {user?.email ? <SearchPage /> : <Login />}
           </Route>
           {/* <Route path="/searchPageForMobile">
@@ -305,6 +320,15 @@ function App() {
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
           <Route path="/">{user?.email && <WorldPage />}</Route>
+                </>)
+              :
+              <>
+                <Route path="/">
+                  <Login/>
+                </Route>
+              </>
+            }
+            </>
         </Switch>
       </Router>
     </div>

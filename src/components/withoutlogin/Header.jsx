@@ -106,12 +106,13 @@ function Header() {
                         </div>} */}
                     </div>
                 </div>
-                <div className="header__profile">
+                {/* <div className="header__profile">
                     <button onClick={() => user?.email ? history.push('/shareexperience'):'You are not sign up'}>Add Your Advice</button>
                 </div>
-                <div className="header__profile">
-                    {!user?.email && <button onClick={() => history.push('/login')}>Sign In</button>}
-                </div>
+              */}
+              <div className="header__profile">
+                  {!user?.email && <button onClick={() => history.push('/signin')}>Sign In</button>}
+              </div> 
             </div>
         </div>
     )
