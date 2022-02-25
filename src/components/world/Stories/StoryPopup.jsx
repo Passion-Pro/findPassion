@@ -204,10 +204,6 @@ function StoryPopup() {
       email: userInfo?.email,
     });
 
-    console.log(fires);
-
-    console.log("Journey Id is " , journey);
-
     db.collection("journeys")
       .doc(journey?.id)
       .update({
@@ -226,7 +222,6 @@ function StoryPopup() {
   const removeFromLikes = (e) => {
     e.preventDefault();
     setLiked(false);
-    console.log(liked);
 
     for (let i = 0; i < likes?.length; i++) {
       if (likes[i]?.email === userInfo?.email) {
@@ -283,12 +278,6 @@ function StoryPopup() {
                 >
                   {journey?.data?.uploaderInfo?.name}
                 </p>
-                {/* {likes?.length > 0 && (
-                  <div className="total_likes">
-                    <span>{likes?.length}</span>
-                    <ThumbUpAltIcon className="total_likes_like_icon" />
-                  </div>
-                )} */}
                 {fires?.length > 0 && (
                   <div className="total_fires">{fires?.length}🔥</div>
                 )}
@@ -354,7 +343,7 @@ function StoryPopup() {
                                 >
                                   {console.log("Partners are", image?.partners)}
                                   <div className="first_two">
-                                    <div
+                                    {partners[0]?.data?.email && <div
                                       className="partner"
                                       onClick={() => {
                                         if (partners[0]?.data?.email) {
@@ -388,24 +377,17 @@ function StoryPopup() {
                                         }
                                       }}
                                     >
-                                      {/* <Avatar
-                                      src={userInfo?.profilePhotoUrl}
-                                      style={{
-                                        width: "21px",
-                                        height: "21px",
-                                      }}
-                                    /> */}
                                       <p>{partners[0]?.data?.name}</p>
-                                    </div>
-                                    <div
+                                    </div>}
+                                    {partners[1]?.data?.email && <div
                                       className="partner"
                                       onClick={() => {
-                                        if (partners[0]?.data?.email) {
+                                        if (partners[1]?.data?.email) {
                                           db.collection("users")
                                             .where(
                                               "email",
                                               "==",
-                                              partners[0]?.data?.email
+                                              partners[1]?.data?.email
                                             )
                                             .get()
                                             .then((querySnapshot) => {
@@ -431,15 +413,8 @@ function StoryPopup() {
                                         }
                                       }}
                                     >
-                                      {/* <Avatar
-                                      src={userInfo?.profilePhotoUrl}
-                                      style={{
-                                        width: "21px",
-                                        height: "21px",
-                                      }}
-                                    /> */}
                                       <p>{partners[1]?.data?.name}</p>
-                                    </div>
+                                    </div>}
                                   </div>
 
                                   {partners.length > 2 && (

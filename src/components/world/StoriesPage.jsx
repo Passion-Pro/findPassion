@@ -51,16 +51,6 @@ function StoriesPage() {
   return (
     <div>
       <Container>
-        {/* <div className="passion_logo">
-          <p>WEB DEVLOPMENT</p>
-          <div className="add_story">
-            {userInfo?.experience > 1 && (
-              <button onClick={(e) => history.push("/addStory")}>
-                Add your story 🔥
-              </button>
-            )}
-          </div>
-        </div> */}
         <div className="options_header">
           <div className="options_buttons">
             <button
@@ -153,7 +143,7 @@ function StoriesPage() {
 
 const Container = styled.div`
   width: 100vw;
-  min-height: 90vh;
+  min-height: 91.5vh;
   height: fit-content;
   display: flex;
   flex-direction: column;

@@ -96,7 +96,7 @@ function PostsPage() {
 const Container  = styled.div`
   width: 100vw;
   flex: 1;
-  min-height: 90vh;
+  min-height: 91.5vh;
   height : fit-content;
   display: flex;
   flex-direction: column;

@@ -101,21 +101,6 @@ function WorldPage() {
   }, []);
   return (
     <Container>
-      {/* <div className="passion_logo">
-        <div className="passion_title">
-          <p>WEB DEVLOPMENT</p>
-        </div>
-        <div className="add_learning">
-          <button onClick={add_learning}>Start learning together 🚀</button>
-        </div>
-      </div> */}
-      {/* <p
-  style={{
-    display: "none",
-  }}
->
-  {z}
-</p> */}
       <div className="options_header">
         <div className="options_buttons">
           <button className="learnings_button">Learnings</button>
@@ -235,7 +220,7 @@ function WorldPage() {
 const Container = styled.div`
   width: 100vw;
   flex: 1;
-  min-height: 90vh;
+  min-height: 91.5vh;
   height: fit-content;
   display: flex;
   flex-direction: column;

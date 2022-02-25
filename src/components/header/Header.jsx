@@ -16,7 +16,7 @@ import { actionTypes } from '../../reducer';
 import { HistoryEduRounded } from '@mui/icons-material';
 
 function Header() {
-    const [{ userInfo, courseDiv }, dispatch] = useStateValue();
+    const [{ userInfo, courseDiv,pathnamef }, dispatch] = useStateValue();
     const history = useHistory();
     const [input, setInput] = useState('');
 
@@ -27,10 +27,11 @@ function Header() {
                 type: actionTypes.SET_SEARCH_INPUT,
                 searchInput: input,
             })
-        } else if (!input && window.location.pathname == '/searchPage') {
-            history.push('/')
+        } else if (!input && pathnamef == '/searchPage') {
+            history.goBack();
         }
     }, [input]);
+    console.log("pathnamef",pathnamef)
 
     return (
         <>

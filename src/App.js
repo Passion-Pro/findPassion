@@ -159,8 +159,10 @@ function App() {
               pathnamef !== "/addJourney/photos" &&
               pathnamef !== "/requests" &&
               pathnamef !== "/addJourney/video" &&
+              pathnamef !== "journey" &&
               (pathnamef?.toString().slice(0, 9) !== "/learning" ||
-                pathnamef !== "/learning") && <Header />}
+                pathnamef !== "/learning") && <Header />
+                }
           </div>
         )}
         {/* phone */}
@@ -175,6 +177,7 @@ function App() {
               pathnamef !== "/userProfile" &&
               pathnamef !== "/userProfileLearnt" &&
               pathnamef !== "/userProfilePost" &&
+              pathnamef !== "/journey" &&
               pathnamef !== "/learning" && <Header />}
           </div>
         )}
@@ -263,18 +266,18 @@ function App() {
           <Route path="/signIn">
             <Login />
           </Route>
-          <Route path="/chat/:chatId">
+          <Route exact path="/chat/:chatId">
             {user?.email ? <Chat /> : <Login />}
           </Route>
-          <Route path="/chat">{user?.email ? <Chat /> : <Login />}</Route>
+          <Route exact path="/chat">{user?.email ? <Chat /> : <Login />}</Route>
           <Route path="/messages/:myChatId/:viewerId">
             <ChatPage />
           </Route>
-          <Route path="/world">{user?.email ? <WorldPage /> : <Login />}</Route>
+          <Route exact path="/world">{user?.email ? <WorldPage /> : <Login />}</Route>
           <Route path="/journey/:journeyId">
             {user?.email ? <StoryPage /> : <Login />}
           </Route>
-          <Route path="/stories">
+          <Route exact path="/stories">
             {user?.email ? <StoriesPage /> : <Login />}
           </Route>
           <Route path="/learners/:learningId">
@@ -283,7 +286,7 @@ function App() {
           <Route path="/groupUploadPdf">
             {user?.email ? <UploadGroupPdf/> : <Login />}
           </Route>
-          <Route path="/profile">
+          <Route exact path="/profile">
             {user?.email ? <ProfilePage /> : <Login />}
           </Route>
           <Route path="/addJourney/:journeyMode">
@@ -295,19 +298,19 @@ function App() {
           <Route path="/learningsUploadPdf/:learningId">
             {user?.email ? <UploadPdf /> : <Login />}
           </Route>
-          <Route path="/learning/:learningId">
+          <Route exact path="/learning/:learningId">
             {user?.email ? <LearningGroup /> : <Login />}
           </Route>
           <Route path="/messagesUploadPdf/:chatId/:chatEmail">
             {user?.email ? <UploadChatPdf /> : <Login />}
           </Route>
-          <Route path="/learnings/viewPdf/:learningId/messages/:messageId">
+          <Route exact path="/learnings/viewPdf/:learningId/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
           <Route path="/posts">
             <PostsPage />
           </Route>
-          <Route path="/chats/viewPdf/:chatEmail/messages/:messageId">
+          <Route exact path="/chats/viewPdf/:chatEmail/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
           <Route path="/userProfile">

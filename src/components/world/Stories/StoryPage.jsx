@@ -269,7 +269,7 @@ function StoryPage() {
         });
       });
   };
-console.log("first","kjhjh")
+  console.log("first", "kjhjh")
   return (
     <div>
       <Container>
@@ -377,8 +377,7 @@ console.log("first","kjhjh")
                                   >
                                     <p>{partners[0]?.data?.name}</p>
                                   </div>)}
-                              {console.log(partners[1]?.data?.name,"fuv")}
-                                  {partners[0]?.data?.name!=='' && (
+                                  {partners[1]?.data?.name && (
                                     <div
                                       className="partner"
                                       onClick={() => {
@@ -625,11 +624,10 @@ console.log("first","kjhjh")
                 <div
                   className="icons"
                   style={{
-                    marginTop: `${
-                      journeyData?.journeyThrough === "video" || showPartners
+                    marginTop: `${journeyData?.journeyThrough === "video" || showPartners
                         ? "0"
                         : "440px"
-                    }`,
+                      }`,
                     marginLeft: `${showPartners ? "80vw" : "0"}`,
                   }}
                 >
@@ -850,7 +848,7 @@ const Container = styled.div`
   .journeyInfo {
     display: flex;
     flex-direction: column;
-    height: 75%;
+    height: 90vh;
     justify-content: center;
   }
 
@@ -913,11 +911,6 @@ const Container = styled.div`
       padding-left: 10px;
       margin-right: 10px;
 
-      /* &:hover {
-        background-color : #474747;
-        cursor : pointer;
-      } */
-
       p {
         color: white;
         margin-top: 0;
@@ -931,6 +924,8 @@ const Container = styled.div`
 
     .first_two {
       display: flex;
+      position: fixed;
+      top: 11vh;
     }
 
     .others {
