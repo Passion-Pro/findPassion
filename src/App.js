@@ -156,6 +156,7 @@ function App() {
           <div className="header__APPlaptop">
             {pathnamef !== "/withoutlogin" &&
               pathnamef !== "/addJourney/photos" &&
+              pathnamef !== "/requests" &&
               pathnamef !== "/addJourney/video" &&
               (pathnamef?.toString().slice(0, 9) !== "/learning" ||
                 pathnamef !== "/learning") && <Header />}
@@ -169,6 +170,7 @@ function App() {
               pathnamef !== "/addJourney/words" &&
               pathnamef !== "/addJourney/video" &&
               pathnamef !== "/shareexperience" &&
+              pathnamef !== "/requests" &&
               pathnamef !== "/userProfile" &&
               pathnamef !== "/userProfileLearnt" &&
               pathnamef !== "/userProfilePost" &&
