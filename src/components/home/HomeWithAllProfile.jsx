@@ -9,7 +9,8 @@ import {useStateValue} from "../../StateProvider"
 import { actionTypes } from '../../reducer';
 
 function HomeWithAllProfile() {
-    const[{userInfo} , dispatch] = useStateValue();
+    const [{ user, userInfo }, dispatch] =
+    useStateValue();
     const [data, setData] = useState([]);
     const [down,setDown]=useState(true);
     const [down2,setDown2]=useState(true);

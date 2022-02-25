@@ -3,8 +3,7 @@ import styled from "styled-components";
 import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
 import Learning from "./Learnings/Learning";
-import { useHistory } from "react-router-dom";
-import NewLearningPopup from "./Learnings/NewLearningPopup";
+import { useHistory } from "react-router-dom"; 
 import db from "../../firebase";
 
 function WorldPage() {
@@ -93,7 +92,12 @@ function WorldPage() {
 
 
   const history = useHistory();
-
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.SET_PATHNAMEF,
+      pathnamef: "/",
+    });
+  }, []);
   return (
     <Container>
       {/* <div className="passion_logo">
@@ -331,6 +335,7 @@ const Container = styled.div`
     padding: 20px;
     padding-left: 30px;
     padding-right: 40px;
+
     @media (max-width: 500px) {
       padding-left: 10px;
       padding-right: 0px;
@@ -359,6 +364,13 @@ const Container = styled.div`
   .my_learnings_title {
     color: white;
     padding-left: 10px;
+  }
+  .my_learnings_title_L {
+    color: white;
+    padding: 0 10px;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+    font-weight: 600;
   }
 `;
 

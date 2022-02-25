@@ -18,6 +18,9 @@ function Learning({ learning,learningL, type, learnings }) {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
   const [profileId,setProfileId]=useState('');
   const [cardInfo, setCardInfo] = useState(null);
+  const[requests , setRequests] = useState([]);
+
+
   // useEffect(() => {
   //   if(learning?.data?.learningId){
 
@@ -46,6 +49,9 @@ function Learning({ learning,learningL, type, learnings }) {
             console.log(doc.id, " => ", doc.data());
             setProfileId(doc?.id);
             setProfilePhotoUrl(doc.data().profilePhotoUrl);
+
+
+
 
             db.collection("users")
               .doc(doc.id)
@@ -76,6 +82,8 @@ function Learning({ learning,learningL, type, learnings }) {
         });
     }
   }, []);
+
+
 
   useEffect(() => {
     if (learning?.id) {

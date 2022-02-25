@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Badge from "@mui/material/Badge";
-import Avatar from "@mui/material/Avatar";
-import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "@mui/material/Avatar"; 
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import QualitiesPopup from "./QualitiesPopup";
 import Quality from "./Quality";
-import PassionPopup from "./PassionPopup";
-import Box from "@mui/material/Box";
+import PassionPopup from "./PassionPopup"; 
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -16,9 +14,7 @@ import Select from "@mui/material/Select";
 import db, { auth, storage } from "../../../firebase";
 import { v4 as uuid } from "uuid";
 import { useHistory } from "react-router-dom";
-import LearningsPopup from "./LearningsPopup";
-import Learning from "./Learning";
-import Skill from "./Skill";
+import LearningsPopup from "./LearningsPopup"; 
 import firebase from "firebase";
 import { styled as style } from "@mui/material/styles";
 
@@ -72,7 +68,7 @@ function CreateAccount() {
   const [input, setInput] = useState("");
   const [year, setYear] = useState();
   const [branch, setBranch] = useState();
-  const[coverImage ,setCoverImage] = useState();
+  const [coverImage, setCoverImage] = useState();
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_PATHNAMEF,
