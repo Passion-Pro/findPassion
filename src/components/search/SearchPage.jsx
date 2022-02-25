@@ -60,13 +60,9 @@ const Container = styled.div`
     outline-width:0px;
     width : 94%;
 }
- }
-
  .searchIcon{
      color : gray !important;
- }
-
- 
+ } 
  `
 
 export default SearchPage

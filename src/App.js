@@ -319,7 +319,7 @@ function App() {
           <Route path="/userProfileLearnt">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/">{user?.email && <WorldPage />}</Route>
+          <Route exact path="/">{user?.email ? <WorldPage />: <Login /> }</Route>
                 </>)
               :
               <>

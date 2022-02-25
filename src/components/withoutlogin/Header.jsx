@@ -13,7 +13,6 @@ function Header() {
     const [showSearch, setShowSearch] = useState(false);
     const history = useHistory();
     const signupimage = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyIOUxxjs2jzo7X6iOYOBKWDzVhPkx0dxK8w&usqp=CAU`;
-
     const [showAddAdvice, setShowAddAdvice] = useState(false);
     const [advice, setAdvice] = useState('');
     const [adviceHead, setAdviceHead] = useState('');
@@ -98,18 +97,8 @@ function Header() {
                 </div>
                 <div className="header__Icons">
                     <div className="header__Icon__search">
-                        {/* {<div className='searchHeader__divOut' >
-                            <div className='searchHeader__div'>
-                                <SearchRoundedIcon />
-                                <input placeholder='Search' className='searchHeader__input' />
-                            </div>
-                        </div>} */}
                     </div>
                 </div>
-                {/* <div className="header__profile">
-                    <button onClick={() => user?.email ? history.push('/shareexperience'):'You are not sign up'}>Add Your Advice</button>
-                </div>
-              */}
               <div className="header__profile">
                   {!user?.email && <button onClick={() => history.push('/signin')}>Sign In</button>}
               </div> 

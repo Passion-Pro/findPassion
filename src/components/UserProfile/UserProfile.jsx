@@ -515,6 +515,19 @@ function UserProfile() {
                         id="filled-read-only-input"
                         type="text"
                         size="small"
+                        label="Email"
+                        defaultValue={userInfo?.email}
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        variant="filled"
+                        className="userProfile__input"
+                        multiline
+                      />
+                      <TextField
+                        id="filled-read-only-input"
+                        type="text"
+                        size="small"
                         label="Involvement"
                         defaultValue={userInfo?.currentInvolvement ? userInfo?.currentInvolvement : 'Not written anything'}
                         InputProps={{
