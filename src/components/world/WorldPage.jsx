@@ -145,7 +145,9 @@ function WorldPage() {
         {(myLearningsLength> 0 || joinedLearnings?.length > 0) ? (
         <div className="myLearning_div">
           <p className="my_learnings_title">My learnings</p>
-          <p className="my_learnings_title_L">Requests</p>
+          <p className="my_learnings_title_L" onClick={()=>{
+            history.push('/requests');
+          }}>Requests</p>
         </div>
         ):(
           <div></div>
