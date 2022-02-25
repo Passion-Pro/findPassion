@@ -142,7 +142,12 @@ function WorldPage() {
       </div>
         {console.log("My Learnings length is " , myLearningsLength)}
       {myLearningsLength > 0 || joinedLearnings?.length > 0 ? (<div className="my_learnings">
-        {(myLearningsLength> 0 || joinedLearnings?.length > 0) ? (<p className="my_learnings_title">My learnings</p>):(
+        {(myLearningsLength> 0 || joinedLearnings?.length > 0) ? (
+        <div className="myLearning_div">
+          <p className="my_learnings_title">My learnings</p>
+          <p className="my_learnings_title_L">Requests</p>
+        </div>
+        ):(
           <div></div>
         )
         }
@@ -343,6 +348,11 @@ const Container = styled.div`
       justify-content: flex-start;
       padding-top: 0px;
     }
+  }
+  .myLearning_div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
   }
   .my_learnings_learnings {
     display: flex;

@@ -3,7 +3,6 @@ import './Home.css';
 import ProfileCard from '../profilecard/ProfileCard';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import db from '../../firebase';
-import ShowStoriesSeries from '../stories/ShowStoriesSeries.jsx';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import {useStateValue} from "../../StateProvider"
 import { actionTypes } from '../../reducer';
