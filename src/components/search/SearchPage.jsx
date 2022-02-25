@@ -7,7 +7,6 @@ import { useStateValue } from '../../StateProvider'
 import { actionTypes } from '../../reducer'
 
 
-
 function SearchPage() {
    const[input , setInput] = useState();
    const[{user , userInfo} , dispatch] = useStateValue();
@@ -44,21 +43,23 @@ function SearchPage() {
 };
 
 const Container = styled.div`
- background-color : #fff;
- border-radius : 20px;
- padding : 5px;
- display : flex;
- margin : 10px;
- width : 90vw;
+ background-color: #fff;
+    width : 92%;
+    border-radius: 20px;
+    padding : 5px;
+    display: flex;
+    margin-left : 7px;
+    margin-bottom : 10px;
 
  @media(min-width : 500px){
      display : none;
  }
 
  input{
-    border : 0;
-    outline-width : 0;
+    border:0px;
+    outline-width:0px;
     width : 94%;
+}
  }
 
  .searchIcon{

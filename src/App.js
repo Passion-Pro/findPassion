@@ -149,9 +149,8 @@ function App() {
           <div className="header__APPlaptop">
             {pathnamef !== "/withoutlogin" &&
               pathnamef !== "/addJourney/photos" &&
-              pathnamef !== "/addJourney/words" &&
               pathnamef !== "/addJourney/video" &&
-              (pathnamef.toString().slice(0, 9) !== "/learning" ||
+              (pathnamef?.toString().slice(0, 9) !== "/learning" ||
                 pathnamef !== "/learning") && <Header />}
           </div>
         )}
@@ -174,9 +173,9 @@ function App() {
           <Route path="/searchPage">
             {user?.email ? <SearchPage /> : <Login />}
           </Route>
-          <Route path="/searchPageForMobile">
+          {/* <Route path="/searchPageForMobile">
             {user?.email ? <SearchMobile /> : <Login />}
-          </Route>
+          </Route> */}
           <Route path="/createStory">
             {user?.email ? <CreateStoryPage /> : <Login />}
           </Route>

@@ -18,6 +18,7 @@ import { useSpeechSynthesis } from "react-speech-kit";
 import Card from "./Card";
 import Typical from "react-typical";
 import PartnerCard from "./PartnerCard";
+import firebase from "firebase";
 
 function StoryPage() {
   const [{ openStoryPopup, startJourney, user, userInfo }, dispatch] =
@@ -105,65 +106,10 @@ function StoryPage() {
     }
   }, [journeyData?.uploaderInfo?.email]);
 
-  useEffect(() => {
-    if (likes?.length > 0) {
-      for (let i = 0; i < likes.length; i++) {
-        if (likes[i]?.email === userInfo?.email) {
-          setLiked(true);
-        }
-      }
-    }
-    if (fires?.length > 0) {
-      console.log(fires);
-      for (let i = 0; i < fires.length; i++) {
-        if (fires[i]?.email === userInfo?.email) {
-          setFired(true);
-        }
-      }
-    }
-  }, [likes?.length, fires?.length, userInfo?.name, user]);
 
-  useEffect(() => {
-    console.log("Views are", views);
-    if (views?.length > 0 && user?.email) {
-      for (let i = 0; i < views?.length; i++) {
-        if (views[i]?.email === user?.email) {
-          setX(1);
-        }
-        if (i === views.length - 1 && x === 0) {
-          setX(2);
 
-          console.log("Set x to 2");
 
-          // console.log("I is " , i);
-          // views.push({
-          //   email: userInfo?.email,
-          // });
-
-          // console.log("Views are ", views);
-
-          // db.collection("journeys").doc(user?.uid).update({
-          //   views: views,
-          // });
-        }
-      }
-    }
-  }, [views?.length, user?.email]);
-
-  useEffect(() => {
-    console.log("X is ", x, user?.email, openStoryPopup);
-    if (x === 2 && user?.email && openStoryPopup === true) {
-      views.push({
-        email: user?.email,
-      });
-
-      console.log("Pushed");
-
-      db.collection("journeys").doc(journeyId).update({
-        views: views,
-      });
-    }
-  }, [x, user?.email, openStoryPopup]);
+ 
 
   useEffect(() => {
     if (newImages?.length > 0) {
@@ -245,14 +191,14 @@ function StoryPage() {
     e.preventDefault();
     setLiked(true);
 
-    likes.push({
-      email: userInfo?.email,
-    });
+    
 
     db.collection("journeys")
       .doc(journeyId)
       .update({
-        likes: likes,
+        likes: firebase.firestore.FieldValue.arrayUnion({
+          email : userInfo?.email
+        }),
       })
       .then(() => {
         db.collection("journeys").doc(journeyId).update({
@@ -267,16 +213,16 @@ function StoryPage() {
     console.log("fired");
     console.log(fires);
 
-    fires.push({
-      email: userInfo?.email,
-    });
+    
 
     console.log(fires);
 
     db.collection("journeys")
       .doc(journeyId)
       .update({
-        fires: fires,
+        fires: firebase.firestore.FieldValue.arrayUnion({
+          email : userInfo?.email
+        }),
       })
       .then(() => {
         console.log("Updated");

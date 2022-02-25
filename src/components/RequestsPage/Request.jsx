@@ -32,8 +32,8 @@ function Request({ request, learnings }) {
 
             if (
               doc.data().learning?.data?.learning ===
-              request?.data?.learning?.data?.learning
-              && doc.data().status !== "accepted"
+                request?.data?.learning?.data?.learning &&
+              doc.data().status !== "accepted"
             ) {
               console.log("2nd Step");
               db.collection("users")
@@ -45,64 +45,21 @@ function Request({ request, learnings }) {
                 });
 
               for (let i = 0; i < learnings?.length; i++) {
-                if (
-                  learnings[i]?.data?.started_by?.email ===
-                    request?.data?.learning?.data?.started_by?.email &&
-                  learnings[i]?.data?.learning ===
-                    request?.data?.learning?.data?.learning
-                ) {
+                if (learnings[i]?.id === request?.data?.learningId) {
+                  
                   db.collection("learnings")
-                    .doc(learnings[i]?.id)
-                    .collection("learners")
-                    .add({
-                      learner: {
-                        email: request?.data?.requestEmail,
-                        name: request?.data?.requestName,
-                      },
-                    });
+                    .doc(request?.data?.learningId)
+                    .update({
+                      learners: firebase.firestore.FieldValue.arrayUnion(
+                        request?.data?.requestEmail
+                      ),
+                    }).then(() => {
+                      console.log("Updated")
+                    })
 
-                    console.log("GOT");
+                  console.log("GOT");
                 }
               }
-
-              // db.collection("learnings")
-              //   .where("started_by", "==", request?.data?.learning?.data?.started_by)
-              //   .get()
-              //   .then((querySnapshot) => {
-              //     querySnapshot.forEach((doc1) => {
-              //       // doc.data() is never undefined for query doc snapshots
-
-              //       console.log(doc1.id, " => ", doc1.data());
-
-              //       if (
-              //         doc1.data()?.learning?.learning ===
-              //         request?.data?.learning?.data?.learning
-              //       ) {
-              //         console.log("ADDED");
-              //         db.collection("learnings")
-              //           .doc(doc1.id)
-              //           .collection("learners")
-              //           .add({
-              //             learner: {
-              //               email : request?.data?.requestEmail,
-              //               name : request?.data?.requestName
-              //             },
-              //           });
-              //       }
-
-              //       db.collection("users")
-              //         .doc(doc1.id)
-              //         .onSnapshot((snapshot) =>
-              //           dispatch({
-              //             type: actionTypes.SET_USER_INFO,
-              //             userInfo: snapshot.data(),
-              //           })
-              //         );
-              //     });
-              //   })
-              //   .catch((error) => {
-              //     console.log("Error getting documents: ", error);
-              //   });
             }
           });
         })
@@ -122,17 +79,11 @@ function Request({ request, learnings }) {
               .doc(doc.id)
               .collection("myJoinedLearnings")
               .add({
-              //   requestEmail : user?.email,
-              // requestName : userInfo?.name,
-              // learningId: learning?.id,
-              // learning:learning?.data()?.learning,
-              // timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-              // status: "pending",
-              timestamp:request?.data?.timestamp,
-              name:request?.data?.requestName,
-                email:request?.data?.requestEmail,
+                timestamp: request?.data?.timestamp,
+                name: request?.data?.requestName,
+                email: request?.data?.requestEmail,
                 started_by: user?.email,
-                startedName:userInfo?.name,
+                startedName: userInfo?.name,
                 learning: request?.data?.learning,
                 learningId: request?.data?.learningId,
                 joined_on: firebase.firestore.FieldValue.serverTimestamp(),

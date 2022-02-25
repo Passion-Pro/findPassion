@@ -13,32 +13,22 @@ function Member({ learner, learning, learningId }) {
   const [{ user }, dispatch] = useStateValue();
   const [id, setId] = useState();
   const [joinedLearnings, setJoinedLearnings] = useState([]);
+  const[name  , setName] = useState();
 
   useEffect(() => {
-    if (learner?.data?.learner?.email) {
+    if (learner) {
       db.collection("users")
-        .where("email", "==", learner?.data?.learner?.email)
+        .where("email", "==", learner)
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
+            console.log("Name is ", " => ", doc.data().name);
 
             setId(doc.id);
 
-            db.collection("users")
-              .doc(doc.id)
-              .collection("myJoinedLearnings")
-              .onSnapshot((snapshot) =>
-                setJoinedLearnings(
-                  snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    data: doc.data(),
-                  }))
-                )
-              );
-
             setProfilePhotoUrl(doc.data().profilePhotoUrl);
+            setName(doc.data().name);
           });
         })
         .catch((error) => {
@@ -60,9 +50,8 @@ function Member({ learner, learning, learningId }) {
     dispatch({
       type : actionTypes.SET_LEARNER,
       learner : {
-        email : learner?.data?.learner?.email,
-        name : learner?.data?.learner?.name,
-        id : learner?.id
+        email : learner,
+        name : name,
       }
     })
 
@@ -75,18 +64,30 @@ function Member({ learner, learning, learningId }) {
         <Avatar
           className="avatar"
           src={profilePhotoUrl}
-          onClick={(e) => history.push("/profile")}
+          onClick={(e) => {
+            if(learner !==  user?.email){
+              history.push(`/profile/${id}`)
+            }else{
+              history.push(`/userProfile`)
+            }
+          }}
         />
         {console.log(learner)}
         <div
           className="chatName_info"
-          onClick={(e) => history.push("/profile")}
+          onClick={(e) => {
+            if(learner !==  user?.email){
+              history.push(`/profile/${id}`)
+            }else{
+              history.push(`/userProfile`)
+            }
+          }}
         >
-          <p>{learner?.data?.learner?.name}</p>
+          <p>{name}</p>
         </div>
         {console.log("Started by email is ", learning?.started_by?.email)}
         {user?.email === learning?.started_by?.email &&
-          learner?.data?.learner?.email !== user?.email && (
+          learner !== user?.email && (
             <PersonRemoveIcon className="reove_icon" onClick={removePerson} />
           )}
       </Container>

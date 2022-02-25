@@ -24,7 +24,7 @@ import CloseIcon from "@mui/icons-material/Close";
 function AddStoryPage() {
   const { journeyMode } = useParams();
   const [activeTab, setActiveTab] = useState("questions");
-  const [{ userInfo, user, addPartnerInfo }, dispatch] = useStateValue();
+  const [{ userInfo, user, addPartnerInfo , uploading }, dispatch] = useStateValue();
   const [image, setImage] = useState();
   const [openEmojis, setOpenEmojis] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState(null);
@@ -46,11 +46,12 @@ function AddStoryPage() {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [uploadJourney, setUploadJourney] = useState(false);
+  const[alreadyUploaded , setAlreadyUploaded] = useState(false);
 
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_PATHNAMEF,
-      pathnamef: "/addJourney",
+      pathnamef: `/addJourney/${journeyMode}`,
     });
   }, []);
 
@@ -59,6 +60,9 @@ function AddStoryPage() {
       db.collection("journeys")
         .doc(user?.uid)
         .onSnapshot((snapshot) => {
+          if(snapshot.data().upload === 'yes'){
+            setAlreadyUploaded(true);
+          }
           setCardsInfo(snapshot.data()?.imagesInfo);
           if (
             snapshot.data()?.yearOfStart &&
@@ -204,12 +208,10 @@ function AddStoryPage() {
                 fires: [],
                 likesLength: 0,
                 firesLength: 0,
-                uploaderInfo: userInfo,
-                views: [
-                  {
-                    email: userInfo?.email,
-                  },
-                ],
+                uploaderInfo: {
+                  name : userInfo?.name,
+                  email : userInfo?.email
+                },
                 currentYear: currentYear,
                 upload: "no",
               });
@@ -408,7 +410,7 @@ function AddStoryPage() {
 
   return (
     <>
-      {loading ? (
+      {loading || uploading ? (
         <Loading />
       ) : (
         <Container>
@@ -935,7 +937,7 @@ function AddStoryPage() {
                     )}
                   </div>
                   <div className="upload_journey">
-                    {cardsInfo?.length > 0 && (
+                    {cardsInfo?.length > 0 && !alreadyUploaded &&  (
                       <button
                         onClick={() => {
                           setUploadJourney(true);
@@ -1159,7 +1161,7 @@ function AddStoryPage() {
       {uploadJourney && (
         <UploadJourneyPopup
           setUploadJourney={setUploadJourney}
-          journeyCards={imagesInfo}
+          imagesInfo={imagesInfo}
         />
       )}
     </>

@@ -73,7 +73,7 @@ function GroupExpandMore() {
         DefaultbackgroundImage: 'https://firebasestorage.googleapis.com/v0/b/find-passion.appspot.com/o/LearningImages%2F8b87d5d2-1ff3-4830-a62f-d30b5046a1d3?alt=media&token=d8a46f9c-6666-4466-bba8-beb20bf439e1',
         id: id,
         name: userInfo?.name,
-        groupSlogan: 'Improve your performance by discuss the skill you have common with others.',
+        groupSlogan: 'Improve your performance by discussing the skill you have common with others.',
       }).then(() => {
         setGroupName('')
         dispatch({

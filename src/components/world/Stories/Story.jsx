@@ -54,7 +54,7 @@ function Story({ journey }) {
         <div
           className="current_status"
           style={{
-            backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+            backgroundImage: `url(${journey?.data?.achievementUrl})`,
           }}
         ></div>
         <div className="user_info">
@@ -62,11 +62,11 @@ function Story({ journey }) {
             <Avatar className="user_info_avatar" src={profilePhotoUrl} />
             <p onClick={goToProfilePage}>{journey?.data?.uploaderInfo?.name}</p>
           </div>
-          <div>
+          {journey?.data?.fires?.length > 0 && (<div>
             <span className="fire_symbol">
               {journey?.data?.fires?.length}🔥
             </span>
-          </div>
+          </div>)}
         </div>
         {/* <div className="journey_period">
         <p>
@@ -83,7 +83,7 @@ function Story({ journey }) {
         <div
           className="current_status"
           style={{
-            backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+            backgroundImage: `url(${journey?.data?.achievementUrl})`,
           }}
         ></div>
        <div className="user_info">
@@ -91,11 +91,11 @@ function Story({ journey }) {
             <Avatar className="user_info_avatar" src={profilePhotoUrl} />
             <p onClick={goToProfilePage}>{journey?.data?.uploaderInfo?.name}</p>
           </div>
-          <div>
+         {journey?.data?.fires?.length>0 && ( <div>
             <span className="fire_symbol">
               {journey?.data?.fires?.length}🔥
             </span>
-          </div>
+          </div>)}
         </div>
         {/* <div className="journey_period">
         <p>
@@ -144,11 +144,6 @@ const Container = styled.div`
     }
   }
 
-  @media (max-width: 500px) {
-    width: 95vw;
-    margin-right: auto;
-    margin-left: auto;
-  }
 
   .current_status {
     height: 125px;

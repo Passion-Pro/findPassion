@@ -72,7 +72,7 @@ function Header() {
                 <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
                     <HomeRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => history.push('/searchPageForMobile')}>
+                <div className="Loginheader__Icon__search" onClick={() => history.push('/searchPage')}>
                     <SearchRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
                 <div className="Loginheader__Icon__search" onClick={() => {
@@ -87,7 +87,7 @@ function Header() {
                 <div className="Loginheader__Icon__search" onClick={() => history.push('/group')}>
                     <GroupsRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
-                <div className="Loginheader__Icon__search" onClick={() => history.push('/world')}>
+                <div className="Loginheader__Icon__search" onClick={() => history.push('/all_profile')}>
                     <LanguageRoundedIcon style={{ fontSize: 30, color: "white" }} />
                 </div>
             </div>

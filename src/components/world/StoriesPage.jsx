@@ -38,7 +38,7 @@ function StoriesPage() {
         .onSnapshot((snapshot) => {
           setMyJourney({
             data: snapshot.data(),
-            id : user.uid,
+            id: user.uid,
           });
         });
     }
@@ -72,8 +72,8 @@ function StoriesPage() {
             <button className="stories_button">Journeys</button>
             <button
               className="learnings_button"
-              style = {{
-                marginLeft: '20px'
+              style={{
+                marginLeft: "20px",
               }}
               onClick={(e) => history.push("/posts")}
             >
@@ -83,19 +83,18 @@ function StoriesPage() {
           <div className="add_story_button">
             {userInfo?.experience > 0 && (
               <>
-                {myJourney?.data?.uploaderInfo?.email?(
+                {myJourney?.data?.uploaderInfo?.email ? (
+                  <>
+                  </>
+                ) : (
                   <button
-                  onClick = {(e) => history.push(`/addJourney/${myJourney?.data?.journeyThrough}`)}
-                >
-                  Update Your Journey
-                </button>
-                ):(<button
-                  onClick={(e) => {
-                    setOpenJourneyPopup(true);
-                  }}
-                >
-                  Add Your Journey
-                </button>)}
+                    onClick={(e) => {
+                      setOpenJourneyPopup(true);
+                    }}
+                  >
+                    Add Your Journey
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -104,12 +103,16 @@ function StoriesPage() {
           <>
             {myJourney?.data?.uploaderInfo?.email && (
               <div className="my_journey">
-                 <p style = {{
-                   color : "white",
-                   marginBottom : "15px",
-                   marginLeft : "5px",
-                   marginTop: "15px"
-                 }}>My Journey</p>
+                <p
+                  style={{
+                    color: "white",
+                    marginBottom: "15px",
+                    marginLeft: "5px",
+                    marginTop: "15px",
+                  }}
+                >
+                  My Journey
+                </p>
                 <Story journey={myJourney} />
               </div>
             )}
@@ -117,7 +120,8 @@ function StoriesPage() {
               {journeys.map((journey) => (
                 <>
                   {journey.data?.uploaderInfo?.passion === userInfo?.passion &&
-                    journey.data?.upload === "yes" && journey.data?.uploaderInfo?.email !== userInfo?.email && (
+                    journey.data?.upload === "yes" &&
+                    journey.data?.uploaderInfo?.email !== userInfo?.email && (
                       <Story journey={journey} />
                     )}
                 </>
@@ -157,7 +161,7 @@ const Container = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-color : #003663;
+  background-color: #003663;
 
   @media (max-width: 700px) {
     margin-bottom: 50px;
@@ -276,14 +280,13 @@ const Container = styled.div`
   .my_journey {
     padding: 20px;
     padding-left: 30px;
-    
-    @media(max-width: 500px){
-      padding-left : 30px !important;
-      display : flex;
-      padding-right : 40px !important;
 
+    @media (max-width: 500px) {
+      padding-left: 30px !important;
+      display: flex;
+      flex-direction : column;
+      padding-right: 40px !important;
     }
-    
   }
 `;
 

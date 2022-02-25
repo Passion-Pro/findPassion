@@ -9,7 +9,7 @@ import {useStateValue} from "../../StateProvider"
 import { actionTypes } from '../../reducer';
 
 function HomeWithAllProfile() {
-
+    const[{userInfo} , dispatch] = useStateValue();
     const [data, setData] = useState([]);
     const [down,setDown]=useState(true);
     const [down2,setDown2]=useState(true);
@@ -46,7 +46,6 @@ function HomeWithAllProfile() {
 
     return (
         <div className='home'>
-            <HeaderSecond />
             <div className="homeBody">
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
@@ -67,7 +66,7 @@ function HomeWithAllProfile() {
                 </div>
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        Other student
+                        Other Students
                         <div className='ArrowDropDownRoundedIcon' onClick={()=>{setDown2(!down2)}}>
                         <ArrowDropDownRoundedIcon />
                        </div>

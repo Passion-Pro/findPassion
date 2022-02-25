@@ -8,39 +8,89 @@ import NewLearningPopup from "./Learnings/NewLearningPopup";
 import db from "../../firebase";
 
 function WorldPage() {
-  const [learning, setLearning] = useState([]);
+  const [learnings, setLearnings] = useState([]);
+  const[allLearnings , setAllLearnings] = useState([]);
   const [{ user }, dispatch] = useStateValue();
   const [joinedLearnings, setJoinedLearnings] = useState([]);
+  const[myLearningsLength , setMyLearningsLength] = useState();
+  const[jlLength , setJlLength] = useState(null);
+  const[newLearnings , setNewLearnings] = useState([]);
+  const[passions , setPassions] = useState([]);
+  const[tags , setTags] = useState([]);
+  const[oldTags , setOldtags] = useState([]); 
 
+  
+  
   const add_learning = () => {
     dispatch({
       type: actionTypes.OPEN_NEW_LEARNING_POPUP,
       openNewLearningPopup: true,
     });
+    console.log("true");
   };
+
+
   useEffect(() => {
     if (user?.uid) {
       db.collection("learnings").onSnapshot((snapshot) => {
-        setLearning(
+        setLearnings(
           snapshot.docs.map((doc) => ({
             data: doc.data(),
             id: doc.id,
           }))
         );
       });
-      db.collection("users")
-        .doc(user?.uid)
-        .collection("myJoinedLearnings")
-        .onSnapshot((snapshot) => {
-          setJoinedLearnings(
-            snapshot.docs.map((doc) => ({
-              data: doc.data(),
-              id: doc.id,
-            }))
-          );
-        });
+
+      db.collection('users').doc(user?.uid).collection('myLearnings').onSnapshot((snapshot) => {
+        setMyLearningsLength(snapshot.docs.length);
+      })
+
+      db.collection('users').doc(user?.uid).collection('myJoinedLearnings').onSnapshot((snapshot) => {
+        setJoinedLearnings(
+          snapshot.docs.map((doc) => ({
+            data: doc.data(),
+            id: doc.id,
+          }))
+        );
+      })
     }
   }, [user]);
+
+  useEffect(() => {
+     db.collection('passions').onSnapshot((snapshot) => (
+       setPassions(
+         snapshot.docs.map((doc) => ({
+           id : doc.id,
+           data : doc.data(),
+         }))
+       )
+     ))
+  } , []);
+
+  useEffect(() => {
+     console.log(" learnings are" , learnings)
+  } , [])
+
+  useEffect(() => {
+    if(passions?.length > 0) {
+      for( let i = 0; i< passions?.length; i++) {
+        db.collection("passions")
+          .doc(passions[i].id)
+          .collection("learningTags")
+          .onSnapshot((snapshot) =>
+            snapshot.docs.map((doc) => {
+              tags.push(doc.data());
+              console.log("Doc is", doc.data());
+              setOldtags(tags);
+            })
+          );
+      }
+    }
+  } , [passions?.length])
+
+  
+
+
 
   const history = useHistory();
 
@@ -85,48 +135,65 @@ function WorldPage() {
           <button onClick={add_learning}>Start learning together 🚀</button>
         </div>
       </div>
-      <div className="my_learnings">
-      <p className = "my_learnings_title">My learnings</p>
-       <div className="my_learnings_learnings">
-       {learning &&
-        learning
-          .filter((item) => {
-            console.log(item);
-            // return
-            return item?.data?.started_by.email.includes(user?.email);
-          })
-          .map((learning) => <Learning learning={learning} type="my" />)}
+        {console.log("My Learnings length is " , myLearningsLength)}
+      {myLearningsLength > 0 || joinedLearnings?.length > 0 ? (<div className="my_learnings">
+        {(myLearningsLength> 0 || joinedLearnings?.length > 0) ? (<p className="my_learnings_title">My learnings</p>):(
+          <div></div>
+        )
+        }
+        <div className="my_learnings_learnings">
+          {learnings &&
+            learnings
+              .filter((item) => {
+                // return
+                return item?.data?.started_by.email.includes(user?.email);
+              })
+              .map((learning) => <Learning learning={learning} type="my" />)}
           {joinedLearnings.map((learning) => (
-        <>
-          {/* {learning.data.started_by.email === userInfo.email && ( */}
-          <Learning learning={learning} type="joined" />
-          {/* )} */}
-        </>
-      ))}
-       </div>
-      </div>
-      <div className="all_learnings"
-       style = {{
-         display : 'flex',
-         flexDirection : 'column',
-       }}
-      >
-       <p
-        style = {{
-          color : 'white',
-          marginTop : '0',
-          marginBottom : '20px'
+            <>
+              {/* {learning.data.started_by.email === userInfo.email && ( */}
+              <Learning learning={learning} type="joined" />
+              {/* )} */}
+            </>
+          ))}
+        </div>
+      </div>):(
+        <div></div>
+      )}
+      <div
+        className="all_learnings"
+        style={{
+          display: "flex",
+          flexDirection: "column",
         }}
-       >See What your friends are learning</p>
-      <div style = {{
-        display : 'flex',
-        flexWrap : 'wrap',
-      }}>
-      {learning &&
-        learning?.data?.started_by.email != user?.email &&
-        learning.map((learning) =>  <Learning learning={learning} type="all" />
-        )}
-      </div>
+      >
+        <p
+          style={{
+            color: "white",
+            marginTop: "0",
+            marginBottom: "20px",
+          }}
+        >
+          See What your friends are learning
+        </p>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}
+        >
+          {learnings &&
+            learnings
+            .filter((item) => {
+              return !item?.data?.learners.includes(user?.email);
+            })
+            .map((learning) =>(
+            <>{learning?.data?.started_by.email !== user?.email &&
+              <Learning learning={learning} type="all" />
+            }</>
+            )
+            )}
+        </div>
       </div>
       {/* <h2>My learning</h2>
       {learning &&
@@ -148,6 +215,7 @@ function WorldPage() {
 {learning &&
         learning?.data?.started_by.email!=user?.email &&
         learning.map((learning) => <h4>{learning?.data?.learning}</h4>)} */}
+    <NewLearningPopup tags={tags}/>
     </Container>
   );
 }

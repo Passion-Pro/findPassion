@@ -10,8 +10,8 @@ import { v4 as uuid } from "uuid";
 
 function NewLearningPopup({tags}) {
   const [{ openNewLearningPopup, user, userInfo }, dispatch] = useStateValue();
-  const [image, setImage] = useState();
-  const [input, setInput] = useState();
+  const [image, setImage] = useState(null);
+  const [input, setInput] = useState('');
   const [imageUrl, setImageUrl] = useState("");
   const [learnings, setLearnings] = useState([]);
   const[launch , setLaunch] = useState(false);
@@ -98,12 +98,16 @@ function NewLearningPopup({tags}) {
                 .add({
                   learning: input,
                   learningImageUrl: url,
-                  started_by : userInfo,
+                  started_by : {
+                    email : userInfo?.email,
+                    name : userInfo?.name
+                  },
                   learnersLength: 1,
                   fires: [],
                   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                   tags : suggestedTags,
-                  date : date
+                  date : date,
+                  learners : [user?.email]
                 })
                 .then(() => {
                   console.log("THen Step is arrived");
@@ -146,7 +150,8 @@ function NewLearningPopup({tags}) {
           fires: [],
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           tags : suggestedTags,
-          date : date
+          date : date,
+          learners : [user?.email]
         });
       }
       if(image){

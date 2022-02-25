@@ -34,14 +34,12 @@ function LearnersPage() {
 
         db.collection("learnings")
         .doc(learningId)
-        .collection("learners")
         .onSnapshot((snapshot) =>
-          setLearners(
-            snapshot.docs.map((doc) => ({
-              id: doc.id,
-              data: doc.data(),
-            }))
+          {
+            setLearners(
+            snapshot.data().learners
           )
+        }
         );
       }
     } , [learningId , user])

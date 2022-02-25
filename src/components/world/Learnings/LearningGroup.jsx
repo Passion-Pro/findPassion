@@ -15,6 +15,7 @@ import firebase from "firebase";
 import Picker from "emoji-picker-react";
 import Suggestion from "./Suggestion";
 import RemoveMemberPopup from "./RemoveMemberPopup";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function LearningGroup() {
   const [{ user, userInfo, openRemoveMemberPopup, learner }, dispatch] =
@@ -102,14 +103,10 @@ function LearningGroup() {
 
       db.collection("learnings")
         .doc(learningId)
-        .collection("learners")
-        .onSnapshot((snapshot) =>
+        .onSnapshot((snapshot) =>{
           setLearners(
-            snapshot.docs.map((doc) => ({
-              id: doc.id,
-              data: doc.data(),
-            }))
-          )
+            snapshot.data().learners
+          )}
         );
 
       db.collection("learnings")
@@ -193,7 +190,8 @@ function LearningGroup() {
 
   useEffect(() => {
     console.log("Messages are", messages);
-  }, [messages]);
+    console.log("Learners are" , learners);
+  }, [messages , learners]);
 
   const open_attachPopup = () => {
     dispatch({
@@ -227,6 +225,14 @@ function LearningGroup() {
       <Container>
         <div className="learningsGroup">
           <div className="group_details">
+            <ArrowBackIcon
+             style = {{
+               marginLeft : '10px'
+             }}
+             onClick = {() => {
+               history.goBack();
+             }}
+            />
             <Avatar
               className="learningGroup_avatar"
               src={learningData?.learningImageUrl}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useStateValue } from "../../StateProvider";
 import { actionTypes } from "../../reducer";
@@ -7,7 +7,8 @@ import {useHistory} from "react-router-dom"
 
 
 function Message({ message , learningId , chatEmail}) {
-
+  const[{userInfo} , dispatch] = useStateValue();
+  
   const history = useHistory();
 
   const view_pdf = (e) => {
@@ -20,6 +21,7 @@ function Message({ message , learningId , chatEmail}) {
 
   return (
     <Container>
+      <div className= {message?.data?.name === userInfo?.name ? 'user_message':'sender_message'}>
       {message?.data?.type === "text" && (
         <div className="message">
           <p className="message_name">{message?.data?.name}</p>
@@ -54,15 +56,29 @@ function Message({ message , learningId , chatEmail}) {
           </div>
         </div>
       )}
+      </div>
     </Container>
   );
 }
 
 const Container = styled.div`
+  margin-bottom: 20px;
+
+ .user_message{
   margin-right: 10px;
   margin-left: auto;
   max-width: 50%;
-  margin-bottom: 20px;
+  display : flex;
+  justify-content : flex-end;
+ }
+
+ .sender_message{
+  margin-left: 10px;
+  max-width: 50%;
+  display : flex;
+ }
+
+
 
   @media (max-width: 500px) {
     max-width: 70%;

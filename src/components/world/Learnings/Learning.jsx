@@ -59,7 +59,7 @@ function Learning({ learning,learningL, type, learnings }) {
                 //  }
                 querySnapshot.forEach((doc) => {
                   // doc.data() is never undefined for query doc snapshots
-                  console.log(doc.id, " => ", doc.data());
+                  // console.log(doc.id, " => ", doc.data());
 
                   if (doc.data().status === "pending") {
                     setRequestSent(true);
@@ -76,19 +76,6 @@ function Learning({ learning,learningL, type, learnings }) {
         });
     }
   }, []);
-
-  useEffect(() => {
-    if (requests.length > 0 && userInfo?.email) {
-      console.log("Requests are " , requests);
-      for (let i = 0; i < requests?.length; i++) {
-        if (requests[i]?.data?.requestEmail === userInfo?.email) {
-          if (requests[i].data.status === "pending") {
-            setRequestSent(true)
-          }
-        }
-      }
-    }
-  }, [requests.length, userInfo?.email])
 
   useEffect(() => {
     if (learning?.id) {

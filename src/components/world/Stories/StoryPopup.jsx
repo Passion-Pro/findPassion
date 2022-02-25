@@ -99,47 +99,6 @@ function StoryPopup() {
     }
   }, [images?.length, startJourney]);
 
-  useEffect(() => {
-    console.log("Views are", views);
-    if (views?.length > 0 && user?.email) {
-      for (let i = 0; i < views?.length; i++) {
-        if (views[i]?.email === user?.email) {
-          setX(1);
-        }
-        if (i === views.length - 1 && x === 0) {
-          setX(2);
-
-          console.log("Set x to 2");
-
-          // console.log("I is " , i);
-          // views.push({
-          //   email: userInfo?.email,
-          // });
-
-          // console.log("Views are ", views);
-
-          // db.collection("journeys").doc(user?.uid).update({
-          //   views: views,
-          // });
-        }
-      }
-    }
-  }, [views?.length, user?.email]);
-
-  useEffect(() => {
-    console.log("X is ", x, user?.email, openStoryPopup);
-    if (x === 2 && user?.email && openStoryPopup === true) {
-      views.push({
-        email: user?.email,
-      });
-
-      console.log("Pushed");
-
-      db.collection("journeys").doc(journey?.id).update({
-        views: views,
-      });
-    }
-  }, [x, user?.email, openStoryPopup]);
 
   useEffect(() => {
     if (newImages?.length > 0) {

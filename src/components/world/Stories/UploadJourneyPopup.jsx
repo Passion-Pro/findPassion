@@ -6,6 +6,7 @@ import { v4 as uuid } from "uuid";
 import db, { storage } from "../../../firebase";
 import { useHistory } from "react-router-dom";
 import Loading from "../../../Loading";
+import { actionTypes } from "../../../reducer";
 
 function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
   const [{ user, userInfo }, dispatch] = useStateValue();
@@ -29,6 +30,10 @@ function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
       upload.on(
         "state_changed",
         (snapshot) => {
+          dispatch({
+            type : actionTypes.SET_UPLOADING,
+            uploading : true
+          })
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
@@ -58,7 +63,10 @@ function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
               })
               .then(() => {
                 history.push("/stories");
-                setLoading(false);
+                dispatch({
+                  type : actionTypes.SET_UPLOADING,
+                  uploading : true
+                })
               });
           }
         }
@@ -68,9 +76,6 @@ function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
 
   return (
     <>
-      {loading ? (
-        <Loading/>
-      ) : (
         <Container>
           <div className="uploadJourney_Popup">
             <div
@@ -118,7 +123,6 @@ function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
             )}
           </div>
         </Container>
-      )}
     </>
   );
 }

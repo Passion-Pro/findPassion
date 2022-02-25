@@ -58,6 +58,8 @@ const Container = styled.div`
   animation: fadeIn 0.7s;
   align-items: center;
 
+  
+
   .post_Popup{
     background-color: #fff;
     width: 400px;
@@ -68,6 +70,11 @@ const Container = styled.div`
     flex-direction: column;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.24);
     padding: 10px;
+
+    @media(max-width: 500px){
+      width : 85vw;
+  }
+  
   }
 
   .popup_header{

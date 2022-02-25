@@ -45,6 +45,7 @@ export const initialState = {
   postId: '',
   TEST: '',
   newUser : false,
+  uploading : false,
 };
 
 export const actionTypes = {
@@ -97,7 +98,8 @@ export const actionTypes = {
   OPEN_PDF: "OPEN_PDF",
   OPEN_DELETE_POST_POPUP: "OPEN_DELETE_POST_POPUP",
   SET_POST_ID: "SET_POST_ID",
-  SET_NEW_USER : "SET_NEW_USER"
+  SET_NEW_USER : "SET_NEW_USER",
+  SET_UPLOADING : "SET_UPLOADING"
 
 };
 
@@ -397,6 +399,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         openPdf: action.openPdf
+      }
+    case actionTypes.SET_UPLOADING:
+      return {
+        ...state,
+        uploading: action.uploading
       }
     
     default:

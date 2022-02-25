@@ -177,6 +177,32 @@ function UserProfile() {
 
   const update_account = (e) => {
     e.preventDefault();
+
+    if(coverImage){
+      const id1 = uuid();
+      const upload = storage.ref(`JourneyImages/${id1}`).put(coverImage);
+      upload.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+          console.log(`Progress : ${progress}%`);
+          if (snapshot.state === "RUNNING") {
+            console.log(`Progress : ${progress}%`);
+          }
+        },
+        (error) => console.log(error.code),
+        async () => {
+          const imageUrl = await upload.snapshot.ref.getDownloadURL();
+          if (imageUrl) {
+            db.collection("users").doc(user?.uid).update({
+              coverImageUrl : imageUrl,
+            })
+          }
+        }
+      );
+    }
     if (image) {
       const id1 = uuid();
       const upload = storage.ref(`JourneyImages/${id1}`).put(image);
@@ -213,7 +239,8 @@ function UserProfile() {
           }
         }
       );
-    } else {
+    } 
+     else{
       if (user?.uid) {
         db.collection("users").doc(user?.uid).update({
           passion: passion,
