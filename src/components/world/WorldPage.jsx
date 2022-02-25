@@ -382,6 +382,9 @@ const Container = styled.div`
     border-bottom: 1px solid white;
     cursor: pointer;
     font-weight: 600;
+    @media (max-width: 500px) {
+      margin-right: 10px;
+    }
   }
 `;
 
