@@ -5,6 +5,7 @@ import { actionTypes } from "../../reducer";
 import Learning from "./Learnings/Learning";
 import { useHistory } from "react-router-dom"; 
 import db from "../../firebase";
+import NewLearningPopup from "./Learnings/NewLearningPopup";
 
 function WorldPage() {
   const [learnings, setLearnings] = useState([]);
