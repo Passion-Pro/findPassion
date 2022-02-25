@@ -301,7 +301,7 @@ function StoryPopup() {
                   <div
                     className="journey"
                     style={{
-                      backgroundImage: `url(${journey?.data?.memorablePhotoUrl})`,
+                      backgroundImage: `url(${journey?.data?.achievementUrl})`,
                     }}
                   ></div>
                 ) : (

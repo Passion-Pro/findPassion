@@ -182,9 +182,6 @@ function App() {
           <Route path="/searchPage">
             {user?.email ? <SearchPage /> : <Login />}
           </Route>
-          {/* <Route path="/searchPageForMobile">
-            {user?.email ? <SearchMobile /> : <Login />}
-          </Route> */}
           <Route path="/createStory">
             {user?.email ? <CreateStoryPage /> : <Login />}
           </Route>
@@ -304,7 +301,7 @@ function App() {
           <Route path="/userProfileLearnt">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/">{user?.email && <WorldPage />}</Route>
+          <Route path="/">{user?.email ? <WorldPage />: <Login />}</Route>
         </Switch>
       </Router>
     </div>
