@@ -44,7 +44,7 @@ function PostsPage() {
        <div className="options_header">
         <div className="options_buttons">
           <button className="stories_button"
-          onClick={(e) => history.push("/home")}
+          onClick={(e) => history.push("/")}
           >Learnings</button>
           <button
             className="stories_button"

@@ -79,6 +79,24 @@ function StoryPage() {
   }, [journeyId]);
 
   useEffect(() => {
+    if (likes?.length > 0) {
+      for (let i = 0; i < likes.length; i++) {
+        if (likes[i]?.email === userInfo?.email) {
+          setLiked(true);
+        }
+      }
+    }
+    if (fires?.length > 0) {
+      console.log(fires);
+      for (let i = 0; i < fires.length; i++) {
+        if (fires[i]?.email === userInfo?.email) {
+          setFired(true);
+        }
+      }
+    }
+  }, [likes?.length, fires?.length, userInfo?.name, user]);
+
+  useEffect(() => {
     if (journeyData?.uploaderInfo?.email) {
       setNewImages(journeyData?.imagesInfo);
 
@@ -106,12 +124,19 @@ function StoryPage() {
     }
   }, [journeyData?.uploaderInfo?.email]);
 
+
+
   useEffect(() => {
     if (newImages?.length > 0) {
       newImages.reverse();
       setImages(newImages);
     }
   }, [newImages?.length]);
+
+  useEffect(() => {
+    setNextCaption();
+    setPartners();
+  } ,[startJourney])
 
   useEffect(() => {
     if (images.length > 0 && startJourney) {
@@ -284,6 +309,9 @@ function StoryPage() {
             >
               {journeyData?.uploaderInfo?.name}
             </p>
+            {fires?.length > 0 && (
+                  <div className="total_fires">{fires?.length}🔥</div>
+                )}
           </div>
         </div>
         <div className="journeyInfo">
@@ -1012,6 +1040,20 @@ const Container = styled.div`
     padding-left: 10px;
     padding-right: 10px;
     width: fit-content;
+  }
+
+  .total_fires {
+    background-color: #babcfc;
+    border-radius: 10px;
+    width: 60px;
+    margin-left: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 4px;
+    padding-bottom: 4px;
   }
 `;
 

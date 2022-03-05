@@ -10,17 +10,14 @@ function SearchBody() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        if (userInfo?.passion) {
             db.collection("users")
-                .where("passion", "==", userInfo?.passion)
-                .get()
-                .then((querySnapshot) => {
-                    setData(querySnapshot.docs.map((doc) => ({
+                .onSnapshot((snapshot) => {
+                    setData(snapshot.docs.map((doc) => ({
                         data: doc.data(),
                         id: doc?.id
                     })))
                 })
-        }
+        
     }, []);
  
     return (

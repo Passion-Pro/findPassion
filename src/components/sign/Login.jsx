@@ -27,7 +27,6 @@ function Login() {
           type: actionTypes.SET_USER,
           user: auth.user,
         });
-
         db.collection("users")
           .where("email", "==", auth?.user?.email)
           .get()
@@ -36,9 +35,7 @@ function Login() {
               history.push('/newAccount');
             }
             querySnapshot.forEach((doc) => {
-              // doc.data() is never undefined for query doc snapshots
               console.log(doc.id, " => ", doc.data());
-
               db.collection("users")
                 .doc(doc.id)
                 .onSnapshot((snapshot) =>
@@ -52,7 +49,6 @@ function Login() {
           .catch((error) => {
             console.log("Error getting documents: ", error);
           });
-
         history.push("/");
       })
       .catch((error) => {

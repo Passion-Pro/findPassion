@@ -63,7 +63,11 @@ function HomeWithAllProfile() {
 
                     {down && <div className="recommendPeople" id='box1'>
                         {data.map((data) => (
-                            <ProfileCard data={data} />
+                            <>
+                             {data?.data?.passion === userInfo?.passion && (
+                                 <ProfileCard data={data} />
+                             )}
+                            </>
                         ))}
                         {(data.length - webD.length) > 3 && <div className="Arrow__showrecommendProfile" onClick={funct1}>
                             <ArrowForwardRoundedIcon className='Arrow__showrecommendInProfile' />

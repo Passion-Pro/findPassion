@@ -18,6 +18,18 @@ function AddLearntPopup({ tags }) {
   const [suggestedTags, setSuggestedTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
   const [x, setX] = useState(0);
+
+  useEffect(() => {
+    setInput();
+    setVideoLink("");
+    setCourseLink("");
+    setCourseName("");
+    setChannelName("");
+    setTagInput("");
+    setSuggestedTags([]);
+    setPlatform('');
+
+  } , [openAddLearntPopup])
   
 
   const close_popup = () => {
@@ -344,6 +356,11 @@ const Container = styled.div`
   .addLearntPopup_header {
     display: flex;
     justify-content: flex-end;
+  }
+
+  .selected_tags{
+    display : flex;
+    flex-wrap : wrap;
   }
 
   .close_icon {

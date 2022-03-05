@@ -278,7 +278,9 @@ function UserProfile() {
       <div className="Userprofile__In">
         <div className="userProfile__headerMobile">
           <div>
-            <ArrowBackRoundedIcon />
+            <ArrowBackRoundedIcon  onClick = {() => {
+              history.goBack()
+            }}/>
           </div>
           <div>
             Your Profile

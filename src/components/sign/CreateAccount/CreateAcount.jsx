@@ -58,7 +58,7 @@ const SmallAvatar = style(Avatar)(({ theme }) => ({
 function CreateAccount() {
   const [{ selectedQualities, passion, user, learnings }, dispatch] =
     useStateValue();
-  const [experience, setExperience] = useState();
+  const [experience, setExperience] = useState(0);
   const [image, setImage] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -66,7 +66,7 @@ function CreateAccount() {
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
   const [input, setInput] = useState("");
-  const [year, setYear] = useState();
+  const [year, setYear] = useState(0);
   const [branch, setBranch] = useState();
   const [coverImage, setCoverImage] = useState();
   useEffect(() => {
@@ -75,6 +75,7 @@ function CreateAccount() {
       pathnamef: "/newAccount",
     });
   }, []);
+
   useEffect(() => {
     if (year === 1) {
       dispatch({
@@ -119,27 +120,21 @@ function CreateAccount() {
 
   const create_account = (e) => {
     e.preventDefault();
-
     if (
       name &&
-      selectedQualities.length > 0 &&
       passion &&
       branch &&
       year
       && user?.uid
     ) {
       console.log(experience);
-      if (
-        (passion !== "Other" && experience) ||
-        passion === "Other"
-      ) {
-        if (passion === "Don't know") {
+     
+        if (passion === "Other") {
           db.collection("users").doc(user.uid).set({
             name: name,
             email: user?.email,
             qualities: selectedQualities,
             passion: passion,
-            subInterest: input,
             branch: branch,
             year: year,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -223,9 +218,6 @@ function CreateAccount() {
 
         history.push("/world");
 
-      } else {
-        alert("Please fill all the details");
-      }
     } else {
       alert("Please fill all the details");
     }
@@ -350,7 +342,7 @@ function CreateAccount() {
             </div>
             <div className="passion">
               {!passion && (<button onClick={open_passion_popup} className="let_us">
-                Select your passion , interest
+                Choose your field of interest
               </button>)}
               {passion && (<p>{passion}</p>)}
             </div>
@@ -360,7 +352,7 @@ function CreateAccount() {
                   {passion === 'Research' ? (
                     <p>Mention your topic of Research</p>
                   ) : (<p>Mention subInterest in your passion:</p>)}
-                  <input
+                <input
                     type="text"
                     placeholder=""
                     value={input}
@@ -372,7 +364,7 @@ function CreateAccount() {
                 </div>
               </>
             )}
-            {passion && passion !== "Don't know" && (
+            {passion && passion !== "Other" && (
               <div className="experience">
                 <p>Experience in your passion: </p>
                 <FormControl sx={{ m: 1, minWidth: 180 }}>
@@ -415,7 +407,7 @@ const Container = styled.div`
   .createIn {
     display: flex;
     flex-direction: column;
-    max-width: 1000px;
+    max-width: 100vw;
     margin-left: auto;
     margin-right: auto;
     /* border-left : 1px solid lightgray;
@@ -440,6 +432,11 @@ const Container = styled.div`
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    
+
+    @media(max-width : 500px){
+      
+    }
 
   }
 
@@ -457,6 +454,7 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    max-width: 100vw;
 
     .right_header {
       padding-left: 20px;
@@ -470,6 +468,7 @@ const Container = styled.div`
       overflow-y: scroll;
       padding-bottom: 20px;
       width : 550px;
+      max-width: 100vw;
     }
 
     .down_details::-webkit-scrollbar {
@@ -477,7 +476,10 @@ const Container = styled.div`
     }
 
     .info {
+      display: flex;
       margin-bottom: 20px;
+      align-items: center;
+      justify-content: center;
       input {
         margin-left: auto;
         margin-right: auto;
@@ -485,11 +487,13 @@ const Container = styled.div`
         border: 1px solid gray;
         padding: 10px;
         width: 400px;
+        max-width: 90vw;
         outline: 0;
       }
     }
 
     .description {
+      padding-left: 10px;
     }
 
     .let_us {
@@ -541,6 +545,7 @@ const Container = styled.div`
 
     .passion {
       margin-top: 15px;
+      padding-left: 10px;
       .select_passion {
         margin-bottom: 10px;
         &:hover {
