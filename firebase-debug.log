@@ -1,0 +1,42 @@
+[debug] [2022-03-05T05:14:40.836Z] ----------------------------------------------------------------------
+[debug] [2022-03-05T05:14:40.838Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2022-03-05T05:14:40.839Z] CLI Version:   10.1.2
+[debug] [2022-03-05T05:14:40.839Z] Platform:      win32
+[debug] [2022-03-05T05:14:40.839Z] Node Version:  v16.13.0
+[debug] [2022-03-05T05:14:40.854Z] Time:          Sat Mar 05 2022 10:44:40 GMT+0530 (India Standard Time)
+[debug] [2022-03-05T05:14:40.855Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-03-05T05:14:40.935Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-03-05T05:14:40.936Z] > authorizing via signed-in user (ssfirebase7@gmail.com)
+[debug] [2022-03-05T05:14:40.936Z] [iam] checking project find-passion for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2022-03-05T05:14:40.939Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2022-03-05T05:14:40.939Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-03-05T05:14:41.385Z] <<< HTTP RESPONSE 200 {"date":"Sat, 05 Mar 2022 05:14:41 GMT","pragma":"no-cache","cache-control":"no-cache, no-store, max-age=0, must-revalidate","expires":"Mon, 01 Jan 1990 00:00:00 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-03-05T05:14:41.442Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/find-passion:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-03-05T05:14:43.152Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 05 Mar 2022 05:14:42 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=1456","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-03-05T05:14:43.154Z] [iam] error while checking permissions, command may fail: FirebaseError: Authorization failed. This account is missing the following required permissions on project find-passion:
+
+  firebase.projects.get
+  firebasehosting.sites.update
+[debug] [2022-03-05T05:14:43.156Z] > refreshing access token with scopes: []
+[debug] [2022-03-05T05:14:43.157Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-03-05T05:14:43.573Z] <<< HTTP RESPONSE 200 {"cache-control":"no-cache, no-store, max-age=0, must-revalidate","expires":"Mon, 01 Jan 1990 00:00:00 GMT","date":"Sat, 05 Mar 2022 05:14:43 GMT","pragma":"no-cache","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-03-05T05:14:43.617Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/find-passion [none]
+[debug] [2022-03-05T05:14:44.349Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/find-passion 403
+[debug] [2022-03-05T05:14:44.350Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/find-passion {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2022-03-05T05:14:44.351Z] HTTP Error: 403, The caller does not have permission
+[debug] [2022-03-05T05:14:44.709Z] FirebaseError: HTTP Error: 403, The caller does not have permission
+    at module.exports (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:38:12)
+    at Client.doRequest (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:241:23)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+    at async Client.request (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:96:20)
+    at async getFirebaseProject (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\management\projects.js:290:21)
+    at async getDefaultHostingSite (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\getDefaultHostingSite.js:8:21)
+    at async requireHostingSite (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\requireHostingSite.js:9:18)
+    at async Object.fn (C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\commands\deploy.js:73:9)
+    at async C:\Users\mainw\AppData\Roaming\npm\node_modules\firebase-tools\lib\command.js:188:17
+[error] 
+[error] Error: Failed to get Firebase project find-passion. Please make sure the project exists and your account has permission to access it.
