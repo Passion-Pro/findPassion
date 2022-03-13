@@ -25,6 +25,8 @@ import { PhotoCamera } from "@mui/icons-material";
 import Badge from "@mui/material/Badge";
 import firebase from "firebase"
 import DeletePostPopup from "../post/DeletePostPopup";
+import Story from "../world/Stories/Story";
+import StoryPopup from "../world/Stories/StoryPopup";
 
 const StyledBadge = style(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -74,7 +76,8 @@ function UserProfile() {
   const [involvement, setInvolvement] = useState("");
   const [description, setDescription] = useState("");
   const [achievement, setAchievement] = useState("");
-
+  const [myJourney, setMyJourney] = useState([]);
+  
 
   const [tags, setTags] = useState([]);
   const [passions, setPassions] = useState([]);
@@ -91,6 +94,24 @@ function UserProfile() {
       ))
     }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+
+      db.collection("journeys")
+        .doc(user?.uid)
+        .onSnapshot((snapshot) => {
+          setMyJourney({
+            data: snapshot.data(),
+            id: user.uid,
+          });
+        });
+    }
+  }, [user]);
+
+  useEffect(() => {
+     console.log("My Journey is " , myJourney);
+  } , [myJourney])
 
   useEffect(() => {
     dispatch({
@@ -364,6 +385,11 @@ function UserProfile() {
           }}>
             Learnt Stuff
           </div>
+          <div className={window.location.pathname === '/userProfileJourney' ? 'Userprofile__Second_Option_Active' : "Userprofile__Second_Option"} onClick={() => {
+            history.push('/userProfileJourney');
+          }}>
+            Journey
+          </div>
         </div>
 
         {/* post page */}
@@ -377,7 +403,7 @@ function UserProfile() {
         }
 
         {/* learnt page */}
-        {window.location.pathname != '/userProfilePost' && window.location.pathname === '/userProfileLearnt' && window.location.pathname != '/userProfile' && <div className="Userprofile__Third__learntstuff">
+        {window.location.pathname != '/userProfilePost' && window.location.pathname === '/userProfileLearnt' && window.location.pathname != '/userProfile' && window.location.pathname != '/userProfileJourney' && <div className="Userprofile__Third__learntstuff">
           <div className="add_learnt_stuff">
             <button onClick={open_add_learnt_popup}>
               {learntStuff?.length > 0
@@ -396,7 +422,7 @@ function UserProfile() {
 
         {/* About page  */}
         {/* UPDATE PROFILE  */}
-        {window.location.pathname != '/userProfilePost' && window.location.pathname != '/userProfileLearnt' && window.location.pathname === '/userProfile' && <div className="Userprofile__Third">
+        {window.location.pathname != '/userProfilePost' && window.location.pathname != '/userProfileLearnt' && window.location.pathname === '/userProfile' && window.location.pathname != '/userProfileJourney'   && <div className="Userprofile__Third">
           {
             EditUserProfile ?
               <>
@@ -641,7 +667,17 @@ function UserProfile() {
           }
         </div>
         }
+        {window.location.pathname != '/userProfilePost' && window.location.pathname != '/userProfileLearnt' && window.location.pathname !== '/userProfile' && window.location.pathname === '/userProfileJourney' && (
+             <div className="user_journey">
+                  {myJourney?.data?.upload === 'yes'  ? (
+                       <Story journey={myJourney} from = 'userProfile' />
+                  ): (
+                    <button onClick = {() => history.push('/addJourney/photos')}>Add  Your Journey</button>
+                  )}
+             </div>
+        )}
         <AddLearntPopup tags={tags} />
+        <StoryPopup/>
       </div>
     </div>
   );

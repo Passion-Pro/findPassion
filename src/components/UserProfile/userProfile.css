@@ -244,3 +244,24 @@
    }
   
 }
+
+
+.user_journey{
+    width : 70%;
+    margin-left : auto;
+    margin-right : auto;
+    margin-top : 20px;
+    display : flex;
+    justify-content: center;
+}
+
+.user_journey>button{
+    height: 56px;
+      background: #0077b6;
+      border-radius: 16px;
+      margin-top: 40px;
+      color: white;
+      border: 0;
+      min-width : 200px;
+      font-size : 18px;
+}

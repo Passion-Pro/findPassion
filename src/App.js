@@ -66,25 +66,12 @@ function App() {
   const history = useHistory();
 
   useEffect(() => {
-    dispatch({
-      type: actionTypes.SET_LOADING,
-      loading: true,
-    });
+    
     auth.onAuthStateChanged((auth) => {
       if (auth) {
         dispatch({
           type: actionTypes.SET_USER,
           user: auth,
-        });
-        dispatch({
-          type: actionTypes.SET_LOADING,
-          loading: false,
-        });
-      } else {
-        history.push("/withoutloginhome");
-        dispatch({
-          type: actionTypes.SET_LOADING,
-          loading: false,
         });
       }
     });
@@ -150,10 +137,14 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    console.log(userInfo)
+  }, [userInfo]);
+
   return (
     <div className="App" onClick={handleCourseDiv}>
       <Router>
-        {user?.email && (
+        {userInfo && (
           <div className="header__APPlaptop">
             {pathnamef !== "/withoutlogin" &&
               pathnamef !== "/addJourney/photos" &&
@@ -166,7 +157,7 @@ function App() {
           </div>
         )}
         {/* phone */}
-        {user?.email && (
+        {userInfo && (
           <div className="header__APPphone">
             {pathnamef !== "/withoutlogin" &&
               pathnamef !== "/addJourney/photos" &&
@@ -178,10 +169,10 @@ function App() {
               pathnamef !== "/userProfileLearnt" &&
               pathnamef !== "/userProfilePost" &&
               pathnamef !== "/journey" &&
-              pathnamef !== "/learning" && <Header />}
+              pathnamef !== "/learning" &&
+              <Header />}
           </div>
         )}
-        {!user?.email && <HeaderNot />}
         <Switch>
           <>
           {user?.email ? (
@@ -320,6 +311,9 @@ function App() {
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
           <Route path="/userProfileLearnt">
+            {user?.email ? <UserProfile /> : <Login />}
+          </Route>
+          <Route path="/userProfileJourney">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
           <Route exact path="/">{user?.email ? <WorldPage />: <Login /> }</Route>

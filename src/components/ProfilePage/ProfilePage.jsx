@@ -8,6 +8,7 @@ import { useStateValue } from "../../StateProvider";
 import LearntStuff from "../UserProfile/LearntStuff";
 import StoryPopup from "../world/Stories/StoryPopup";
 import { actionTypes } from "../../reducer";
+import firebase from "firebase";
 
 function ProfilePage({ id }) {
   const history = useHistory();
@@ -19,12 +20,20 @@ function ProfilePage({ id }) {
   const [journey, setJourney] = useState([]);
   const[learnings , setLearnings] = useState([]);
   const[joinedLearnings , setJoinedLearnings] = useState([]);
-
+  const [groupDetails,setGroupDetails] = useState(null);
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_PATHNAMEF,
       pathnamef: "/profile",
     });
+    db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user.email).doc(user.uid + 'Details')
+    .onSnapshot((snapshot) => {
+      setGroupDetails(snapshot.data())
+    })
+      // dispatch({
+      //   type: actionTypes.SET_GROUP_DETAILS,
+      //   groupDetails: snapshot.data(),
+      // })
   }, []);
   
   useEffect(() => {
@@ -75,9 +84,6 @@ function ProfilePage({ id }) {
         )
        }
   } , [id])
-
-
-  
 
   useEffect(() => {
     if (chats?.length > 0) {
@@ -147,6 +153,63 @@ function ProfilePage({ id }) {
   const goToJourneyPage = () => {
     history.push(`/journey/${id}`)
   };
+  var today = new Date();
+  var date = today.toLocaleString();
+
+
+  const addMember = () => {
+        // if (newmember) {
+            db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user?.uid + 'groupmember').collection('GroupMember').where('email', '==', viewerInfo.email)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty === true) {
+                        db.collection('users').where('email', '==', viewerInfo.email)
+                            .get()
+                            .then((querySnapshot) => {
+                                // if (querySnapshot.empty === true) {
+                                //     alert('This email address is not exist in platform');
+                                //     setNewmember('');
+                                //     setShowAddMember(false);
+                                // } else {
+                                    querySnapshot.forEach((doc) => {
+                                        db.collection('Groups').doc('KRpTP7NQ8QfN2cEH3352').collection(user?.email).doc(user.uid + 'groupmember').collection('GroupMember').doc(user.uid + viewerInfo.email).set({
+                                            date: date,
+                                            name: doc.data()?.name,
+                                            profilePhotoUrl: doc.data()?.profilePhotoUrl,
+                                            passion: doc.data()?.passion,
+                                            email: viewerInfo.email,
+                                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                            totalmessage: 0,
+                                            totalTask: 0,
+                                        }).then(() => {
+                                            db.collection('users').doc(doc.id).collection('Groups').doc(doc?.id + user?.email).set({
+                                                date: date,
+                                                name: doc.data()?.name,
+                                                email: viewerInfo.email,
+                                                startedby: user?.email,
+                                                GroupId: user?.uid,
+                                                GroupName: groupDetails?.GroupName,
+                                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                                backgroundImage: groupDetails?.backgroundImage,
+                                                ProfileImage: groupDetails?.ProfileImage,
+                                                DefaultbackgroundImage: groupDetails?.DefaultbackgroundImage,
+
+                                            })
+                                            alert('Added');
+                                            // setNewmember('');
+                                            // setShowAddMember(false);
+                                        })
+                                    })
+                                // }
+                            })
+                    } else {
+                        // setNewmember('');
+                        // setShowAddMember(false);
+                        alert('Already member');
+                    }
+                })
+        }
+    // }
 
   return (
     <div>
@@ -160,13 +223,14 @@ function ProfilePage({ id }) {
               <p>{viewerInfo?.name}</p>
             </div>
             <div className="buttons">
-              {viewerInfo?.journeyMode &&(<button className="journey_laptop" onClick={openJourney_popup}>
-                Journey
-              </button>)}
-              {viewerInfo?.journeyMode &&(<button className="journey_mobile" onClick={goToJourneyPage}>
-                Journey
-              </button>)}
               <button onClick={generate_chat}>Chat</button>
+              {viewerInfo?.journeyThrough &&(<button className="journey_laptop" onClick={openJourney_popup}>
+                Journey
+              </button>)}
+              {viewerInfo?.journeyThrough &&(<button className="journey_mobile" onClick={goToJourneyPage}>
+                Journey
+              </button>)}
+              <button onClick = {addMember}>Add to team</button>
             </div>
           </div>
           <div className="profile_info">
@@ -228,8 +292,7 @@ function ProfilePage({ id }) {
         <StoryPopup journey = {journey} />
     </div>
   );
-}
-
+ }
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -318,11 +381,11 @@ const Container = styled.div`
   .buttons {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     margin-bottom: 10px;
 
     @media (max-width: 500px) {
       margin-bottom: 20px;
+      margin-top : 20px;
     }
 
     button {

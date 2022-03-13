@@ -6,7 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import { useHistory } from "react-router-dom";
 import db from "../../../firebase";
 
-function Story({ journey }) {
+function Story({ journey , from }) {
   const [{ userInfo }, dispatch] = useStateValue();
   const history = useHistory();
   const [profilePhotoUrl, setProfilePhotoUrl] = useState();
@@ -49,8 +49,13 @@ function Story({ journey }) {
   };
 
   return (
-    <Container>
-      <div onClick={open_story_popup} className="for_laptop">
+    <Container
+    style = {{
+      width : from === 'userProfile' ? '500px' : '250px'
+    }}
+    >
+      <div onClick={open_story_popup} className="for_laptop"
+      >
         <div
           className="current_status"
           style={{
@@ -111,7 +116,6 @@ function Story({ journey }) {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 250px;
   height: fit-content;
   border: 1px solid lightgray;
   border-radius: 10px;

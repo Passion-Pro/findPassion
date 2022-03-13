@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Badge from "@mui/material/Badge";
-import Avatar from "@mui/material/Avatar"; 
+import Avatar from "@mui/material/Avatar";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
 import QualitiesPopup from "./QualitiesPopup";
 import Quality from "./Quality";
-import PassionPopup from "./PassionPopup"; 
+import PassionPopup from "./PassionPopup";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -14,11 +15,14 @@ import Select from "@mui/material/Select";
 import db, { auth, storage } from "../../../firebase";
 import { v4 as uuid } from "uuid";
 import { useHistory } from "react-router-dom";
-import LearningsPopup from "./LearningsPopup"; 
+import LearningsPopup from "./LearningsPopup";
 import firebase from "firebase";
 import { styled as style } from "@mui/material/styles";
 
 import { PhotoCamera } from "@mui/icons-material";
+import BackgroundI from "../../images/home_indicator.svg";
+import DownImage from "../../images/down_image.svg";
+
 
 const StyledBadge = style(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -60,8 +64,6 @@ function CreateAccount() {
     useStateValue();
   const [experience, setExperience] = useState(0);
   const [image, setImage] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
   const [name, setName] = useState();
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
@@ -69,6 +71,9 @@ function CreateAccount() {
   const [year, setYear] = useState(0);
   const [branch, setBranch] = useState();
   const [coverImage, setCoverImage] = useState();
+  const[personInfo , setPersonInfo] = useState();
+
+
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_PATHNAMEF,
@@ -84,7 +89,7 @@ function CreateAccount() {
       });
     }
 
-    console.log("User is ", user)
+    console.log("User is ", user);
   }, [year]);
 
   const openQaulitiesPopup = () => {
@@ -120,104 +125,107 @@ function CreateAccount() {
 
   const create_account = (e) => {
     e.preventDefault();
-    if (
-      name &&
-      passion &&
-      branch &&
-      year
-      && user?.uid
-    ) {
+    if (name && passion && branch && year && user?.uid && experience) {
+
       console.log(experience);
+
+        // db.collection("users").doc(user.uid).set({
+        //   name: name,
+        //   email: user?.email,
+        //   passion: passion,
+        //   branch: branch,
+        //   year: year,
+        //   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        // });
      
-        if (passion === "Other") {
-          db.collection("users").doc(user.uid).set({
-            name: name,
-            email: user?.email,
-            qualities: selectedQualities,
-            passion: passion,
-            branch: branch,
-            year: year,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        } else {
-          db.collection("users").doc(user.uid).set({
-            name: name,
-            email: user?.email,
-            qualities: selectedQualities,
-            passion: passion,
-            experience: experience,
-            subInterest: input,
-            branch: branch,
-            year: year,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        }
-        const id = uuid();
+        db.collection("users").doc(user.uid).set({
+          name: name,
+          email: user?.email,
+          passion: passion,
+          experience: experience,
+          // subInterest: input,
+          branch: branch,
+          year: year,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      
+      const id = uuid();
 
-        if (image) {
-          const upload = storage.ref(`images/${id}`).put(image);
+      if (image) {
+        const upload = storage.ref(`images/${id}`).put(image);
 
-          upload.on(
-            "state_changed",
-            (snapshot) => {
-              const progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        upload.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
+            console.log(`Progress : ${progress}%`);
+            if (snapshot.state === "RUNNING") {
               console.log(`Progress : ${progress}%`);
-              if (snapshot.state === "RUNNING") {
-                console.log(`Progress : ${progress}%`);
-              }
-            },
-            (error) => console.log(error.code),
-            async () => {
-              const url = await upload.snapshot.ref.getDownloadURL();
-              if (url) {
-                db.collection("users").doc(user.uid).update({
-                  profilePhotoUrl: url,
-                });
-              }
             }
-          );
-        }
+          },
+          (error) => console.log(error.code),
+          async () => {
+            const url = await upload.snapshot.ref.getDownloadURL();
+            if (url) {
+              db.collection("users").doc(user.uid).update({
+                profilePhotoUrl: url,
+              });
+            }
+          }
+        );
+      }
 
-        if (coverImage) {
-          const upload = storage.ref(`images/${id}`).put(coverImage);
+      if (coverImage) {
+        const upload = storage.ref(`images/${id}`).put(coverImage);
 
-          upload.on(
-            "state_changed",
-            (snapshot) => {
-              const progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        upload.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
+            console.log(`Progress : ${progress}%`);
+            if (snapshot.state === "RUNNING") {
               console.log(`Progress : ${progress}%`);
-              if (snapshot.state === "RUNNING") {
-                console.log(`Progress : ${progress}%`);
-              }
-            },
-            (error) => console.log(error.code),
-            async () => {
-              const url = await upload.snapshot.ref.getDownloadURL();
-              if (url) {
-                db.collection("users").doc(user.uid).update({
-                  coverImageUrl: url,
-                });
-              }
             }
-          );
-        }
+          },
+          (error) => console.log(error.code),
+          async () => {
+            const url = await upload.snapshot.ref.getDownloadURL();
+            if (url) {
+              db.collection("users").doc(user.uid).update({
+                coverImageUrl: url,
+              });
+            }
+          }
+        );
+      }
 
-        db.collection('users').doc(user.uid).collection('pageViews').doc('learningsPage').set({
-          views: 0
+      db.collection("users")
+        .doc(user.uid)
+        .collection("pageViews")
+        .doc("learningsPage")
+        .set({
+          views: 0,
         });
-        db.collection('users').doc(user.uid).collection('pageViews').doc('journeysPage').set({
-          views: 0
+      db.collection("users")
+        .doc(user.uid)
+        .collection("pageViews")
+        .doc("journeysPage")
+        .set({
+          views: 0,
         });
-        db.collection('users').doc(user.uid).collection('pageViews').doc('postsPage').set({
-          views: 0
+      db.collection("users")
+        .doc(user.uid)
+        .collection("pageViews")
+        .doc("postsPage")
+        .set({
+          views: 0,
         });
 
-        history.push("/world");
-
+      history.push("/world");
     } else {
       alert("Please fill all the details");
     }
@@ -228,408 +236,346 @@ function CreateAccount() {
     if (e.target.files[0]) {
       setCoverImage(e.target.files[0]);
     }
-  }
+  };
 
   return (
     <Container>
-      <div className="createIn">
-        <div className="up"
-          style={{
-            backgroundImage: coverImage && `url(${URL.createObjectURL(coverImage)})`
-          }}
-        >
-          {image ? (
-            <div className="photo"
-            >
-              <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                badgeContent={
-                  <label htmlFor="photo" className="camera_label">
-                    <PhotoCamera className="camera_icon" />
-                  </label>
-                }
-              >
-                <Avatar className="avatar" src={URL.createObjectURL(image)} />
-              </Badge>
-            </div>
-          ) : (
-            <div className="photo"
-            >
-              <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                badgeContent={
-                  <label htmlFor="photo" className="camera_label">
-                    <PhotoCamera className="camera_icon" />
-                  </label>
-                }
-              >
-                <Avatar className="avatar" />
-              </Badge>
-            </div>
-          )}
-          <input
-            type="file"
+      <img src={BackgroundI} alt="" className="left_image" />
+      <img src={DownImage} alt="" className="right_image" />
+      <div className="create_header">
+        <p className="passion_title">Passion</p>
+      </div>
+      <div className="create_boxes">
+        <div className="box_1">
+          <div
+            className="box_1_up"
             style={{
-              display: "none",
+              backgroundImage:
+                coverImage && `url(${URL.createObjectURL(coverImage)})`,
             }}
-            id="photo"
-            onChange={selectImage}
-            accept="image/git , image/jpeg , image/png"
-          />
-          <div className="cover_photo">
-            <label htmlFor="photo_background">
-              <p>Add background image</p>
-            </label>
+          >
+            {image ? (
+              <div className="photo">
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    <label htmlFor="photo" className="camera_label">
+                      <PhotoCamera className="camera_icon" />
+                    </label>
+                  }
+                >
+                  <Avatar className="avatar" src={URL.createObjectURL(image)} />
+                </Badge>
+              </div>
+            ) : (
+              <div className="photo">
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    <label htmlFor="photo" className="camera_label">
+                      <PhotoCamera className="camera_icon" />
+                    </label>
+                  }
+                >
+                  <Avatar className="avatar" />
+                </Badge>
+              </div>
+            )}
             <input
               type="file"
               style={{
                 display: "none",
               }}
-              id="photo_background"
-              onChange={add_background_image}
+              id="photo"
+              onChange={selectImage}
               accept="image/git , image/jpeg , image/png"
+            />
+            <div className="cover_photo">
+              <label htmlFor="photo_background">
+                <p
+                  style={{
+                    fontSize: "12px",
+                    marginTop: "5px",
+                  }}
+                >
+                  Add background image
+                </p>
+              </label>
+              <input
+                type="file"
+                style={{
+                  display: "none",
+                }}
+                id="photo_background"
+                onChange={add_background_image}
+                accept="image/git , image/jpeg , image/png"
+              />
+            </div>
+          </div>
+          <div className="box_1_down">
+            <p
+              style={{
+                width: "80%",
+                fontSize: "14px",
+                paddingBottom : '20px'
+              }}
+            >
+              Logged in as {user?.email} , if you want to change email
+              <span
+                style={{
+                  marginLeft: "5px",
+                  textDecoration: "underline",
+                  color: "blue",
+                  fontWeight: "bold",
+                }}
+              >
+                logout
+              </span>
+            </p>
+            <input type="text" placeholder="Name" 
+             value = {name}
+             onChange={(e) => setName(e.target.value)}
+            />
+            <input type="text" placeholder="Branch" 
+              value = {branch}
+              onChange={(e) => setBranch(e.target.value)}
+            />
+            <input type="text" placeholder="Year" 
+               value = {year}
+               onChange={(e) => setYear(e.target.value)}
             />
           </div>
         </div>
-        <div className="down">
-          <div className="down_details">
-            <div className="info">
-              <input
-                type="text"
-                placeholder="Enter username"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="info">
-              <input
-                type="text"
-                placeholder="Enter branch"
-                value={branch}
-                onChange={(e) => setBranch(e.target.value)}
-              />
-            </div>
-            <div className="info">
-              <input
-                type="number"
-                placeholder="Enter year"
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-              />
-            </div>
-            <div className="description">
-              {selectedQualities?.length === 0 && (
-                <button onClick={openQaulitiesPopup} className="let_us">
-                  Let us know more about you
-                </button>
-              )}
-              {selectedQualities.length > 0 && (
-                <div className="selected_qualities_div">
-                  <div className="selected_qualities_div_qualities">
-                    <div className="edit_button">
-                      <button onClick={openQaulitiesPopup}>Edit</button>
-                    </div>
-                    <div className="s_qualities">
-                      {selectedQualities.map((quality) => (
-                        <Quality quality={quality} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="passion">
-              {!passion && (<button onClick={open_passion_popup} className="let_us">
-                Choose your field of interest
-              </button>)}
-              {passion && (<p>{passion}</p>)}
-            </div>
-            {passion && passion !== "Don't know" && (
-              <>
-                <div className="subfield">
-                  {passion === 'Research' ? (
-                    <p>Mention your topic of Research</p>
-                  ) : (<p>Mention subInterest in your passion:</p>)}
-                <input
-                    type="text"
-                    placeholder=""
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    style={{
-                      textTransform: "uppercase",
-                    }}
-                  />
-                </div>
-              </>
-            )}
-            {passion && passion !== "Other" && (
-              <div className="experience">
-                <p>Experience in your passion: </p>
-                <FormControl sx={{ m: 1, minWidth: 180 }}>
-                  <InputLabel id="demo-simple-select-label">
-                    Experience
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={experience}
-                    label="Experience"
-                    onChange={handleChange}
-                  >
-                    <MenuItem value={0}>Less than 1 year</MenuItem>
-                    <MenuItem value={1}>1 year</MenuItem>
-                    <MenuItem value={2}>2 years</MenuItem>
-                    <MenuItem value={3}>3 years</MenuItem>
-                    <MenuItem value={4}>4 years</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
-            )}
-            <div className="create_account_button">
-              <button onClick={create_account}>Create Account</button>
-            </div>
+        <div className="box_2">
+          <button
+            onClick = {open_passion_popup}
+          > {passion ? passion : 'Select Your Passion'}</button>
+          <textarea
+            name=""
+            id=""
+            cols="30"
+            rows="10"
+            placeholder="Write about yourself"
+            value = {personInfo}
+            onChange = {(e) => setPersonInfo(e.target.value)}
+          ></textarea>
+          <div className="experience">
+            <FormControl sx={{ m: 1, minWidth: 180 }}>
+              <InputLabel id="demo-simple-select-label">Experience</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={experience}
+                label="Experience"
+                onChange={handleChange}
+              >
+                <MenuItem value={0}>Less than 1 year</MenuItem>
+                <MenuItem value={1}>1 year</MenuItem>
+                <MenuItem value={2}>2 years</MenuItem>
+                <MenuItem value={3}>3 years</MenuItem>
+                <MenuItem value={4}>4 years</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </div>
-        <QualitiesPopup />
-        <PassionPopup />
-        <LearningsPopup />
+        <button className="create_button"
+         onClick = {create_account}
+        >Create Account</button>
       </div>
+      <PassionPopup/>
     </Container>
   );
 }
 
 const Container = styled.div`
-  height: 100vh;
   width: 100vw;
+  height : 100vh;
 
-  .createIn {
+  @media(max-width: 900px){
+    height : 100%;
+  }
+
+  .left_image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    min-width: 200px;
+    max-width: 25vw;
+    object-fit: contain;
+  }
+
+  .right_image {
+    position: absolute;
+    bottom: 0 !important;
+    right: 0;
+    z-index: -1;
+    max-width: 25vw;
+    min-width: 200px;
+    object-fit: contain;
+  }
+
+  .passion_title {
+    font-family: "Signika";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 59px;
+    color: #03045e;
+    margin-top: 0;
+    margin-bottom: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+  }
+
+  .create_boxes {
     display: flex;
-    flex-direction: column;
-    max-width: 100vw;
+    justify-content: space-around;
+    max-width: 1250px;
     margin-left: auto;
     margin-right: auto;
-    /* border-left : 1px solid lightgray;
-    border-right : 1px solid lightgray; */
-  }
 
-  @media (max-width: 500px) {
-    display: flex;
-    flex-direction: column;
-    overflow: scroll;
-    padding-bottom: 20px;
-  }
-
-  .up {
-    padding-top: 50px;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    border-bottom: 1px solid lightgray;
-    margin-bottom: 20px;
-    background-color: #e9e6e6;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    
-
-    @media(max-width : 500px){
-      
+    @media (max-width: 900px) {
+      flex-direction: column;
+      align-items: center;
     }
 
-  }
-
-  .avatar {
-    width: 150px !important;
-    height: 150px !important;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 40px;
-    border: 2px solid white;
-  }
-
-  .down {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    max-width: 100vw;
-
-    .right_header {
-      padding-left: 20px;
-      border-bottom: 1px solid lightgray;
-    }
-
-    .down_details {
-      /* padding-left: 20px; */
+    .box_1 {
+      width: 400px;
       display: flex;
       flex-direction: column;
-      overflow-y: scroll;
-      padding-bottom: 20px;
-      width : 550px;
-      max-width: 100vw;
+      margin-bottom: 10px;
+
+      @media (max-width: 900px) {
+       width : 370px;
+    }
     }
 
-    .down_details::-webkit-scrollbar {
-      display: none;
+    .avatar {
+      width: 80px !important;
+      height: 80px !important;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 40px;
+      border: 2px solid white;
+      margin-bottom: 10px;
     }
 
-    .info {
-      display: flex;
-      margin-bottom: 20px;
+    .box_1_up {
       align-items: center;
       justify-content: center;
-      input {
-        margin-left: auto;
-        margin-right: auto;
-        border-radius: 10px;
-        border: 1px solid gray;
-        padding: 10px;
-        width: 400px;
-        max-width: 90vw;
-        outline: 0;
-      }
+      height: 180px;
+      border-bottom: 1px solid lightgray;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background: #f2f2f2;
+
+      @media (max-width: 900px) {
+      height : 180px;
+    }
     }
 
-    .description {
-      padding-left: 10px;
-    }
-
-    .let_us {
-      padding: 10px;
-      border : 1px solid lightgray;
-      border-radius : 5px;
-      background-color : white;
-
-      &:hover {
-        cursor : pointer;
-        background-color : lightgray;
-      }
-    }
-
-    .selected_qualities_div {
+    .box_1_down {
       display: flex;
       flex-direction: column;
-      padding: 10px;
-      width: 90%;
-      border-radius: 10px;
-      border: 1px solid lightgray;
-    }
+      align-items: center;
+      background: #b4ecf6;
+      padding: 20px 0 20px 0;
+      height: 300px !important;
+      justify-content: center;
 
-    .edit_button {
-      button {
-        background-color: #ecebeb;
-        border: 1px solid gray;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        padding: 7px;
-        width: 80px;
-
-        &:hover {
-          background-color: #b3b3b3;
-          cursor: pointer;
-        }
-      }
-    }
-
-    .s_qualities {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .your_qualities {
-      margin-bottom: 10px;
-      margin-top: 0px;
-    }
-
-    .passion {
-      margin-top: 15px;
-      padding-left: 10px;
-      .select_passion {
-        margin-bottom: 10px;
+      span {
         &:hover {
           cursor: pointer;
-          color: blue;
         }
-      }
-      p {
-        margin-top: 0px;
-        border : 0;
-        padding : 10px;
-        background-color : #2174f1;
-        color : white;
-        border-radius : 20px;
-      }
-    }
-
-    .create_account_button {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 10px;
-
-      button {
-        /* padding-top : 10px;
-            padding-bottom : 10px; */
-        border-radius: 20px;
-        padding: 10px;
-        background-color: #847cf8;
-        border: 1px solid lightgray;
-        color : white;
-
-        &:hover {
-          cursor: pointer;
-          background-color: #a59fff;
-        }
-      }
-    }
-
-    .subfield {
-      p {
-        margin-bottom: 5px;
       }
 
       input {
-        border-radius: 5px;
-        border: 1px solid gray;
-        padding: 7px;
-        width: 50%;
+        border: 0;
+        border-radius: 10px;
+        padding: 10px;
+        width: 80%;
         outline: 0;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    }
+
+    .box_2 {
+      width: 400px;
+      height: 521px;
+      background: #b4ecf6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      @media (max-width: 900px) {
+       width : 370px;
+       height : 510px;
+    }
+
+      button {
+        margin-top: 20px;
+        width: 80%;
+        background-color: #fff;
+        border: 1px solid lightgray;
+        padding: 10px;
+        border-radius: 5px;
+
+        &:hover {
+          cursor: pointer;
+          background-color: lightgray;
+        }
+      }
+
+      textarea {
+        margin-top: 20px;
+        flex: 1;
+        margin-bottom: 10px;
+        width: 75%;
+        background-color: #fff;
+        border: 1px solid lightgray;
+        resize: none;
+        padding: 10px;
+      }
+
+      .MuiFormControl-root.css-1f4ug3e-MuiFormControl-root {
+        background: white;
+        width: 100% !important;
+      }
+
+      .experience {
+        width: 81%;
+        margin-bottom: 10px;
       }
     }
   }
 
-  .photo {
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .create_button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    background: #0077b6;
+    border-radius: 16px;
+    color: white;
+    border: 0;
+    min-width: 200px;
+    font-size: 16px;
+    height: 56px;
 
-  .camera_label{
-    background-color: white;
-    padding: 5px;
-    padding-bottom: 2px;
-    border-radius: 50%;
-    display: inline-block;
-  }
+    @media (max-width: 900px) {
+      position : relative;
+      margin-top : 20px;
+    }
 
-  .cover_photo{
-      margin-bottom : 10px;
-      display : flex;
-      justify-content : flex-end;
-      width : 100%;
-
-      p {
-        margin-right : 10px;
-        padding : 7px;
-        border-radius : 5px;
-        background-color : white;
-        border : 1px solid lightgray;
-        font-size : 14px;
-        margin-top : 0;
-        margin-bottom : 0;
-      }
-
+    &:hover {
+      cursor : pointer;
+    }
   }
 `;
 
