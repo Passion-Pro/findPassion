@@ -19,8 +19,6 @@ function WorldPage() {
   const[tags , setTags] = useState([]);
   const[oldTags , setOldtags] = useState([]); 
 
-  
-  
   const add_learning = () => {
     dispatch({
       type: actionTypes.OPEN_NEW_LEARNING_POPUP,
@@ -88,11 +86,7 @@ function WorldPage() {
     }
   } , [passions?.length])
 
-  
-
-
-
-  const history = useHistory();
+    const history = useHistory();
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_PATHNAMEF,
@@ -103,22 +97,21 @@ function WorldPage() {
     <Container>
       <div className="options_header">
         <div className="options_buttons">
-          <button className="learnings_button">Learnings</button>
           <button
             className="stories_button"
-            onClick={(e) => history.push("/stories")}
-          >
-            Journeys
-          </button>
-          <button
-            className="stories_button"
-            style={{
-              marginLeft: "20px",
-            }}
             onClick={(e) => history.push("/posts")}
           >
             Posts
           </button>
+          <button className="learnings_button" style={{
+              marginLeft: "20px",
+            }} onClick={(e) => history.push("/world")}> Learnings</button>
+          {/* <button
+            className="stories_button"
+            onClick={(e) => history.push("/stories")}
+          >
+            Journeys
+          </button> */}
         </div>
 
         <div className="add_learning_button">
@@ -166,9 +159,10 @@ function WorldPage() {
       >
         <p
           style={{
-            color: "white",
-            marginTop: "0",
+           paddingTop:0,
+            marginTop: 0,
             marginBottom: "20px",
+            fontWeight: "bold",
           }}
         >
           See What your friends are learning
@@ -218,7 +212,8 @@ function WorldPage() {
 }
 
 const Container = styled.div`
-  width: 100vw;
+  width: 90vw;
+  padding: 0 5vw;
   flex: 1;
   min-height: 91.5vh;
   height: fit-content;
@@ -228,7 +223,7 @@ const Container = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  background-color: #003663;
+  background-color: #fff;
   @media (max-width: 700px) {
     margin-bottom: 50px;
   }
@@ -254,7 +249,7 @@ const Container = styled.div`
   }
   .options_header {
     display: flex;
-    padding: 20px;
+    /* padding: 20px; */
     padding-bottom: 0;
     justify-content: space-between;
     /* width : 100%; */
@@ -281,7 +276,7 @@ const Container = styled.div`
     .stories_button {
       width: 100px;
       padding-top: 10px;
-      padding-bottom: 10px;
+      /* padding-bottom: 10px; */
       border-radius: 20px;
       border: 0;
       height: 40px;
@@ -294,10 +289,12 @@ const Container = styled.div`
   .add_learning_button {
     display: flex;
     margin-right: 10px;
+    height: 60px;
+    padding:20px;
     button {
       width: 180px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      /* padding-top: 10px;
+      padding-bottom: 10px; */
       border-radius: 20px;
       border: 0;
       background-color: #6868fa;
@@ -325,7 +322,7 @@ const Container = styled.div`
   .my_learnings {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     padding-left: 30px;
     padding-right: 40px;
 
@@ -350,7 +347,7 @@ const Container = styled.div`
   .all_learnings {
     display: flex;
     flex-wrap: wrap;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     padding-left: 30px;
     padding-right: 40px;
     @media (max-width: 500px) {
@@ -360,13 +357,14 @@ const Container = styled.div`
     }
   }
   .my_learnings_title {
-    color: white;
+    /* color: white; */
+    font-weight: bold;
     padding-left: 10px;
   }
   .my_learnings_title_L {
-    color: white;
+    /* color: white; */
     padding: 0 10px;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid red;
     cursor: pointer;
     font-weight: 600;
     @media (max-width: 500px) {

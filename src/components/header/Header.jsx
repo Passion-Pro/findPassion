@@ -8,30 +8,48 @@ import ProfileImage from '../profile/ProfileImage';
 import AddIcon from '@mui/icons-material/Add';
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded';
 import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
-import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import ChatIcon from '@mui/icons-material/Chat';
 import PostPopup from '../post/PostPopup';
 import { useStateValue } from '../../StateProvider';
 import { actionTypes } from '../../reducer';
-import { HistoryEduRounded } from '@mui/icons-material';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
 function Header() {
-    const [{ userInfo, courseDiv,pathnamef }, dispatch] = useStateValue();
+    const [{ userInfo, courseDiv, searchInputPassion,pathnamef }, dispatch] = useStateValue();
     const history = useHistory();
     const [input, setInput] = useState('');
+    const [inputPassion, setInputPassion] = useState(userInfo?.passion);
+    const [search, setSearch] = useState(false);
+    const [showpopup, setShowpopup] = useState(false);
+console.log('inputPassion',inputPassion,userInfo.passion)
 
     useEffect(() => {
-        if (input) {
-            history.push('/searchPage')
+        if (input != '' && search) {
+            history.push('/peopleforsearch')
             dispatch({
                 type: actionTypes.SET_SEARCH_INPUT,
                 searchInput: input,
             })
-        } else if (!input && pathnamef == '/searchPage') {
-            history.goBack();
+        } else if (input == '' && window.location.pathname === '/peopleforsearch') {
+            history.push('/all_profile');
         }
-    }, [input]);
-    console.log("pathnamef",pathnamef)
+    }, [search]);
+
+    useEffect(() => {
+        if (inputPassion!='') {
+            dispatch({
+                type: actionTypes.SET_SEARCH_INPUT_PASSION,
+                searchInputPassion: inputPassion,
+            })
+
+        }
+    }, [inputPassion]);
+
+    useEffect(() => {
+        if (inputPassion!='') {
+            setInputPassion(userInfo?.passion)
+        }
+    }, [userInfo?.passion]);
 
     return (
         <>
@@ -43,8 +61,119 @@ function Header() {
                     <div className='searchHeader__divOut__ForLoginHeader' >
                         <div className='searchHeader__div'>
                             <SearchRoundedIcon />
-                            <input placeholder='Search' className='searchHeader__input' onChange={e => setInput(e.target.value)} />
+                            <input placeholder='Search' className='searchHeader__input' onChange={e => {
+                                setInput(e.target.value);
+                                setSearch(false)
+                            }} />
+                            {input !== '' &&
+                                <>
+                                    <button style={{ height: "95%", width: '50px', color: "white", backgroundColor: '#0a66c2', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',marginRight:"10px" }}
+                                        onClick={() => {
+                                            setSearch(true)
+                                        }}
+                                    ><ArrowForwardRoundedIcon /></button>
+                                </>
+                            }
+                            <>
+                                <div style={{ height: "95%", width: '150px', color: "white", backgroundColor: '#0a66c2', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',cursor:'pointer' }} onClick={() => {
+                                    setShowpopup(!showpopup)
+                                }}>
+                                    {inputPassion && inputPassion.length > 10 ? inputPassion.slice(0, 10)+"..." : inputPassion}
+                                </div>
+                                {showpopup &&
+                                    <div className='popuptochoosePassion'>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none', margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Web Development')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            Web Development
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('App Development')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            App Development
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Designing')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            Designing
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Machine Learning')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            Machine Learning
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Game Development')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                           Game Development
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Video Editing')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            Video Editing
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Artificial Intelligence')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            Artificial Intelligence
+                                        </button>
+                                        <button style={{
+                                            height: "50px",
+                                            fontSize: 'large',
+                                            width: '100%', color: "#5d5c5c", fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: "center", borderRadius: '6px', outline: "none", border: 'none',
+                                            margin: "4px 2px" ,cursor:'pointer'
+                                        }} onClick={()=>{
+                                            setInputPassion('Research')
+                                            setShowpopup(!showpopup)
+                                        }}>
+                                            Research
+                                        </button>
+                                    </div>
+                                }
+                            </>
                         </div>
+
                     </div>
                     <div className="Loginheader__Icons">
                         <div className="Loginheader__home__Icon" onClick={() => history.push('/')}>
@@ -57,11 +186,11 @@ function Header() {
                             <GroupsRoundedIcon style={{ fontSize: 30, color: "white" }} />
                         </div>
                         <div className="Loginheader__Icon__search" onClick={() => history.push('/chat')}>
-                            <ChatIcon style = {{ fontSize: 30 , color : "white"}}/>
-                        </div> 
+                            <ChatIcon style={{ fontSize: 30, color: "white" }} />
+                        </div>
                     </div>
 
-                    <div className="Loginheader__profile" onClick = {() => history.push("/userProfile")}>
+                    <div className="Loginheader__profile" onClick={() => history.push("/userProfile")}>
                         {userInfo?.profilePhotoUrl ? <ProfileImage image={userInfo?.profilePhotoUrl} /> : <AccountCircleRoundedIcon style={{ fontSize: 50, color: "white" }} />}
                         <span className='Loginheader_profileName'>
                             {userInfo?.name && userInfo?.name?.length > 9 ? userInfo?.name.slice(0, 9) : userInfo?.name}

@@ -2,13 +2,16 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import React, { useState, useEffect } from 'react'
 import SearchBody from './SearchBody'
 import styled from "styled-components"
-import { useStateValue } from '../../StateProvider'
-import { actionTypes } from '../../reducer'
+import { useHistory } from 'react-router-dom'
+import { useStateValue } from '../../../StateProvider'
+import { actionTypes } from '../../../reducer'
 
 
 function SearchPage() {
-    const [input, setInput] = useState();
-    const [{ user, userInfo }, dispatch] = useStateValue();
+   const[input , setInput] = useState('');
+   const[{user , userInfo} , dispatch] = useStateValue();
+   
+   const history=useHistory();
 
     useEffect(() => {
         if (input) {
@@ -61,7 +64,7 @@ const Container = styled.div`
 }
  .searchIcon{
      color : gray !important;
- } 
+ }
  `
 
 export default SearchPage

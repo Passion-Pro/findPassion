@@ -48,18 +48,25 @@ function Group() {
         </> </div> :
           <div style={{ display: 'flex', width: "100vw", height: "80vh", alignItems: 'center', justifyContent: 'center' }}>
             <div className='start_group_box'>
+              <div style = {{
+                  fontSize : '17px',
+                  fontWeight:'bold',
+                  padding: '4px',
+                  margin: 0,
+                }}>Find the perfect team member with the desired skills through our community site</div>
                <p
                 style = {{
                   fontSize : '17px',
+                  padding: '4px',
+                  margin: 0,
                 }}
                >Start your group here and enjoy the benifits of</p>
                <p
                 style = {{
-                  marginBottom : '5px',
                   marginLeft : '3px',
                   fontStyle : 'italic'
                 }}
-               > A task giving system to your teammates</p>
+               > A goal giving system to your teammates</p>
                <p
                 style = {{
                   marginTop : '5px',
@@ -76,7 +83,7 @@ function Group() {
                 type: actionTypes.SET_SHOW_GROUP_ADD,
                 showgroupAdd: true,
               })
-            }}>Start now</Button>
+            }}>Add Team</Button>
 
                </div>
             </div>
