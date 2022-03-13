@@ -326,7 +326,7 @@ function App() {
           <Route path="/userProfileJourney">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route exact path="/">{user?.email ? <WorldPage />: <Login /> }</Route>
+          <Route exact path="/">{user?.email ? <PostsPage />: <Login /> }</Route>
                 </>)
               :
               <>
