@@ -145,7 +145,7 @@ function AddStoryPage() {
               })
               .then(() => {
                 setLoading(false);
-                history.push("/stories");
+                history.push("/userProfileJourney");
               });
           }
         }

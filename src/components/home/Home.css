@@ -4,7 +4,6 @@
     width: 100vw;
     height: fit-content;
     align-items: center;
-    background-color : #003663;
 }
 .homeBody{
     display: flex;
@@ -46,14 +45,13 @@
 }
 .header__ProfileName{
     margin-top: 12px;
-    border: 2px solid #e8e9eb;
-    background-color: #f6f9fc; 
     border-radius: 6px;
 }  
 .header__ProfileName__Head{
     display: flex;
     justify-content: space-between;
     padding: 12px;
+    padding-left : 25px;
     font-size: 18px;
     color: #0a2540;
 }

@@ -13,7 +13,7 @@ export const initialState = {
   showStoryCaption: false,
   showStory: false,
   openNewLearningPopup: false,
-  userInfo: [],
+  userInfo: null,
   journey: [],
   courseDiv: false,
   showDiv: false,

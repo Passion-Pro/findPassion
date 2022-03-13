@@ -33,6 +33,8 @@ function Quality({quality , from}) {
          }}
         >
            {quality?.data?.name}
+
+           
           
         </Container>
     )

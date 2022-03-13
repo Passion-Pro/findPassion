@@ -55,7 +55,7 @@ function HomeWithAllProfile() {
             <div className="homeBody">
                 <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        Find students in {userInfo?.passion}
+                        <span>Find students in {userInfo?.passion}</span>
                         <div className='ArrowDropDownRoundedIcon' onClick={() => { setDown(!down) }}>
                             <ArrowDropDownRoundedIcon />
                         </div>
@@ -76,7 +76,7 @@ function HomeWithAllProfile() {
                 </div>
                 {webD.length > 0 && <div className="header__ProfileName">
                     <div className='header__ProfileName__Head'>
-                        Other Students
+                        <span> Other Students</span>
                         <div className='ArrowDropDownRoundedIcon' onClick={() => { setDown2(!down2) }}>
                             <ArrowDropDownRoundedIcon />
                         </div>

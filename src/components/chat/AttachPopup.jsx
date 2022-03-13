@@ -642,7 +642,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                     <p>Image</p>
                   </div>
                 </label>
-                <input
+                {/* <input
                   type="file"
                   id={"video"}
                   style={{ display: "none" }}
@@ -657,7 +657,7 @@ function AttachPopup({ learningId, from, chatMessages, chatId, chatInfo, groupDe
                     <p>Attach</p>
                     <p>Video</p>
                   </div>
-                </label>
+                </label> */}
                 <div className="icon_detail">
                   <div className="icon file_icon" onClick={open_pdf_page}>
                     <InsertDriveFileIcon />
@@ -740,6 +740,9 @@ const Container = styled.div`
   .icons {
     display: flex;
     justify-content: space-around;
+    width : 70%;
+    margin-left : auto;
+    margin-right : auto;
 
     p {
       font-size: 12px;

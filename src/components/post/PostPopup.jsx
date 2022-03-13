@@ -9,7 +9,6 @@ import styled from "styled-components"
 import CloseIcon from "@mui/icons-material/Close";
 
 function PostPopup({setOpenPopup}) {
- 
     const history=useHistory();
     const [{user, courseDiv  }, dispatch] =useStateValue();
 
@@ -38,8 +37,6 @@ function PostPopup({setOpenPopup}) {
                 </div>
                 </div>
             </div>
-
-            
         </Container>
     )
 };
