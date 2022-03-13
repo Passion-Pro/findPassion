@@ -6,10 +6,11 @@ import './SearchBody.css';
 import SearchName from './SearchName';
 
 function SearchBody() {
-    const [{ userInfo, searchInput,searchInputPassion }, dispatch] = useStateValue();
-    var limit = 3;
+    const [{ userInfo, searchInput,searchInputPassion }, dispatch] = useStateValue(); 
     const [data, setData] = useState([]);
-    const [newData,setNewData]=useState([]);
+    const [n,setN]=useState(false)
+    var mm=false;
+    // var newData=[];
     const history=useHistory();
 
     useEffect(() => {
@@ -23,15 +24,15 @@ function SearchBody() {
                         id: doc?.id
                     })))
                 })
-                .then(()=>{
-                    newData=data.filter(item => {
-                        return item?.data?.name.toLowerCase().includes(searchInput.toLowerCase())
-                    })
-                })
+                // .then(()=>{
+                //     newData=data.filter(item => {
+                //         return item?.data?.name.toLowerCase().includes(searchInput.toLowerCase())
+                //     })
+                // })
         }
     }, []);
 
- 
+//  console.log("newData",newData)
     return (
         <>
         <div className="options_buttons">
@@ -54,14 +55,15 @@ function SearchBody() {
           </button>
         </div>
         <div className='SearchBody'>
-            {newData.length>0 ? newData.filter(item => {
+            {data.length>0 && data.filter(item => {
                 return item?.data?.name.toLowerCase().includes(searchInput.toLowerCase())
             }).map((data) => (
+                <>
                 <SearchName data={data} Nodata={true} />
-                )):<SearchName Nodata={false} />}
-                {/* {
-                    <SearchName Nodata={false} />
-                } */}
+                {mm=true}
+                </>
+                ))}
+                {!mm && <SearchName data={data} Nodata={false} />}
         </div>
         </>
     )

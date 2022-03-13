@@ -2,7 +2,6 @@ import React from 'react';
 import './SearchName.css';
 import { Avatar } from '@material-ui/core';
 import { useHistory } from 'react-router-dom'
-import SearchPage from './SearchPage'
 function SearchName({ data,Nodata }) {
     const history=useHistory()
     return (

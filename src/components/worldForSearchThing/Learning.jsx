@@ -6,7 +6,7 @@ import firebase from "firebase";
 import { useStateValue } from "../../StateProvider";
 import db from "../../firebase";
 
-function Learning({ learning,learningL, type, learnings ,Nodata}) {
+function Learning({ learning, type}) {
   const history = useHistory();
   const [{ user, userInfo,searchInput }, dispatch] = useStateValue();
   const [requestSent, setRequestSent] = useState(false);
@@ -28,7 +28,7 @@ function Learning({ learning,learningL, type, learnings ,Nodata}) {
       history.push('/all_profile')
     }
    }, []);
-   
+
   useEffect(() => {
     if (user?.uid  && userInfo) {
       if(type === 'joined'){
