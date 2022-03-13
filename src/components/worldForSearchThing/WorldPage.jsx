@@ -44,16 +44,15 @@ function WorldPage() {
           </button>
         </div>
           <div className="all_learnings">
-            {searchInput}
           {learnings && 
             learnings
             .filter((item) => {
-              return (item?.data?.learning.toLowerCase().includes(searchInput.toLowerCase()) && !item?.data?.learners.includes(user?.email));
+              return (!item?.data?.learners.includes(user?.email));
               // return (!item?.data?.learners.includes(user?.email));
             })
             .map((learning) =>(
             <>{learning?.data?.started_by.email !== user?.email &&
-               <Learning learning={learning} type = 'all'/>
+               <p>HI</p>
             }</>
             )
             )}
