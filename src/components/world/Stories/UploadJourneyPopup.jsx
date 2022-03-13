@@ -22,6 +22,8 @@ function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
 
   const upload_journey = (e) => {
     if (image) {
+      setUploadJourney(false);
+
       const id = uuid();
 
       const upload = storage.ref(`JourneyImages/${id}`).put(image);
@@ -62,11 +64,14 @@ function UploadJourneyPopup({ setUploadJourney  , imagesInfo }) {
                 upload: "yes",
               })
               .then(() => {
-                history.push("/stories");
+                history.push("/userProfileJourney");
                 dispatch({
                   type : actionTypes.SET_UPLOADING,
                   uploading : true
                 })
+
+               
+
               });
           }
         }

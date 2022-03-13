@@ -10,6 +10,7 @@ function RemoveAllCardsPopup({setOpenRemovePopup , journeyId}) {
   const[{user} , dispatch] = useStateValue();
 
   const remove_all_cards = (e) => {
+      setOpenRemovePopup(false)
      db.collection("journeys").doc(user?.uid).update({
          currentYear : 0,
          imagesInfo : [],
