@@ -1,0 +1,36 @@
+.SearchBody{
+    flex: 1;
+    width: 100%;
+}
+.options_buttons {
+    display: flex;
+    margin: 30px 0 30px 30px;
+}
+.stories_button {
+    width: 100px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 20px;
+    border: 0;
+    height: 40px;
+  }
+  .stories_button:hover{
+    cursor: pointer;
+    background-color: #dfdede;
+  }
+  .learnings_button {
+    /* margin-right: 20px; */
+    width: 100px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 20px;
+    border: 0;
+    background-color: #252525;
+    color: white;
+    height: 40px;
+  }
+@media(max-width:1080px){
+    .SearchBody{
+        flex: 1;
+    }
+}

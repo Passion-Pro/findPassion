@@ -25,6 +25,7 @@ export const initialState = {
   groupMemberDetails: null,
   mygroupDetail: null,
   searchInput: '',
+  searchInputPassion:'' ,
   showMoreoption: false,
   showTop: false,
   editGroup: false,
@@ -50,6 +51,7 @@ export const initialState = {
 
 export const actionTypes = {
   TEST: "TEST",
+  SET_SEARCH_INPUT_PASSION:'SET_SEARCH_INPUT_PASSION',
   SET_SHOW_GROUP_ADD: "SET_SHOW_GROUP_ADD",
   SET_LOADING: 'SET_LOADING',
   SET_EDIT_GROUP: 'SET_EDIT_GROUP',
@@ -116,6 +118,11 @@ const reducer = (state, action) => {
     //     type: actionTypes.SET_POST_ID,
     //     postId: action.postId
     //   }
+    case actionTypes.SET_SEARCH_INPUT_PASSION:
+      return {
+        ...state,
+        searchInputPassion: action.searchInputPassion,
+      };
     case actionTypes.OPEN_DELETE_POST_POPUP:
       return {
         ...state,

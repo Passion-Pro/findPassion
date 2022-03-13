@@ -13,8 +13,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { actionTypes } from '../../reducer';
 import DeletePostPopup from './DeletePostPopup';
 
-function PostCard({ data , type,Nodata }) {
-    const [{ user, userInfo,searchInputPassion , openDeletePostPopup }, dispatch] = useStateValue();
+function PostCard({ data , type }) {
+    const [{ user, userInfo , openDeletePostPopup,searchInputPassion }, dispatch] = useStateValue();
     const [postUserInfo, setPostUserInfo] = useState(null);
 
 
@@ -32,21 +32,20 @@ function PostCard({ data , type,Nodata }) {
                     user?.email
                 ),
                 totalLike: currentLikeStatus ? data?.data?.totalLike + 1 : data?.data?.totalLike - 1,
+            }).then(() => {
+                db.collection("users")
+                    .doc(user.uid)
+                    .collection("Posts").doc(data.id).update({
+                        likedUser: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(
+                            user?.email
+                        ) : firebase.firestore.FieldValue.arrayRemove(
+                            user?.email
+                        ),
+                        totalLike: currentLikeStatus ? data?.data?.totalLike + 1 : data?.data?.totalLike - 1,
+                    })
+            }).catch(() => {
+                console.log("error");
             })
-            // .then(() => {
-            //     db.collection("users")
-            //         .doc(user.uid)
-            //         .collection("Posts").doc(data.id).update({
-            //             likedUser: currentLikeStatus ? firebase.firestore.FieldValue.arrayUnion(
-            //                 user?.email
-            //             ) : firebase.firestore.FieldValue.arrayRemove(
-            //                 user?.email
-            //             ),
-            //             totalLike: currentLikeStatus ? data?.data?.totalLike + 1 : data?.data?.totalLike - 1,
-            //         })
-            // }).catch(() => {
-            //     console.log("error");
-            // })
     }
 
     useEffect(() => {
@@ -59,7 +58,7 @@ function PostCard({ data , type,Nodata }) {
 console.log("postid",data?.id)
     return (
         <>
-           {Nodata ? <div className='PostCard'>
+            <div className='PostCard'>
                 <div className='PostCardStarted'>
                     <div className="PostCardStartedIn">
                         <div className="PeopleStartedSameIn__Accountname">
@@ -123,7 +122,7 @@ console.log("postid",data?.id)
                         </div>
                     </div>
                 </div>
-            </div>:<div style={{height:"75.5vh",width:'100%',display:'flex',justifyContent:"center",alignItems:"center"}}>No data</div>}
+            </div>
             {openDeletePostPopup && ( <DeletePostPopup  postId = {data?.id} postData = {data?.data}/>)}
         </>
     )

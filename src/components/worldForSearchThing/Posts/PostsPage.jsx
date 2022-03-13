@@ -11,9 +11,10 @@ import PostPopup from "../../post/PostPopup";
 
 function PostsPage() {
   const history = useHistory();
-  const [{ userInfo, user },dispatch] = useStateValue();
+  const [{ userInfo, user,searchInput,searchInputPassion },dispatch] = useStateValue();
   const [posts, setPosts] = useState([]);
   const[openPopup , setOpenPopup] = useState(false);
+
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_PATHNAMEF,
@@ -21,8 +22,15 @@ function PostsPage() {
     });
   }, []);
   useEffect(() => {
-    if (userInfo?.name) {
-      db.collection(userInfo?.passion)
+   if(searchInput==''){
+     history.push('/all_profile')
+   }
+  }, []);
+
+
+  useEffect(() => {
+    if (searchInput) {
+      db.collection(searchInputPassion ? searchInputPassion:userInfo?.passion)
         .doc('Csb15iOnGedmpceiQOhX')
         .collection("Posts")
         .orderBy("timestamp", "desc")
@@ -39,42 +47,32 @@ function PostsPage() {
 
   return (
     <Container>
-       <div className="options_header">
+       <div >
         <div className="options_buttons">
-          <button className="learnings_button"
+        <button className="stories_button"
+            onClick={(e) => history.push("/peopleforsearch")}
+            >People</button>
+            <button className="stories_button"
+            onClick={(e) => history.push("/worldforsearch")}
             style = {{
-              marginLeft : '20px'
+              marginLeft : '10px'
             }}
-            onClick={(e) => history.push("/posts")}
+            >Learnings</button>
+            <button className="learnings_button"
+            style = {{
+              marginLeft : '10px'
+            }}
+            onClick={(e) => history.push("/postforsearch")}
           >
             Posts
           </button>
-            <button className="stories_button"
-            onClick={(e) => history.push("/world")}
-            >Learnings</button>
         </div>
-
-          <div className="add_learning_button">
-            <button
-             onClick = {() => setOpenPopup(true)}
-            >
-              <p
-               style = {{
-                   marginTop : '5px',
-                   marginBottom : 0,
-                   marginRight : '5px'
-
-               }}
-              >Add a Post</p>
-              <PhotoCamera/>
-            </button>
-          </div>
       </div>
       <div className="postBody">
           {<div className="recommendPosts">
-            {posts && posts.map((data) => (
-              <PostCard data={data} Nodata={true} />
-            ))}
+            {posts.length>0 ? posts.map((data) => (
+              <PostCard data={data} Nodata={true}/>
+            )):<PostCard  Nodata={false}/>}
           </div>}
         </div>
        {openPopup && ( <PostPopup setOpenPopup = {setOpenPopup}/>)}
@@ -83,8 +81,7 @@ function PostsPage() {
 };
 
 const Container  = styled.div`
-  width: 90vw;
-  padding: 0 5vw;
+  width: 100vw;
   flex: 1;
   min-height: 90vh;
   height : fit-content;
@@ -98,7 +95,7 @@ const Container  = styled.div`
 
   .options_header {
     display: flex;
-    /* padding: 20px; */
+    padding: 20px;
     padding-bottom: 0;
     justify-content : space-between;
     /* width : 100%; */
@@ -117,7 +114,7 @@ const Container  = styled.div`
     }
 
     .learnings_button {
-      margin-right: 20px;
+      margin-right: 10px;
       width: 100px;
       padding-top: 10px;
       padding-bottom: 10px;
@@ -135,6 +132,7 @@ const Container  = styled.div`
       border-radius: 20px;
       border: 0;
       height : 40px;
+      margin-left: 10px ;
 
       &:hover {
         cursor: pointer;
@@ -145,8 +143,7 @@ const Container  = styled.div`
 
   .add_learning_button {
     display: flex;
-    padding: 20px;
-    /* margin-right: 10px; */
+    margin-right: 10px;
 
     button {
      display : flex;
