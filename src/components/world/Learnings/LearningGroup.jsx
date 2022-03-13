@@ -28,7 +28,7 @@ function LearningGroup() {
   const [messages, setMessages] = useState([]);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [openEmojis, setOpenEmojis] = useState(false);
-  const [activeTab, setActiveTab] = useState("suggestions");
+  const [activeTab, setActiveTab] = useState("chat");
   const [suggestionTab, setSuggestionTab] = useState("all");
   const [users, setUsers] = useState([]);
   const [learntStuff, setLearntStuff] = useState([]);

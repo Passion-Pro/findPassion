@@ -160,12 +160,12 @@ function ProfilePage({ id }) {
               <p>{viewerInfo?.name}</p>
             </div>
             <div className="buttons">
-              <button className="journey_laptop" onClick={openJourney_popup}>
+              {viewerInfo?.journeyMode &&(<button className="journey_laptop" onClick={openJourney_popup}>
                 Journey
-              </button>
-              <button className="journey_mobile" onClick={goToJourneyPage}>
+              </button>)}
+              {viewerInfo?.journeyMode &&(<button className="journey_mobile" onClick={goToJourneyPage}>
                 Journey
-              </button>
+              </button>)}
               <button onClick={generate_chat}>Chat</button>
             </div>
           </div>

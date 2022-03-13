@@ -44,7 +44,7 @@ function StoryPage() {
   const [nextCaption, setNextCaption] = useState();
   const [nextPart, setNextPart] = useState();
   const [showPartners, setShowPartners] = useState(false);
-  const[partners, setPartners] = useState([])
+  const [partners, setPartners] = useState([]);
 
   useEffect(() => {
     dispatch({
@@ -79,6 +79,24 @@ function StoryPage() {
   }, [journeyId]);
 
   useEffect(() => {
+    if (likes?.length > 0) {
+      for (let i = 0; i < likes.length; i++) {
+        if (likes[i]?.email === userInfo?.email) {
+          setLiked(true);
+        }
+      }
+    }
+    if (fires?.length > 0) {
+      console.log(fires);
+      for (let i = 0; i < fires.length; i++) {
+        if (fires[i]?.email === userInfo?.email) {
+          setFired(true);
+        }
+      }
+    }
+  }, [likes?.length, fires?.length, userInfo?.name, user]);
+
+  useEffect(() => {
     if (journeyData?.uploaderInfo?.email) {
       setNewImages(journeyData?.imagesInfo);
 
@@ -108,15 +126,17 @@ function StoryPage() {
 
 
 
-
- 
-
   useEffect(() => {
     if (newImages?.length > 0) {
       newImages.reverse();
       setImages(newImages);
     }
   }, [newImages?.length]);
+
+  useEffect(() => {
+    setNextCaption();
+    setPartners();
+  } ,[startJourney])
 
   useEffect(() => {
     if (images.length > 0 && startJourney) {
@@ -191,13 +211,11 @@ function StoryPage() {
     e.preventDefault();
     setLiked(true);
 
-    
-
     db.collection("journeys")
       .doc(journeyId)
       .update({
         likes: firebase.firestore.FieldValue.arrayUnion({
-          email : userInfo?.email
+          email: userInfo?.email,
         }),
       })
       .then(() => {
@@ -213,15 +231,13 @@ function StoryPage() {
     console.log("fired");
     console.log(fires);
 
-    
-
     console.log(fires);
 
     db.collection("journeys")
       .doc(journeyId)
       .update({
         fires: firebase.firestore.FieldValue.arrayUnion({
-          email : userInfo?.email
+          email: userInfo?.email,
         }),
       })
       .then(() => {
@@ -233,8 +249,6 @@ function StoryPage() {
 
     setFired(true);
   };
-
-  
 
   const removeFromLikes = (e) => {
     e.preventDefault();
@@ -280,7 +294,7 @@ function StoryPage() {
         });
       });
   };
-
+  console.log("first", "kjhjh")
   return (
     <div>
       <Container>
@@ -289,8 +303,15 @@ function StoryPage() {
             <ArrowBack className="back_icon" onClick={goBack} />
             <Avatar className="user_info_avatar" src={profilePhotoUrl} />
             <p
-             onClick={(e) => {history.push(`/viewProfile/${journeyId}`)}}
-            >{journeyData?.uploaderInfo?.name}</p>
+              onClick={(e) => {
+                history.push(`/viewProfile/${journeyId}`);
+              }}
+            >
+              {journeyData?.uploaderInfo?.name}
+            </p>
+            {fires?.length > 0 && (
+                  <div className="total_fires">{fires?.length}🔥</div>
+                )}
           </div>
         </div>
         <div className="journeyInfo">
@@ -300,7 +321,7 @@ function StoryPage() {
                 <div
                   className="journey"
                   style={{
-                    backgroundImage: `url(${journeyData?.memorablePhotoUrl})`,
+                    backgroundImage: `url(${journeyData?.achievementUrl})`,
                   }}
                 ></div>
               ) : (
@@ -340,23 +361,60 @@ function StoryPage() {
                         {images.map((image, index) => (
                           <>
                             {partners?.length > 0 && (
-                                <div
-                                  className="journey_partners"
-                                  style={{
-                                    position: "absolute",
-                                  }}
-                                >
-                                  {console.log("Partners are", image?.partners)}
-                                  <div className="first_two">
+                              <div
+                                className="journey_partners"
+                                style={{
+                                  position: "absolute",
+                                }}
+                              >
+                                {console.log("Partners are", image?.partners)}
+                                <div className="first_two">
+                                  {partners[0]?.data?.name && (<div
+                                    className="partner"
+                                    onClick={() => {
+                                      if (partners[0]?.data?.email) {
+                                        db.collection("users")
+                                          .where(
+                                            "email",
+                                            "==",
+                                            partners[0]?.data?.email
+                                          )
+                                          .get()
+                                          .then((querySnapshot) => {
+                                            querySnapshot.forEach((doc) => {
+                                              // doc.data() is never undefined for query doc snapshots
+                                              console.log(
+                                                doc.id,
+                                                " => ",
+                                                doc.data()
+                                              );
+
+                                              history.push(
+                                                `/viewProfile/${doc.id}`
+                                              );
+                                            });
+                                          })
+                                          .catch((error) => {
+                                            console.log(
+                                              "Error getting documents: ",
+                                              error
+                                            );
+                                          });
+                                      }
+                                    }}
+                                  >
+                                    <p>{partners[0]?.data?.name}</p>
+                                  </div>)}
+                                  {partners[1]?.data?.name && (
                                     <div
                                       className="partner"
                                       onClick={() => {
-                                        if (partners[0]?.data?.email) {
+                                        if (partners[1]?.data?.email) {
                                           db.collection("users")
                                             .where(
                                               "email",
                                               "==",
-                                              partners[0]?.data?.email
+                                              partners[1]?.data?.email
                                             )
                                             .get()
                                             .then((querySnapshot) => {
@@ -382,73 +440,24 @@ function StoryPage() {
                                         }
                                       }}
                                     >
-                                      {/* <Avatar
-                                      src={userInfo?.profilePhotoUrl}
-                                      style={{
-                                        width: "21px",
-                                        height: "21px",
-                                      }}
-                                    /> */}
-                                      <p>{partners[0]?.data?.name}</p>
-                                    </div>
-                                    <div
-                                      className="partner"
-                                      onClick={() => {
-                                        if (partners[0]?.data?.email) {
-                                          db.collection("users")
-                                            .where(
-                                              "email",
-                                              "==",
-                                              partners[0]?.data?.email
-                                            )
-                                            .get()
-                                            .then((querySnapshot) => {
-                                              querySnapshot.forEach((doc) => {
-                                              // doc.data() is never undefined for query doc snapshots
-                                                console.log(
-                                                  doc.id,
-                                                  " => ",
-                                                  doc.data()
-                                                );
-
-                                                history.push(
-                                                  `/viewProfile/${doc.id}`
-                                                );
-                                              });
-                                            })
-                                            .catch((error) => {
-                                              console.log(
-                                                "Error getting documents: ",
-                                                error
-                                              );
-                                            });
-                                        }
-                                      }}
-                                    >
-                                      {/* <Avatar
-                                      src={userInfo?.profilePhotoUrl}
-                                      style={{
-                                        width: "21px",
-                                        height: "21px",
-                                      }}
-                                    /> */}
                                       <p>{partners[1]?.data?.name}</p>
-                                    </div>
-                                  </div>
-
-                                  {partners.length > 2 && (
-                                    <div
-                                      className="others"
-                                      onClick={() => {
-                                        setShowPartners(true);
-                                        console.log(showPartners);
-                                      }}
-                                    >
-                                      <p>+{partners?.length - 2} others</p>
                                     </div>
                                   )}
                                 </div>
-                              )}
+
+                                {partners.length > 2 && (
+                                  <div
+                                    className="others"
+                                    onClick={() => {
+                                      setShowPartners(true);
+                                      console.log(showPartners);
+                                    }}
+                                  >
+                                    <p>+{partners?.length - 2} others</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                             {console.log("ImageUrl is ", image?.imageUrl)}
                             <TinderCard
                               className="swipe"
@@ -466,7 +475,7 @@ function StoryPage() {
                                   });
                                 }
                                 setPartners([]);
-                                setPartners(images[index - 1]?.partners)
+                                setPartners(images[index - 1]?.partners);
                               }}
                             >
                               {console.log("images ", images)}
@@ -478,23 +487,23 @@ function StoryPage() {
                                 }}
                               >
                                 {image?.year && (
-                                    <div className="year_info">
-                                      <p
-                                        style={{
-                                          marginTop: 0,
-                                          marginBottom: 0,
-                                          color: "white",
-                                          fontSize: "12px",
-                                        }}
-                                      >
-                                        {image?.year === 1 && `1st year`}
-                                        {image?.year === 2 && `2nd year`}
-                                        {image?.year === 3 && `3rd year`}
-                                        {image?.year > 3 &&
-                                          `${image?.year}th year`}
-                                      </p>
-                                    </div>
-                                  )}
+                                  <div className="year_info">
+                                    <p
+                                      style={{
+                                        marginTop: 0,
+                                        marginBottom: 0,
+                                        color: "white",
+                                        fontSize: "12px",
+                                      }}
+                                    >
+                                      {image?.year === 1 && `1st year`}
+                                      {image?.year === 2 && `2nd year`}
+                                      {image?.year === 3 && `3rd year`}
+                                      {image?.year > 3 &&
+                                        `${image?.year}th year`}
+                                    </p>
+                                  </div>
+                                )}
                                 {nextCaption && (
                                   <div className="image_caption">
                                     {/* <p>{image?.caption?.length > 180
@@ -577,20 +586,20 @@ function StoryPage() {
               {showPartners && (
                 <div className="partners_component">
                   <div className="partners_header">
-                      <p>{partners?.length} partners</p>
-                      <button
-                        onClick={() => {
-                          setShowPartners(false);
-                        }}
-                      >
-                        Journey
-                      </button>
-                    </div>
-                    <div className="partner_partners">
-                      {partners.map((partner) => (
-                        <PartnerCard partner={partner} />
-                      ))}
-                    </div>
+                    <p>{partners?.length} partners</p>
+                    <button
+                      onClick={() => {
+                        setShowPartners(false);
+                      }}
+                    >
+                      Journey
+                    </button>
+                  </div>
+                  <div className="partner_partners">
+                    {partners.map((partner) => (
+                      <PartnerCard partner={partner} />
+                    ))}
+                  </div>
                 </div>
               )}
             </>
@@ -598,9 +607,11 @@ function StoryPage() {
           <div className="start_button">
             {startJourney === false ? (
               <>
-                {!showPartners && (<button onClick={start_journey} className="start">
-                  Start Journey
-                </button>)}
+                {!showPartners && (
+                  <button onClick={start_journey} className="start">
+                    Start Journey
+                  </button>
+                )}
                 <div className="icons">
                   {/* {liked === false ? (
                     <ThumbUpAltOutlinedIcon
@@ -628,23 +639,24 @@ function StoryPage() {
               </>
             ) : (
               <>
-                {!showPartners && (<button
-                  className={
-                    journeyData?.journeyThrough === "video" ? `start` : `stop`
-                  }
-                  onClick={stop_journey}
-                >
-                  Stop
-                </button>)}
+                {!showPartners && (
+                  <button
+                    className={
+                      journeyData?.journeyThrough === "video" ? `start` : `stop`
+                    }
+                    onClick={stop_journey}
+                  >
+                    Stop
+                  </button>
+                )}
                 <div
                   className="icons"
                   style={{
-                    marginTop: `${
-                      journeyData?.journeyThrough === "video" || showPartners ? "0" : "440px"
-                    }`,
-                    marginLeft : `${
-                       showPartners ? "80vw" : "0"
-                    }`
+                    marginTop: `${journeyData?.journeyThrough === "video" || showPartners
+                        ? "0"
+                        : "440px"
+                      }`,
+                    marginLeft: `${showPartners ? "80vw" : "0"}`,
                   }}
                 >
                   {/* {liked === false ? (
@@ -683,8 +695,8 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: #000000;
-  display : flex;
-  flex-direction : column;
+  display: flex;
+  flex-direction: column;
 
   .storyPopup_header {
     display: flex;
@@ -864,7 +876,7 @@ const Container = styled.div`
   .journeyInfo {
     display: flex;
     flex-direction: column;
-    height: 75%;
+    height: 90vh;
     justify-content: center;
   }
 
@@ -888,7 +900,7 @@ const Container = styled.div`
       background-color: #00000076;
       padding: 10px;
       border-radius: 10px;
-      margin-bottom : 40px;
+      margin-bottom: 40px;
     }
   }
 
@@ -914,9 +926,9 @@ const Container = styled.div`
     margin-right: auto;
     margin-top: 10px;
     justify-content: space-between;
-    position : absolute;
+    position: absolute;
     margin-top: 150px;
-    top : 0;
+    top: 0;
 
     .partner {
       display: flex;
@@ -926,11 +938,6 @@ const Container = styled.div`
       border-radius: 20px;
       padding-left: 10px;
       margin-right: 10px;
-
-      /* &:hover {
-        background-color : #474747;
-        cursor : pointer;
-      } */
 
       p {
         color: white;
@@ -945,6 +952,8 @@ const Container = styled.div`
 
     .first_two {
       display: flex;
+      position: fixed;
+      top: 11vh;
     }
 
     .others {
@@ -978,17 +987,16 @@ const Container = styled.div`
     flex-direction: column;
     padding-left: 10px;
     padding-right: 10px;
-    margin-top : 100px;
-    max-height : 580px;
+    margin-top: 100px;
+    max-height: 580px;
 
     .partners_header {
       display: flex;
       justify-content: space-between;
       margin-top: 20px;
       margin-bottom: 20px;
-      padding-left : 20px;
-      padding-right : 20px;
-
+      padding-left: 20px;
+      padding-right: 20px;
 
       p {
         color: white;
@@ -1032,6 +1040,20 @@ const Container = styled.div`
     padding-left: 10px;
     padding-right: 10px;
     width: fit-content;
+  }
+
+  .total_fires {
+    background-color: #babcfc;
+    border-radius: 10px;
+    width: 60px;
+    margin-left: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 4px;
+    padding-bottom: 4px;
   }
 `;
 

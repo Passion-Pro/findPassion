@@ -66,7 +66,7 @@ function Member({ learner, learning, learningId }) {
           src={profilePhotoUrl}
           onClick={(e) => {
             if(learner !==  user?.email){
-              history.push(`/profile/${id}`)
+              history.push(`/viewprofile/${id}`)
             }else{
               history.push(`/userProfile`)
             }
@@ -77,7 +77,7 @@ function Member({ learner, learning, learningId }) {
           className="chatName_info"
           onClick={(e) => {
             if(learner !==  user?.email){
-              history.push(`/profile/${id}`)
+              history.push(`/viewprofile/${id}`)
             }else{
               history.push(`/userProfile`)
             }

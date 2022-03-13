@@ -70,18 +70,26 @@ const Container = styled.div`
   max-width: 50%;
   display : flex;
   justify-content : flex-end;
+
+  @media (max-width: 500px) {
+    max-width : 70%;
+  }
  }
 
  .sender_message{
   margin-left: 10px;
   max-width: 50%;
   display : flex;
+
+  @media (max-width: 500px) {
+    max-width : 70%;
+  }
  }
 
 
 
   @media (max-width: 500px) {
-    max-width: 70%;
+    width : 100%;
   }
   .message {
     display: flex;

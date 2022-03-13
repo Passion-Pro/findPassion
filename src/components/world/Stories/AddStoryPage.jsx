@@ -20,6 +20,7 @@ import Picker from "emoji-picker-react";
 import RemoveAllCardsPopup from "./RemoveAllCardsPopup";
 import UploadJourneyPopup from "./UploadJourneyPopup";
 import CloseIcon from "@mui/icons-material/Close";
+import firebase from "firebase"
 
 function AddStoryPage() {
   const { journeyMode } = useParams();
@@ -362,6 +363,7 @@ function AddStoryPage() {
               .doc(user?.uid)
               .update({
                 imagesInfo: cardsInfo,
+                currentYear : firebase.firestore.FieldValue.increment(1)
               })
               .then(() => {
                 console.log("YES DONE");
@@ -724,7 +726,7 @@ function AddStoryPage() {
                                 accept="image/git , image/jpeg , image/png"
                               />
                             </div>
-                            <button onClick={nextYear}>Next Year</button>
+                            <button onClick={nextYear}>Add Card and move to next year</button>
                           </div>
                         </div>
                       )}
@@ -1282,7 +1284,7 @@ const Container = styled.div`
     justify-content: space-between;
 
     button {
-      width: 100px;
+      width: fit-content;
       padding: 10px;
       border: 0;
       border-radius: 20px;

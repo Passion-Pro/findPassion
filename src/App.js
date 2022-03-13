@@ -68,7 +68,7 @@ function App() {
     dispatch,
   ] = useStateValue();
   const history = useHistory();
-  
+
   useEffect(() => {
     dispatch({
       type: actionTypes.SET_LOADING,
@@ -167,8 +167,10 @@ function App() {
               pathnamef !== "/addJourney/photos" &&
               pathnamef !== "/requests" &&
               pathnamef !== "/addJourney/video" &&
+              pathnamef !== "journey" &&
               (pathnamef?.toString().slice(0, 9) !== "/learning" ||
-                pathnamef !== "/learning") && <Header />}
+                pathnamef !== "/learning") && <Header />
+                }
           </div>
         )}
         {/* phone */}
@@ -183,6 +185,7 @@ function App() {
               pathnamef !== "/userProfile" &&
               pathnamef !== "/userProfileLearnt" &&
               pathnamef !== "/userProfilePost" &&
+              pathnamef !== "/journey" &&
               pathnamef !== "/learning" && <Header />}
           </div>
         )}

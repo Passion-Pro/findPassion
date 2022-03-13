@@ -278,7 +278,9 @@ function UserProfile() {
       <div className="Userprofile__In">
         <div className="userProfile__headerMobile">
           <div>
-            <ArrowBackRoundedIcon />
+            <ArrowBackRoundedIcon  onClick = {() => {
+              history.goBack()
+            }}/>
           </div>
           <div>
             Your Profile
@@ -511,6 +513,19 @@ function UserProfile() {
                 <div className="Userprofile__Third__info">
                   <div className="Userprofile__Third__infoIn">
                     <div className="current_involvement">
+                      <TextField
+                        id="filled-read-only-input"
+                        type="text"
+                        size="small"
+                        label="Email"
+                        defaultValue={userInfo?.email}
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        variant="filled"
+                        className="userProfile__input"
+                        multiline
+                      />
                       <TextField
                         id="filled-read-only-input"
                         type="text"

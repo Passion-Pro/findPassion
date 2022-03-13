@@ -86,7 +86,7 @@ const Container  = styled.div`
   width: 90vw;
   padding: 0 5vw;
   flex: 1;
-  min-height: 90vh;
+  min-height: 91.5vh;
   height : fit-content;
   display: flex;
   flex-direction: column;
