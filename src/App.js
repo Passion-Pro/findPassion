@@ -192,6 +192,9 @@ function App() {
                   <Route exact path="/">
                     <CreateAccount />
                   </Route>
+                  <Route exact path="/newAccount">
+            {user?.email ? <CreateAccount /> : <Login />}
+          </Route>
                 </>
                 )
                 :

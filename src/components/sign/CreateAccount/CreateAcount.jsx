@@ -5,7 +5,7 @@ import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import { useStateValue } from "../../../StateProvider";
 import { actionTypes } from "../../../reducer";
-import QualitiesPopup from "./QualitiesPopup";
+import QualitiesPopup from "./Qu\alitiesPopup";
 import Quality from "./Quality";
 import PassionPopup from "./PassionPopup";
 import InputLabel from "@mui/material/InputLabel";
@@ -68,7 +68,7 @@ function CreateAccount() {
   const [profileUrl, setProfileUrl] = useState();
   const history = useHistory();
   const [input, setInput] = useState("");
-  const [year, setYear] = useState(0);
+  const [year, setYear] = useState();
   const [branch, setBranch] = useState();
   const [coverImage, setCoverImage] = useState();
   const[personInfo , setPersonInfo] = useState();
@@ -125,19 +125,8 @@ function CreateAccount() {
 
   const create_account = (e) => {
     e.preventDefault();
-    if (name && passion && branch && year && user?.uid && experience) {
-
-      console.log(experience);
-
-        // db.collection("users").doc(user.uid).set({
-        //   name: name,
-        //   email: user?.email,
-        //   passion: passion,
-        //   branch: branch,
-        //   year: year,
-        //   timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        // });
-     
+    console.log("firstcc",name ,passion , branch , year , user?.uid , experience)
+    if (name && passion && branch && year && user?.uid ) {
         db.collection("users").doc(user.uid).set({
           name: name,
           email: user?.email,
@@ -226,7 +215,7 @@ function CreateAccount() {
           views: 0,
         });
 
-      history.push("/world");
+      history.push("/");
     } else {
       alert("Please fill all the details");
     }
@@ -330,6 +319,12 @@ function CreateAccount() {
                   textDecoration: "underline",
                   color: "blue",
                   fontWeight: "bold",
+                }}
+                onClick={()=>{
+                  firebase.auth().signOut().then(() => {
+                    window.location.reload()
+                    history.push("/signIn")
+                  });
                 }}
               >
                 logout

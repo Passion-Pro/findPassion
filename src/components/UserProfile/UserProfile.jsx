@@ -19,12 +19,9 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import PostCard from '../post/PostCard'
 import { styled as style } from "@mui/material/styles";
-
-
 import { PhotoCamera } from "@mui/icons-material";
 import Badge from "@mui/material/Badge";
 import firebase from "firebase"
-import DeletePostPopup from "../post/DeletePostPopup";
 import Story from "../world/Stories/Story";
 import StoryPopup from "../world/Stories/StoryPopup";
 
@@ -525,7 +522,7 @@ function UserProfile() {
                       <Button style={{ width: '100%', marginRight: '20px' }} variant="contained" onClick={update_account}>Save Changes</Button>
                       <Button style={{ width: '100%' }} variant="contained" onClick={() => {
                         firebase.auth().signOut().then(() => {
-                          history.push("/signIn")
+                          window.location.reload();
                         });
                       }}>Logout</Button>
                     </div>

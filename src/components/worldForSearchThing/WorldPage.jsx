@@ -3,13 +3,13 @@ import { useHistory } from 'react-router-dom'
 import db from '../../firebase';
 import { useStateValue } from '../../StateProvider';
 import Learning from './Learning';
-
+import PostCard from '../post/PostCard'
 
 function WorldPage() {
   const history = useHistory();
   const [{ searchInput, user }, dispatch] = useStateValue();
   const [learnings, setLearnings] = useState([]);
-
+  var mm=false;
   const newlearnings = [];
   useEffect(() => {
     db.collection("learnings").onSnapshot((snapshot) => {
@@ -45,14 +45,21 @@ function WorldPage() {
           Posts
         </button>
       </div>
-      <div className="all_learnings">
+      <div className="all_learnings" style={{paddingLeft:'5vw'}}>
         {learnings.length>0 &&
-          learnings
+          learnings.filter(item => {
+            return item?.data?.learning.toLowerCase().includes(searchInput.toLowerCase())
+        })
             .map((learning) => (
               <>{learning?.data?.started_by.email !== user?.email &&
+                <>
                 <Learning learning={learning} type='all' Nodata={true}/>
+                {mm=true}
+                </>
               }</>))
+
             }
+            {!mm && <PostCard type='all' Nodata={false}/>}
       </div>
     </div>
   )

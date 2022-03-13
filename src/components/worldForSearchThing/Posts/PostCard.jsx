@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import Divider from '@mui/material/Divider';
-import ProfileImage from '../profile/ProfileImage';
 import './PostCard.css';
 import ThumbUpRoundedIcon from '@mui/icons-material/ThumbUpRounded';
 import firebase from 'firebase';
