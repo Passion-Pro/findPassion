@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Chat from "./components/chat/Chat";
 import ChatPage from "./components/chat/ChatPage";
 import WorldPage from "./components/world/WorldPage";
+import WorldPageforsearch from "./components/worldForSearchThing//WorldPage";
 import LearningGroup from "./components/world/Learnings/LearningGroup";
 import StoriesPage from "./components/world/StoriesPage";
 import StoryPage from "./components/world/Stories/StoryPage";
@@ -41,7 +42,9 @@ import ViewProfile from "./components/profile/ViewProfile";
 import ShowStories from "./components/stories/ShowStories";
 import { useHistory } from "react-router-dom";
 import UploadChatPdf from "./components/chat/UploadChatPdf";
-import SearchPage from "./components/search/SearchPage";
+// import SearchPage from "./components/search/SearchPage";
+import SearchPage from "./components/worldForSearchThing/People/SearchPage";
+import SearchPageforsearch from "./components/worldForSearchThing/People/SearchBody";
 import Header from "./components/header/Header";
 import HeaderNot from "./components/withoutlogin/Header";
 import ShowTask from "./components/group/ShowTask";
@@ -49,7 +52,7 @@ import { CircularProgress } from "@mui/material";
 import PostsPage from "./components/world/Posts/PostsPage";
 import SearchMobile from "./components/SearchForMobile/SearchMobile";
 import UploadGroupPdf from "./components/group/UploadGroupPdf";
-
+import PostsPageSearch from './components/worldForSearchThing/Posts/PostsPage'
 function App() {
   const [
     {
@@ -60,6 +63,7 @@ function App() {
       showMoreoption,
       showgroupMoreRight,
       pathnamef,
+      searchInput,
     },
     dispatch,
   ] = useStateValue();
@@ -135,6 +139,10 @@ function App() {
       type: actionTypes.SET_PATHNAMEF,
       pathnamef: "/",
     });
+    dispatch({
+      type: actionTypes.SET_SEARCH_INPUT_PASSION,
+      searchInputPassion: userInfo?.passion,
+  })
   }, []);
 
   useEffect(() => {
@@ -178,149 +186,151 @@ function App() {
           {user?.email ? (
               !userInfo?.email ?
                 (<>
-                  <Route path="/signin">
+                  <Route exact path="/signin">
                     <Login />
                   </Route>
-                  <Route path="/">
+                  <Route exact path="/">
                     <CreateAccount />
                   </Route>
                 </>
                 )
                 :
                 <>
-                <Route path="/searchPage">
+                <Route exact path="/searchPage">
             {user?.email ? <SearchPage /> : <Login />}
           </Route>
-          {/* <Route path="/searchPageForMobile">
-            {user?.email ? <SearchMobile /> : <Login />}
-          </Route> */}
-          <Route path="/createStory">
+                <Route exact path="/peopleforsearch">
+            {user?.email ? <SearchPageforsearch /> : <Login />}
+          </Route>
+          <Route exact path="/createStory">
             {user?.email ? <CreateStoryPage /> : <Login />}
           </Route>
-          <Route path="/viewstory/:id">
+          <Route exact path="/viewstory/:id">
             {user?.email ? <ShowStories /> : <Login />}
           </Route>
-          <Route path="/viewprofile/:id">
+          <Route exact path="/viewprofile/:id">
             {user?.email ? <ViewProfile /> : <Login />}
           </Route>
-          <Route path="/withoutlogin">
+          <Route exact path="/withoutlogin">
             {user?.email ? <WithoutLogin /> : <Login />}
           </Route>
-          <Route path="/shareexperience">
+          <Route exact path="/shareexperience">
             {user?.email ? <ShareExperience /> : <Login />}
           </Route>
-          <Route path="/grouptaskother/:id">
+          <Route exact path="/grouptaskother/:id">
             {user?.email ? <GroupTaskOther /> : <Login />}
           </Route>
-          <Route path="/showalltask/:id">
+          <Route exact path="/showalltask/:id">
             {user?.email ? <ShowTask /> : <Login />}
           </Route>
-          <Route path="/groupchatother/:id">
+          <Route exact path="/groupchatother/:id">
             {user?.email ? <GroupChatOther /> : <Login />}
           </Route>
-          <Route path="/groupevolvementother/:id">
+          <Route exact path="/groupevolvementother/:id">
             {user?.email ? <GroupEnvolvementOther /> : <Login />}
           </Route>
-          <Route path="/grouptask">
+          <Route exact path="/grouptask">
             {user?.email ? <GroupTask /> : <Login />}
           </Route>
-          <Route path="/grouptasklist">
+          <Route exact path="/grouptasklist">
             {user?.email ? <GroupTasklist /> : <Login />}
           </Route>
-          <Route path="/groupchat">
+          <Route exact path="/groupchat">
             {user?.email ? <GroupChat /> : <Login />}
           </Route>
-          <Route path="/groupevolvement">
+          <Route exact path="/groupevolvement">
             {user?.email ? <GroupEnvolvement /> : <Login />}
           </Route>
-          <Route path="/group">{user?.email ? <Group /> : <Login />}</Route>
-          <Route path="/groupother/:id">
+          <Route exact path="/group">{user?.email ? <Group /> : <Login />}</Route>
+          <Route exact path="/groupother/:id">
             {user?.email ? <GroupOther /> : <Login />}
           </Route>
-          <Route path="/createpost">
+          <Route exact path="/createpost">
             {user?.email ? <Createpost /> : <Login />}
           </Route>
-          <Route path="/all_profile">
+          <Route exact path="/all_profile">
             {user?.email ? <HomeWithAllProfile /> : <Login />}
 
           </Route>
-          <Route path="/landspacepost">
+          <Route exact path="/landspacepost">
             {user?.email ? <LandspacePost /> : <Login />}
           </Route>
-          <Route path="/addpost">{user?.email ? <AddPost /> : <Login />}</Route>
-          <Route path="/portraitpost">
+          <Route exact path="/addpost">{user?.email ? <AddPost /> : <Login />}</Route>
+          <Route exact path="/portraitpost">
             {user?.email ? <PortraitPhotos /> : <Login />}
           </Route>
-          <Route path="/newAccount">
+          <Route exact path="/newAccount">
             {user?.email ? <CreateAccount /> : <Login />}
           </Route>
-          <Route path="/signIn">
+          <Route exact path="/signIn">
             <Login />
           </Route>
           <Route exact path="/chat/:chatId">
             {user?.email ? <Chat /> : <Login />}
           </Route>
           <Route exact path="/chat">{user?.email ? <Chat /> : <Login />}</Route>
-          <Route path="/messages/:myChatId/:viewerId">
+          <Route exact path="/messages/:myChatId/:viewerId">
             <ChatPage />
           </Route>
           <Route exact path="/world">{user?.email ? <WorldPage /> : <Login />}</Route>
-          <Route path="/journey/:journeyId">
+          <Route exact path="/worldforsearch">{user?.email ? <WorldPageforsearch /> : <Login />}</Route>
+          <Route exact path="/journey/:journeyId">
             {user?.email ? <StoryPage /> : <Login />}
           </Route>
           <Route exact path="/stories">
             {user?.email ? <StoriesPage /> : <Login />}
           </Route>
-          <Route path="/learners/:learningId">
+          <Route exact path="/learners/:learningId">
             <LearnersPage />
           </Route>
-          <Route path="/groupUploadPdf">
+          <Route exact path="/groupUploadPdf">
             {user?.email ? <UploadGroupPdf/> : <Login />}
           </Route>
           <Route exact path="/profile">
             {user?.email ? <ProfilePage /> : <Login />}
           </Route>
-          <Route path="/addJourney/:journeyMode">
+          <Route exact path="/addJourney/:journeyMode">
             {user?.email ? <AddStoryPage /> : <Login />}
           </Route>
-          <Route path="/requests">
+          <Route exact path="/requests">
             {user?.email ? <RequestsPage /> : <Login />}
           </Route>
-          <Route path="/learningsUploadPdf/:learningId">
+          <Route exact path="/learningsUploadPdf/:learningId">
             {user?.email ? <UploadPdf /> : <Login />}
           </Route>
           <Route exact path="/learning/:learningId">
             {user?.email ? <LearningGroup /> : <Login />}
           </Route>
-          <Route path="/messagesUploadPdf/:chatId/:chatEmail">
+          <Route exact path="/messagesUploadPdf/:chatId/:chatEmail">
             {user?.email ? <UploadChatPdf /> : <Login />}
           </Route>
           <Route exact path="/learnings/viewPdf/:learningId/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
-          <Route path="/posts">
+          <Route exact path="/posts">
             <PostsPage />
           </Route>
+          <Route exact path="/postforsearch">{user?.email && <PostsPageSearch />}</Route>
           <Route exact path="/chats/viewPdf/:chatEmail/messages/:messageId">
             {user?.email ? <ViewPdf /> : <Login />}
           </Route>
-          <Route path="/userProfile">
+          <Route exact path="/userProfile">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/userProfilePost">
+          <Route exact path="/userProfilePost">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route path="/userProfileLearnt">
+          <Route exact path="/userProfileLearnt">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
           <Route path="/userProfileJourney">
             {user?.email ? <UserProfile /> : <Login />}
           </Route>
-          <Route exact path="/">{user?.email ? <WorldPage />: <Login /> }</Route>
+          <Route exact path="/">{user?.email ? <PostsPage />: <Login /> }</Route>
                 </>)
               :
               <>
-                <Route path="/">
+                <Route exact path="/">
                   <Login/>
                 </Route>
               </>

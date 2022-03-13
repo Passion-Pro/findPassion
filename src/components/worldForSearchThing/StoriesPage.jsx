@@ -28,7 +28,7 @@ function StoriesPage() {
           setJourneys(
             snapshot.docs.map((doc) => ({
               id: doc.id,
-              data: doc.data()
+              data: doc.data(),
             }))
           )
         );
@@ -51,6 +51,16 @@ function StoriesPage() {
   return (
     <div>
       <Container>
+        {/* <div className="passion_logo">
+          <p>WEB DEVLOPMENT</p>
+          <div className="add_story">
+            {userInfo?.experience > 1 && (
+              <button onClick={(e) => history.push("/addStory")}>
+                Add your story 🔥
+              </button>
+            )}
+          </div>
+        </div> */}
         <div className="options_header">
           <div className="options_buttons">
             <button
@@ -143,7 +153,7 @@ function StoriesPage() {
 
 const Container = styled.div`
   width: 100vw;
-  min-height: 91.5vh;
+  min-height: 90vh;
   height: fit-content;
   display: flex;
   flex-direction: column;
