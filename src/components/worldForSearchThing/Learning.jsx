@@ -6,7 +6,7 @@ import firebase from "firebase";
 import { useStateValue } from "../../StateProvider";
 import db from "../../firebase";
 
-function Learning({ learning,learningL, type, learnings }) {
+function Learning({ learning,learningL, type, learnings ,Nodata}) {
   const history = useHistory();
   const [{ user, userInfo,searchInput }, dispatch] = useStateValue();
   const [requestSent, setRequestSent] = useState(false);
@@ -23,7 +23,12 @@ function Learning({ learning,learningL, type, learnings }) {
     if(profileId)
           history.push(`/viewProfile/${profileId}`);
   };
-
+  useEffect(() => {
+    if(searchInput==''){
+      history.push('/all_profile')
+    }
+   }, []);
+   
   useEffect(() => {
     if (user?.uid  && userInfo) {
       if(type === 'joined'){
@@ -41,9 +46,6 @@ function Learning({ learning,learningL, type, learnings }) {
             console.log(doc.id, " => ", doc.data());
             setProfileId(doc?.id);
             setProfilePhotoUrl(doc.data().profilePhotoUrl);
-
-
-
 
             db.collection("users")
               .doc(doc.id)
@@ -196,7 +198,7 @@ function Learning({ learning,learningL, type, learnings }) {
 
   return (
     <>
-      <Container>
+     {Nodata? <Container>
         <div className="learning_header">
           <div
             style={{
@@ -251,7 +253,9 @@ function Learning({ learning,learningL, type, learnings }) {
             </>
           )}
         </div>
-      </Container>
+      </Container>:
+      <div style={{height:"75.5vh",width:'100%',display:'flex',justifyContent:"center",alignItems:"center"}}>No data</div>
+      }
     </>
   );
 }
