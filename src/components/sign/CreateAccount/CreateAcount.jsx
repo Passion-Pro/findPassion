@@ -143,6 +143,7 @@ function CreateAccount() {
           email: user?.email,
           passion: passion,
           experience: experience,
+          personInfo : personInfo,
           // subInterest: input,
           branch: branch,
           year: year,
